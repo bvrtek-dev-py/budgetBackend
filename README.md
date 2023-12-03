@@ -4,7 +4,7 @@ Manage your home budget efficiently with this Python-based application powered b
 
 ## Table of Contents
 - [Project Overview](#project-overview)
-- [Features](#features)
+- [Features](#main-features)
 - [Tech Stack](#tech-stack)
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
