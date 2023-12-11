@@ -1,5 +1,7 @@
-from typing import AsyncGenerator
+from contextlib import asynccontextmanager
+from typing import AsyncGenerator, Annotated
 
+from fastapi import Depends
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
     AsyncSession,
@@ -12,25 +14,30 @@ from budgetBackend.config.database import DATABASE_URL
 SessionLocal = async_sessionmaker[AsyncSession]
 
 
-async_engine: AsyncEngine = create_async_engine(
-    url=DATABASE_URL, pool_size=20, max_overflow=30
-)
-
-session_class: SessionLocal = async_sessionmaker(
-    autocommit=False,
-    autoflush=False,
-    bind=async_engine,
-    expire_on_commit=False,
-)
+def async_engine_factory() -> AsyncEngine:
+    return create_async_engine(url=DATABASE_URL, pool_size=10, max_overflow=20)
 
 
-async def get_session() -> AsyncGenerator[AsyncSession, None]:
-    async with session_class.begin() as session:
-        try:
-            yield session
+@asynccontextmanager
+async def _get_session_context(
+    async_engine: Annotated[AsyncEngine, Depends(async_engine_factory)]
+) -> AsyncSession:
+    session_local = async_sessionmaker(
+        autocommit=False, autoflush=False, bind=async_engine, expire_on_commit=False
+    )
+    session = session_local()
 
-        except:
-            await session.rollback()
+    try:
+        yield session
+    except Exception:
+        await session.rollback()
+        raise
+    finally:
+        await session.close()
 
-        finally:
-            await session.close()
+
+async def get_session(
+    session_context: Annotated[AsyncSession, Depends(_get_session_context)]
+) -> AsyncGenerator[AsyncSession, None]:
+    async with session_context as session:
+        yield session
