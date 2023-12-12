@@ -3,14 +3,14 @@ from typing import Annotated, List
 from fastapi import APIRouter, Depends, Path
 from fastapi import status
 
-from budgetBackend.api.v1.common.responses import ErrorResponse
-from budgetBackend.api.v1.transaction.requests import (
+from backend.api.v1.common.responses import ErrorResponse
+from backend.api.v1.transaction.requests import (
     TransactionCreateRequest,
     TransactionUpdateRequest,
 )
-from budgetBackend.api.v1.transaction.responses import TransactionBaseResponse
-from budgetBackend.modules.transaction.dependencies import get_transaction_service
-from budgetBackend.modules.transaction.services import TransactionService
+from backend.api.v1.transaction.responses import TransactionBaseResponse
+from backend.modules.transaction.dependencies import get_transaction_service
+from backend.modules.transaction.services import TransactionService
 
 router = APIRouter(prefix="/api/v1/transactions", tags=["APIv1 Transactions"])
 

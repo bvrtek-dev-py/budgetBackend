@@ -3,8 +3,8 @@ from decimal import Decimal
 from sqlalchemy import String, DECIMAL, Text, Enum
 from sqlalchemy.orm import MappedColumn, mapped_column
 
-from budgetBackend.database.base import BaseModel
-from budgetBackend.modules.transaction.enums import TransactionType
+from backend.database.base import BaseModel
+from backend.modules.transaction.enums import TransactionType
 
 
 class Transaction(BaseModel):

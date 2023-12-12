@@ -1,9 +1,9 @@
 from typing import Sequence
 
-from budgetBackend.modules.category.enums import CategoryType
-from budgetBackend.modules.category.models import Category
-from budgetBackend.modules.category.repositories import CategoryRepository
-from budgetBackend.modules.common.exceptions import ObjectDoesNotExist
+from backend.modules.category.enums import CategoryType
+from backend.modules.category.models import Category
+from backend.modules.category.repositories import CategoryRepository
+from backend.modules.common.exceptions import ObjectDoesNotExist
 
 
 class CategoryService:

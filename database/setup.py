@@ -1,5 +1,5 @@
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator, Annotated
+from typing import AsyncGenerator, Annotated, AsyncIterator
 
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import (
@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
 )
 
-from budgetBackend.config.database import DATABASE_URL
+from backend.config.database import DATABASE_URL
 
 SessionLocal = async_sessionmaker[AsyncSession]
 
@@ -21,7 +21,7 @@ def async_engine_factory() -> AsyncEngine:
 @asynccontextmanager
 async def _get_session_context(
     async_engine: Annotated[AsyncEngine, Depends(async_engine_factory)]
-) -> AsyncSession:
+) -> AsyncIterator[AsyncSession]:
     session_local = async_sessionmaker(
         autocommit=False, autoflush=False, bind=async_engine, expire_on_commit=False
     )

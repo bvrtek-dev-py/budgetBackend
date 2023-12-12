@@ -1,8 +1,8 @@
 from typing import Sequence
 
-from budgetBackend.modules.common.exceptions import ObjectDoesNotExist
-from budgetBackend.modules.wallet.models import Wallet
-from budgetBackend.modules.wallet.repositories import WalletRepository
+from backend.modules.common.exceptions import ObjectDoesNotExist
+from backend.modules.wallet.models import Wallet
+from backend.modules.wallet.repositories import WalletRepository
 
 
 class WalletService:

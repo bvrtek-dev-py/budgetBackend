@@ -3,7 +3,7 @@ from typing import Sequence
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from budgetBackend.modules.wallet.models import Wallet
+from backend.modules.wallet.models import Wallet
 
 
 class WalletRepository:

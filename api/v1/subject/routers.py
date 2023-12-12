@@ -3,14 +3,14 @@ from typing import Annotated, List
 from fastapi import APIRouter, Depends, Path
 from fastapi import status
 
-from budgetBackend.api.v1.common.responses import ErrorResponse
-from budgetBackend.api.v1.subject.requests import (
+from backend.api.v1.common.responses import ErrorResponse
+from backend.api.v1.subject.requests import (
     SubjectCreateRequest,
     SubjectUpdateRequest,
 )
-from budgetBackend.api.v1.subject.responses import SubjectBaseResponse
-from budgetBackend.modules.subject.dependencies import get_subject_service
-from budgetBackend.modules.subject.services import SubjectService
+from backend.api.v1.subject.responses import SubjectBaseResponse
+from backend.modules.subject.dependencies import get_subject_service
+from backend.modules.subject.services import SubjectService
 
 router = APIRouter(prefix="/api/v1/subjects", tags=["APIv1 Subject"])
 

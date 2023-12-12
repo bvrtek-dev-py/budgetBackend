@@ -1,15 +1,16 @@
 from typing import Sequence
 
-from budgetBackend.modules.common.exceptions import ObjectDoesNotExist
-from budgetBackend.modules.user.exceptions import PasswordDoesNotMatch
-from budgetBackend.modules.user.models import User
-from budgetBackend.modules.user.repositories import UserRepository
+from backend.modules.common.exceptions import ObjectDoesNotExist
+from backend.modules.user.exceptions import PasswordDoesNotMatch
+from backend.modules.user.models import User
+from backend.modules.user.repositories import UserRepository
 
 
 class UserService:
     def __init__(self, repository: UserRepository):
         self._repository = repository
 
+    # pylint: disable=too-many-arguments
     async def create(
         self,
         username: str,
@@ -22,7 +23,7 @@ class UserService:
         if password1 != password2:
             raise PasswordDoesNotMatch
 
-        user = User( # TODO add factory
+        user = User(
             username=username,
             email=email,
             first_name=first_name,

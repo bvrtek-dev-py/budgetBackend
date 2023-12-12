@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from budgetBackend.modules.category.enums import CategoryType
+from backend.modules.category.enums import CategoryType
 
 
 class CategoryCreateRequest(BaseModel):
