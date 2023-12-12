@@ -1,8 +1,8 @@
 from typing import Sequence
 
-from budgetBackend.modules.common.exceptions import ObjectDoesNotExist
-from budgetBackend.modules.subject.models import Subject
-from budgetBackend.modules.subject.repositories import SubjectRepository
+from backend.modules.common.exceptions import ObjectDoesNotExist
+from backend.modules.subject.models import Subject
+from backend.modules.subject.repositories import SubjectRepository
 
 
 class SubjectService:

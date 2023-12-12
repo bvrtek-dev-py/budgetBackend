@@ -3,7 +3,7 @@ from decimal import Decimal
 
 from pydantic import BaseModel
 
-from budgetBackend.modules.transaction.enums import TransactionType
+from backend.modules.transaction.enums import TransactionType
 
 
 class TransactionBaseResponse(BaseModel):

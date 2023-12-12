@@ -3,14 +3,14 @@ from typing import Annotated, List
 from fastapi import APIRouter, Depends, Path
 from fastapi import status
 
-from budgetBackend.api.v1.category.requests import (
+from backend.api.v1.category.requests import (
     CategoryCreateRequest,
     CategoryUpdateRequest,
 )
-from budgetBackend.api.v1.category.responses import CategoryBaseResponse
-from budgetBackend.api.v1.common.responses import ErrorResponse
-from budgetBackend.modules.category.dependencies import get_category_service
-from budgetBackend.modules.category.services import CategoryService
+from backend.api.v1.category.responses import CategoryBaseResponse
+from backend.api.v1.common.responses import ErrorResponse
+from backend.modules.category.dependencies import get_category_service
+from backend.modules.category.services import CategoryService
 
 router = APIRouter(prefix="/api/v1/categories", tags=["API v1", "Category"])
 

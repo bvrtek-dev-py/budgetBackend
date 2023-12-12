@@ -1,10 +1,10 @@
 from decimal import Decimal
 from typing import Sequence
 
-from budgetBackend.modules.common.exceptions import ObjectDoesNotExist
-from budgetBackend.modules.transaction.enums import TransactionType
-from budgetBackend.modules.transaction.models import Transaction
-from budgetBackend.modules.transaction.repositories import TransactionRepository
+from backend.modules.common.exceptions import ObjectDoesNotExist
+from backend.modules.transaction.enums import TransactionType
+from backend.modules.transaction.models import Transaction
+from backend.modules.transaction.repositories import TransactionRepository
 
 
 class TransactionService:

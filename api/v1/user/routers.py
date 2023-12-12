@@ -3,11 +3,11 @@ from typing import Annotated, List
 from fastapi import APIRouter, Depends, Path
 from fastapi import status
 
-from budgetBackend.api.v1.common.responses import ErrorResponse
-from budgetBackend.api.v1.user.requests import UserCreateRequest, UserUpdateRequest
-from budgetBackend.api.v1.user.responses import UserBaseResponse
-from budgetBackend.modules.user.dependencies import get_user_service
-from budgetBackend.modules.user.services import UserService
+from backend.api.v1.common.responses import ErrorResponse
+from backend.api.v1.user.requests import UserCreateRequest, UserUpdateRequest
+from backend.api.v1.user.responses import UserBaseResponse
+from backend.modules.user.dependencies import get_user_service
+from backend.modules.user.services import UserService
 
 router = APIRouter(prefix="/api/v1/users", tags=["API v1", "User"])
 

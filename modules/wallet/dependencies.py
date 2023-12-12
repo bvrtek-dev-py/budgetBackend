@@ -3,9 +3,9 @@ from typing import Annotated
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from budgetBackend.database.setup import get_session
-from budgetBackend.modules.wallet.repositories import WalletRepository
-from budgetBackend.modules.wallet.services import WalletService
+from backend.database.setup import get_session
+from backend.modules.wallet.repositories import WalletRepository
+from backend.modules.wallet.services import WalletService
 
 
 def get_wallet_repository(

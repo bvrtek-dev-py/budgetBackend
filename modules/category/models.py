@@ -1,10 +1,8 @@
-from typing import get_args
-
 from sqlalchemy import String, Enum
 from sqlalchemy.orm import MappedColumn, mapped_column
 
-from budgetBackend.database.base import BaseModel
-from budgetBackend.modules.category.enums import CategoryType
+from backend.database.base import BaseModel
+from backend.modules.category.enums import CategoryType
 
 
 class Category(BaseModel):

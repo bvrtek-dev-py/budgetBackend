@@ -3,9 +3,9 @@ from typing import Annotated
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from budgetBackend.database.setup import get_session
-from budgetBackend.modules.subject.repositories import SubjectRepository
-from budgetBackend.modules.subject.services import SubjectService
+from backend.database.setup import get_session
+from backend.modules.subject.repositories import SubjectRepository
+from backend.modules.subject.services import SubjectService
 
 
 def get_subject_repository(

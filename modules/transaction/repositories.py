@@ -3,7 +3,7 @@ from typing import Sequence
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from budgetBackend.modules.transaction.models import Transaction
+from backend.modules.transaction.models import Transaction
 
 
 class TransactionRepository:

@@ -2,14 +2,14 @@ from typing import List, Annotated
 
 from fastapi import APIRouter, Depends, Path
 
-from budgetBackend.api.v1.common.responses import ErrorResponse
-from budgetBackend.api.v1.wallet.requests import (
+from backend.api.v1.common.responses import ErrorResponse
+from backend.api.v1.wallet.requests import (
     WalletUpdateRequest,
     WalletCreateRequest,
 )
-from budgetBackend.api.v1.wallet.responses import WalletBaseResponse
-from budgetBackend.modules.wallet.dependencies import get_wallet_service
-from budgetBackend.modules.wallet.services import WalletService
+from backend.api.v1.wallet.responses import WalletBaseResponse
+from backend.modules.wallet.dependencies import get_wallet_service
+from backend.modules.wallet.services import WalletService
 
 router = APIRouter(prefix="/api/v1/wallets", tags=["APIv1 Wallet"])
 
