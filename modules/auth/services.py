@@ -26,14 +26,14 @@ class TokenService:
     def __init__(
         self,
         algorithm: str,
-        refresh_secret_key: str,
+        refresh_token_secret_key: str,
         secret_key: str,
-        token_expire: float,
+        token_expire_minutes: float,
     ):
         self.algorithm = algorithm
-        self.refresh_secret_key = refresh_secret_key
+        self.refresh_token_secret_key = refresh_token_secret_key
         self.secret_key = secret_key
-        self.token_expire = token_expire
+        self.token_expire_minutes = token_expire_minutes
 
     def create_access_token(self, data: dict) -> str:
         to_encode = data.copy()
@@ -48,7 +48,9 @@ class TokenService:
         to_encode.update({"exp": self.get_expire_token_datetime()})
 
         return jwt.encode(  # type: ignore
-            claims=to_encode, key=self.refresh_secret_key, algorithm=self.algorithm
+            claims=to_encode,
+            key=self.refresh_token_secret_key,
+            algorithm=self.algorithm,
         )
 
     def decode(self, token: str) -> dict[str, str]:
@@ -66,4 +68,4 @@ class TokenService:
             raise InvalidCredentials from exc
 
     def get_expire_token_datetime(self) -> datetime:
-        return datetime.utcnow() + timedelta(minutes=self.token_expire)
+        return datetime.utcnow() + timedelta(minutes=self.token_expire_minutes)

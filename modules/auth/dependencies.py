@@ -36,6 +36,6 @@ def get_token_service() -> TokenService:
     return TokenService(
         algorithm=ALGORITHM,
         secret_key=SECRET_KEY,
-        refresh_secret_key=REFRESH_TOKEN_SECRET_KEY,
-        token_expire=ACCESS_TOKEN_EXPIRE_MINUTES,
+        refresh_token_secret_key=REFRESH_TOKEN_SECRET_KEY,
+        token_expire_minutes=ACCESS_TOKEN_EXPIRE_MINUTES,
     )
