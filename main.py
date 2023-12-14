@@ -3,6 +3,7 @@ import asyncio
 import uvicorn
 from fastapi import FastAPI
 
+from backend.api.v1.auth.routers import router as auth_router
 from backend.api.v1.category.routers import router as category_router
 from backend.api.v1.subject.routers import router as subject_router
 from backend.api.v1.transaction.routers import router as transaction_router
@@ -22,6 +23,7 @@ app.include_router(wallet_router)
 app.include_router(category_router)
 app.include_router(transaction_router)
 app.include_router(subject_router)
+app.include_router(auth_router)
 
 
 async def create_tables() -> None:
