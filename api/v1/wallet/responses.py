@@ -1,14 +1,18 @@
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class WalletBaseResponse(BaseModel):
-    id: int
-    name: str
-    description: str
+    id: int = Field(gt=0)
+    name: str = Field(min_length=3, max_length=50)
+    description: str = Field(min_length=3, max_length=2000)
+
+
+class WalletGetResponse(WalletBaseResponse):
     created_at: datetime
     updated_at: datetime
 
     class ConfigDict:
         frozen = True
+        orm_mode = True
