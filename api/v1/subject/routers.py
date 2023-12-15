@@ -17,7 +17,7 @@ router = APIRouter(prefix="/api/v1/subjects", tags=["APIv1 Subject"])
 
 @router.post(
     "/",
-    responses={201: {"model": SubjectBaseResponse}, 422: {"model": ErrorResponse}},
+    responses={201: {"model": SubjectBaseResponse}},
     status_code=status.HTTP_201_CREATED,
 )
 async def create_subject(
@@ -34,7 +34,6 @@ async def create_subject(
         404: {"model": ErrorResponse},
         409: {"model": ErrorResponse},
     },
-    status_code=status.HTTP_200_OK,
 )
 async def update_subject(
     subject_id: Annotated[int, Path(gt=0)],
@@ -50,7 +49,6 @@ async def update_subject(
         200: {"model": SubjectBaseResponse},
         404: {"model": ErrorResponse},
     },
-    status_code=status.HTTP_200_OK,
 )
 async def get_subject(
     subject_id: int,
@@ -59,9 +57,7 @@ async def get_subject(
     return await subject_service.get_by_id(subject_id)
 
 
-@router.get(
-    "/", response_model=List[SubjectBaseResponse], status_code=status.HTTP_200_OK
-)
+@router.get("/", responses={200: {"model": List[SubjectBaseResponse]}})
 async def get_subjects(
     subject_service: Annotated[SubjectService, Depends(get_subject_service)]
 ):

@@ -12,7 +12,7 @@ from backend.api.v1.transaction.responses import TransactionBaseResponse
 from backend.modules.transaction.dependencies import get_transaction_service
 from backend.modules.transaction.services import TransactionService
 
-router = APIRouter(prefix="/api/v1/transactions", tags=["APIv1 Transactions"])
+router = APIRouter(prefix="/api/v1/transactions", tags=["APIv1 Transaction"])
 
 
 @router.post(
@@ -38,7 +38,6 @@ async def create_transaction(
         404: {"model": ErrorResponse},
         409: {"model": ErrorResponse},
     },
-    status_code=status.HTTP_200_OK,
 )
 async def update_transaction(
     transaction_id: Annotated[int, Path(gt=0)],
@@ -58,7 +57,6 @@ async def update_transaction(
         200: {"model": TransactionBaseResponse},
         404: {"model": ErrorResponse},
     },
-    status_code=status.HTTP_200_OK,
 )
 async def get_transaction(
     transaction_id: Annotated[int, Path(gt=0)],
@@ -69,9 +67,7 @@ async def get_transaction(
     return await transaction_service.get_by_id(transaction_id)
 
 
-@router.get(
-    "/", response_model=List[TransactionBaseResponse], status_code=status.HTTP_200_OK
-)
+@router.get("/", responses={200: {"model": List[TransactionBaseResponse]}})
 async def get_transactions(
     transaction_service: Annotated[TransactionService, Depends(get_transaction_service)]
 ):
