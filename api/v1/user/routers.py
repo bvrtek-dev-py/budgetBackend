@@ -9,12 +9,17 @@ from backend.api.v1.user.responses import UserBaseResponse
 from backend.modules.user.dependencies import get_user_service
 from backend.modules.user.services import UserService
 
-router = APIRouter(prefix="/api/v1/users", tags=["API v1", "User"])
+router = APIRouter(prefix="/api/v1/users", tags=["APIv1 User"])
 
 
 @router.post(
     "/",
-    responses={201: {"model": UserBaseResponse}, 422: {"model": ErrorResponse}},
+    responses={
+        201: {"model": UserBaseResponse},
+        409: {"model": ErrorResponse},
+        422: {"model": ErrorResponse},
+    },
+    status_code=status.HTTP_201_CREATED,
 )
 async def create_user(
     request: UserCreateRequest,
@@ -72,6 +77,7 @@ async def get_users(user_service: Annotated[UserService, Depends(get_user_servic
         204: {},
         404: {"model": ErrorResponse},
     },
+    status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_user(
     user_id: int, user_service: Annotated[UserService, Depends(get_user_service)]

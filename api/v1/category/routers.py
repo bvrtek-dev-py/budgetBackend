@@ -12,12 +12,12 @@ from backend.api.v1.common.responses import ErrorResponse
 from backend.modules.category.dependencies import get_category_service
 from backend.modules.category.services import CategoryService
 
-router = APIRouter(prefix="/api/v1/categories", tags=["API v1", "Category"])
+router = APIRouter(prefix="/api/v1/categories", tags=["APIv1 Category"])
 
 
 @router.post(
     "/",
-    responses={201: {"model": CategoryBaseResponse}, 422: {"model": ErrorResponse}},
+    responses={201: {"model": CategoryBaseResponse}},
     status_code=status.HTTP_201_CREATED,
 )
 async def create_category(
@@ -37,7 +37,6 @@ async def create_category(
         404: {"model": ErrorResponse},
         409: {"model": ErrorResponse},
     },
-    status_code=status.HTTP_200_OK,
 )
 async def update_category(
     category_id: Annotated[int, Path(gt=0)],
@@ -53,7 +52,6 @@ async def update_category(
         200: {"model": CategoryBaseResponse},
         404: {"model": ErrorResponse},
     },
-    status_code=status.HTTP_200_OK,
 )
 async def get_category(
     category_id: int,
@@ -62,9 +60,7 @@ async def get_category(
     return await category_service.get_by_id(category_id)
 
 
-@router.get(
-    "/", response_model=List[CategoryBaseResponse], status_code=status.HTTP_200_OK
-)
+@router.get("/", responses={200: {"model": List[CategoryBaseResponse]}})
 async def get_categories(
     category_service: Annotated[CategoryService, Depends(get_category_service)]
 ):
