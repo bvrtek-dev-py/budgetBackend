@@ -26,7 +26,7 @@ async def create_category(
 ):
     return await category_service.create(
         request.name,
-        request.type,
+        request.transaction_type,
     )
 
 
