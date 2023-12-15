@@ -1,6 +1,6 @@
 from typing import Sequence
 
-from backend.modules.category.enums import CategoryType
+from backend.modules.transaction.enums import TransactionType
 from backend.modules.category.models import Category
 from backend.modules.category.repositories import CategoryRepository
 from backend.modules.common.exceptions import ObjectDoesNotExist
@@ -13,11 +13,11 @@ class CategoryService:
     async def create(
         self,
         name: str,
-        category_type: CategoryType,
+        transaction_type: TransactionType,
     ) -> Category:
         category = Category(
             name=name,
-            type=category_type,
+            transaction_type=transaction_type,
         )
 
         return await self._repository.save(category)

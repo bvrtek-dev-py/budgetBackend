@@ -1,11 +1,11 @@
 from pydantic import BaseModel
 
-from backend.modules.category.enums import CategoryType
+from backend.modules.transaction.enums import TransactionType
 
 
 class CategoryCreateRequest(BaseModel):
     name: str
-    type: CategoryType
+    transaction_type: TransactionType
 
     class ConfigDict:
         frozen = True
