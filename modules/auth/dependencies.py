@@ -9,6 +9,7 @@ from backend.config.auth import (
     SECRET_KEY,
     REFRESH_TOKEN_SECRET_KEY,
 )
+from backend.config.oauth2 import oauth2_scheme
 from backend.modules.auth.services import (
     PasswordHashService,
     TokenService,
@@ -39,3 +40,10 @@ def get_token_service() -> TokenService:
         refresh_token_secret_key=REFRESH_TOKEN_SECRET_KEY,
         token_expire_minutes=ACCESS_TOKEN_EXPIRE_MINUTES,
     )
+
+
+def get_current_user(
+    token: Annotated[str, Depends(oauth2_scheme)],
+    token_service: Annotated[TokenService, Depends(get_token_service)],
+) -> str:
+    return token_service.decode(token)["email"]

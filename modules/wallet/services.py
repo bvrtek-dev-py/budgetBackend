@@ -1,6 +1,6 @@
-from typing import Sequence
+from typing import Sequence, Optional
 
-from backend.modules.common.exceptions import ObjectDoesNotExist
+from backend.modules.common.exceptions import ObjectDoesNotExist, ObjectAlreadyExists
 from backend.modules.wallet.models import Wallet
 from backend.modules.wallet.repositories import WalletRepository
 
@@ -9,13 +9,19 @@ class WalletService:
     def __init__(self, repository: WalletRepository):
         self._repository = repository
 
-    async def create(self, name: str, description: str) -> Wallet:
-        wallet = Wallet(name=name, description=description)
+    async def create(self, user_id: int, name: str, description: str) -> Wallet:
+        if await self._wallet_with_user_id_and_name_exists(user_id, name):
+            raise ObjectAlreadyExists
+
+        wallet = Wallet(name=name, description=description, user_id=user_id)
 
         return await self._repository.save(wallet)
 
     async def update(self, wallet_id: int, name: str, description: str) -> Wallet:
         wallet = await self.get_by_id(wallet_id)
+
+        if await self._wallet_with_user_id_and_name_exists(wallet.user_id, name):
+            raise ObjectAlreadyExists
 
         wallet.name = name
         wallet.description = description
@@ -35,5 +41,19 @@ class WalletService:
 
         return wallet
 
-    async def get_all(self) -> Sequence[Wallet]:
-        return await self._repository.get_all()
+    async def _wallet_with_user_id_and_name_exists(
+        self, user_id: int, name: str, exclude_wallet_id: Optional[int] = None
+    ) -> bool:
+        """
+        Method checks if object with user_id and name already exists and if this object
+        is not excluded.
+        """
+        wallet = await self._repository.get_by_user_id_and_name(user_id, name)
+
+        if wallet is None or wallet.id == exclude_wallet_id:
+            return False
+
+        return True
+
+    async def get_by_user_id(self, user_id: int) -> Sequence[Wallet]:
+        return await self._repository.get_by_user_id(user_id)

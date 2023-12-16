@@ -1,6 +1,8 @@
-from datetime import datetime
+from typing import List
 
 from pydantic import BaseModel
+
+from backend.api.v1.wallet.responses import WalletBaseResponse
 
 
 class UserBaseResponse(BaseModel):
@@ -9,8 +11,8 @@ class UserBaseResponse(BaseModel):
     last_name: str
     username: str
     email: str
-    created_at: datetime
-    updated_at: datetime
+    wallets: List[WalletBaseResponse]
 
     class ConfigDict:
         frozen = True
+        orm_mode = True

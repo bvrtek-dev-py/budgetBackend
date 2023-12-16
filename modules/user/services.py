@@ -61,6 +61,14 @@ class UserService:
 
         return user
 
+    async def get_by_email(self, email: str) -> User:
+        user = await self._repository.get_by_email(email)
+
+        if user is None:
+            raise ObjectDoesNotExist
+
+        return user
+
     async def get_by_username_or_email(self, field: str) -> User:
         user = await self._repository.get_by_email(field)
         if user is not None:
