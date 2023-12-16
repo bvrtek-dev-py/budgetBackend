@@ -57,9 +57,9 @@ async def create_wallet(
     request: WalletCreateRequest,
     user_service: Annotated[UserService, Depends(get_user_service)],
     wallet_service: Annotated[WalletService, Depends(get_wallet_service)],
-    current_user: Annotated[str, Depends(get_current_user)],
+    current_user_email: Annotated[str, Depends(get_current_user)],
 ):
-    user = await user_service.get_by_email(current_user)
+    user = await user_service.get_by_email(current_user_email)
     return await wallet_service.create(user.id, request.name, request.description)
 
 
