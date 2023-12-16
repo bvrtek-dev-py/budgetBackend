@@ -2,6 +2,7 @@ from typing import Sequence
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from .models import User
 
@@ -27,19 +28,28 @@ class UserRepository:
         await self._session.commit()
 
     async def get_all(self) -> Sequence[User]:
-        result = await self._session.execute(select(User))
+        result = await self._session.execute(
+            select(User).options(selectinload(User.wallets))
+        )
 
         return result.scalars().all()
 
     async def get_by_id(self, user_id: int) -> User | None:
-        return await self._session.get(User, user_id)
+        result = await self._session.execute(
+            select(User).where(User.id == user_id).options(selectinload(User.wallets))
+        )
+        return result.scalars().first()
 
     async def get_by_email(self, email: str) -> User | None:
-        result = await self._session.execute(select(User).where(User.email == email))
+        result = await self._session.execute(
+            select(User).where(User.email == email).options(selectinload(User.wallets))
+        )
         return result.scalars().first()
 
     async def get_by_username(self, username: str) -> User | None:
         result = await self._session.execute(
-            select(User).where(User.username == username)
+            select(User)
+            .where(User.username == username)
+            .options(selectinload(User.wallets))
         )
         return result.scalars().first()
