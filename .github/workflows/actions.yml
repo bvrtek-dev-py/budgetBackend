@@ -38,7 +38,7 @@ jobs:
 
       - name: Integration tests
         run:
-          poetry run pytest
+          pytest
 
       - name: Mypy type checking
         run:
