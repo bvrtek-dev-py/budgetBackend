@@ -7,7 +7,7 @@ from backend.modules.user.models import User
 
 class InMemoryUserRepository:
     def __init__(self):
-        self.users: List[User] = [
+        self.users: List[User] = [  # type: ignore
             User(
                 id=1,
                 first_name=base_user_data["first_name"],
