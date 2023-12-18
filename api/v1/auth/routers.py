@@ -5,10 +5,12 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from backend.api.v1.auth.repsonses import TokenResponse
 from backend.api.v1.common.responses import ErrorResponse
+from backend.api.v1.user.responses import UserBaseResponse
 from backend.config.oauth2 import oauth2_scheme
 from backend.modules.auth.dependencies import (
     get_password_verify_service,
     get_token_service,
+    get_current_user,
 )
 from backend.modules.auth.exceptions import InvalidCredentials
 from backend.modules.auth.services import (
@@ -76,3 +78,11 @@ async def refresh_token(
 async def logout():
     # TODO logout endpoint # pylint: disable=fixme
     ...
+
+
+@router.get("/user-me", response_model=UserBaseResponse)
+async def user_me(
+    email: Annotated[str, Depends(get_current_user)],
+    user_service: Annotated[UserService, Depends(get_user_service)],
+):
+    return await user_service.get_by_email(email)
