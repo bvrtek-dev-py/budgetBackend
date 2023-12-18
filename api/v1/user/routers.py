@@ -19,6 +19,7 @@ router = APIRouter(prefix="/api/v1/users", tags=["APIv1 User"])
         409: {"model": ErrorResponse},
         422: {"model": ErrorResponse},
     },
+    response_model=UserBaseResponse,
     status_code=status.HTTP_201_CREATED,
 )
 async def create_user(
@@ -42,6 +43,7 @@ async def create_user(
         404: {"model": ErrorResponse},
         409: {"model": ErrorResponse},
     },
+    response_model=UserBaseResponse,
 )
 async def update_user(
     user_id: Annotated[int, Path(gt=0)],
@@ -59,6 +61,7 @@ async def update_user(
         200: {"model": UserBaseResponse},
         404: {"model": ErrorResponse},
     },
+    response_model=UserBaseResponse,
 )
 async def get_user(
     user_id: int, user_service: Annotated[UserService, Depends(get_user_service)]

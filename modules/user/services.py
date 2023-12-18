@@ -1,7 +1,7 @@
-from typing import Sequence
+from typing import Sequence, Optional
 
 from backend.modules.auth.services import PasswordHashService
-from backend.modules.common.exceptions import ObjectDoesNotExist
+from backend.modules.common.exceptions import ObjectDoesNotExist, ObjectAlreadyExists
 from backend.modules.user.exceptions import PasswordDoesNotMatch
 from backend.modules.user.models import User
 from backend.modules.user.repositories import UserRepository
@@ -27,6 +27,12 @@ class UserService:
         if password1 != password2:
             raise PasswordDoesNotMatch
 
+        if await self._check_username_exists(username):
+            raise ObjectAlreadyExists
+
+        if await self._check_email_exists(email):
+            raise ObjectAlreadyExists
+
         user = User(
             username=username,
             email=email,
@@ -41,6 +47,9 @@ class UserService:
         self, user_id: int, username: str, first_name: str, last_name: str
     ) -> User:
         user = await self.get_by_id(user_id)
+
+        if await self._check_username_exists(username, user_id):
+            raise ObjectAlreadyExists
 
         user.username = username
         user.first_name = first_name
@@ -79,6 +88,32 @@ class UserService:
             return user
 
         raise ObjectDoesNotExist
+
+    async def _check_username_exists(
+        self, username: str, excluded_id: Optional[int] = None
+    ) -> bool:
+        user = await self._repository.get_by_username(username)
+
+        if user is None:
+            return False
+
+        if user.id == excluded_id:
+            return False
+
+        return True
+
+    async def _check_email_exists(
+        self, email: str, excluded_id: Optional[int] = None
+    ) -> bool:
+        user = await self._repository.get_by_email(email)
+
+        if user is None:
+            return False
+
+        if user.id == excluded_id:
+            return False
+
+        return True
 
     async def get_all(self) -> Sequence[User]:
         return await self._repository.get_all()

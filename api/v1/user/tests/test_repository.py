@@ -17,7 +17,17 @@ class InMemoryUserRepository:
                 password="1234",
                 created_at=datetime.now(),
                 updated_at=datetime.now(),
-            )
+            ),
+            User(
+                id=2,
+                first_name="Łukasz",
+                last_name="Borys",
+                username="user",
+                email="user@email.pl",
+                password="1234",
+                created_at=datetime.now(),
+                updated_at=datetime.now(),
+            ),
         ]
 
     async def save(self, user: User) -> User:

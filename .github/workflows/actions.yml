@@ -28,6 +28,10 @@ jobs:
         with:
           python-version: 3.11.5
 
+      - name: Integration tests
+        run:
+          pytest
+
       - name: Install poetry
         run:
           pip install poetry
