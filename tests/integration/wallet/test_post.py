@@ -1,12 +1,7 @@
 import pytest
 from httpx import AsyncClient
 
-from backend.main import app
-from backend.modules.wallet.dependencies import get_wallet_repository
 from backend.tests.conftest import login_user
-from backend.tests.integration.wallet.repository import InMemoryWalletRepository
-
-app.dependency_overrides[get_wallet_repository] = lambda: InMemoryWalletRepository()
 
 
 @pytest.mark.asyncio
