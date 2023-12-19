@@ -1,3 +1,4 @@
+# pylint: disable=W0621,W0108
 from typing import Dict
 
 import pytest
