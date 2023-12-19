@@ -2,13 +2,14 @@ import pytest
 from httpx import AsyncClient
 
 from backend.tests.conftest import login_user
+from backend.tests.integration.wallet.data import BASE_WALLET_ID
 
 
 @pytest.mark.asyncio
 async def test_update_wallet(async_client: AsyncClient, test_user: dict[str, str]):
     # Given
     token = await login_user(async_client, test_user)
-    wallet_id = 1
+    wallet_id = BASE_WALLET_ID
     data = {
         "name": "Konto_11",
         "description": "opisss",
@@ -32,7 +33,7 @@ async def test_update_wallet_name_exists_same_wallet_id(
 ):
     # Given
     token = await login_user(async_client, test_user)
-    wallet_id = 1
+    wallet_id = BASE_WALLET_ID
     data = {
         "name": "Konto",
         "description": "opisss",

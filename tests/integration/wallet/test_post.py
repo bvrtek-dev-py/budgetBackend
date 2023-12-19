@@ -2,6 +2,7 @@ import pytest
 from httpx import AsyncClient
 
 from backend.tests.conftest import login_user
+from backend.tests.integration.user.data import BASE_USER_ID
 
 
 @pytest.mark.asyncio
@@ -21,7 +22,7 @@ async def test_create_wallet(async_client: AsyncClient, test_user: dict[str, str
     # Then
     assert response.status_code == 201
     assert data.items() <= response.json().items()
-    assert 1 == response.json()["user_id"]
+    assert BASE_USER_ID == response.json()["user_id"]
 
 
 @pytest.mark.asyncio

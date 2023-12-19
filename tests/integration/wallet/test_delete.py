@@ -4,13 +4,14 @@ import pytest
 from httpx import AsyncClient
 
 from backend.tests.conftest import login_user
+from backend.tests.integration.wallet.data import BASE_WALLET_ID
 
 
 @pytest.mark.asyncio
 async def test_delete_wallet(async_client: AsyncClient, test_user: Dict[str, str]):
     # Given
     token = await login_user(async_client, test_user)
-    wallet_id = 1
+    wallet_id = BASE_WALLET_ID
 
     # When
     response = await async_client.delete(

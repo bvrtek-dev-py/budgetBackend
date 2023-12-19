@@ -4,13 +4,15 @@ import pytest
 from httpx import AsyncClient
 
 from backend.tests.conftest import login_user
+from backend.tests.integration.user.data import BASE_USER_ID
+from backend.tests.integration.wallet.data import BASE_WALLET_DATA
 
 
 @pytest.mark.asyncio
 async def test_get_wallets(async_client: AsyncClient, test_user: Dict[str, str]):
     # Given
     token = await login_user(async_client, test_user)
-    data = {"name": "Konto", "description": "description", "user_id": 1}
+    data = BASE_WALLET_DATA
 
     # When
     response = await async_client.get(
@@ -29,7 +31,7 @@ async def test_get_wallet_owned_wallet_by_id(
 ):
     # Given
     token = await login_user(async_client, test_user)
-    user_id = 1
+    user_id = BASE_USER_ID
     data = {"name": "Konto", "description": "description", "user_id": user_id}
 
     # When
