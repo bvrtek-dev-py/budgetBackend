@@ -7,7 +7,7 @@ from backend.tests.integration.user.data import get_user_db
 
 class InMemoryUserRepository(UserRepositoryInterface):
     def __init__(self):
-        self.users = get_user_db()
+        self.users: List[User] = get_user_db()
 
     async def save(self, user: User) -> User:
         user.id = len(self.users) + 1
