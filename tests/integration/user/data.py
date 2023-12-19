@@ -1,6 +1,6 @@
 import functools
 from datetime import datetime
-from typing import List
+from typing import List, Dict
 
 from backend.modules.auth.dependencies import (
     _get_crypt_context,
@@ -9,7 +9,8 @@ from backend.modules.auth.services import PasswordHashService
 from backend.modules.user.models import User
 
 
-base_user_data = {
+BASE_USER_ID: int = 1
+BASE_USER_DATA: Dict[str, str] = {
     "first_name": "name",
     "last_name": "last",
     "username": "username",
@@ -26,11 +27,11 @@ def hash_password(password: str) -> str:
 def get_user_db() -> List[User]:
     return [
         User(
-            id=1,
-            first_name=base_user_data["first_name"],
-            last_name=base_user_data["last_name"],
-            username=base_user_data["username"],
-            email=base_user_data["email"],
+            id=BASE_USER_ID,
+            first_name=BASE_USER_DATA["first_name"],
+            last_name=BASE_USER_DATA["last_name"],
+            username=BASE_USER_DATA["username"],
+            email=BASE_USER_DATA["email"],
             password=hash_password("1234"),
             created_at=datetime.now(),
             updated_at=datetime.now(),

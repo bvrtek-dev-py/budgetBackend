@@ -7,11 +7,11 @@ from backend.tests.integration.user.data import get_user_db
 
 class InMemoryUserRepository(UserRepositoryInterface):
     def __init__(self):
-        self.users: List[User] = get_user_db()
+        self._users: List[User] = get_user_db()
 
     async def save(self, user: User) -> User:
-        user.id = len(self.users) + 1
-        self.users.append(user)
+        user.id = len(self._users) + 1
+        self._users.append(user)
 
         return user
 
@@ -19,27 +19,27 @@ class InMemoryUserRepository(UserRepositoryInterface):
         return user
 
     async def delete(self, user: User) -> None:
-        self.users.remove(user)
+        self._users.remove(user)
 
     async def get_all(self) -> List[User]:
-        return self.users
+        return self._users
 
     async def get_by_id(self, user_id: int) -> User | None:
-        for user in self.users:
+        for user in self._users:
             if user.id == user_id:
                 return user
 
         return None
 
     async def get_by_email(self, email: str) -> User | None:
-        for user in self.users:
+        for user in self._users:
             if user.email == email:
                 return user
 
         return None
 
     async def get_by_username(self, username: str) -> User | None:
-        for user in self.users:
+        for user in self._users:
             if user.username == username:
                 return user
 
