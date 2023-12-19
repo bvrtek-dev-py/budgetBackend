@@ -2,12 +2,12 @@ from typing import List
 
 from backend.modules.user.interfaces import UserRepositoryInterface
 from backend.modules.user.models import User
-from backend.tests.integration.user.data import users
+from backend.tests.integration.user.data import get_user_db
 
 
 class InMemoryUserRepository(UserRepositoryInterface):
     def __init__(self):
-        self.users = users
+        self.users = get_user_db()
 
     async def save(self, user: User) -> User:
         user.id = len(self.users) + 1
