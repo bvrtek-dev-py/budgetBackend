@@ -2,10 +2,11 @@ from datetime import datetime
 from typing import List
 
 from backend.api.v1.user.tests.data import base_user_data
+from backend.modules.user.interfaces import UserRepositoryInterface
 from backend.modules.user.models import User
 
 
-class InMemoryUserRepository:
+class InMemoryUserRepository(UserRepositoryInterface):
     def __init__(self):
         self.users: List[User] = [  # type: ignore
             User(

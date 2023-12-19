@@ -3,13 +3,15 @@ from typing import Sequence, Optional
 from backend.modules.auth.services import PasswordHashService
 from backend.modules.common.exceptions import ObjectDoesNotExist, ObjectAlreadyExists
 from backend.modules.user.exceptions import PasswordDoesNotMatch
+from backend.modules.user.interfaces import UserRepositoryInterface
 from backend.modules.user.models import User
-from backend.modules.user.repositories import UserRepository
 
 
 class UserService:
     def __init__(
-        self, repository: UserRepository, password_hash_service: PasswordHashService
+        self,
+        repository: UserRepositoryInterface,
+        password_hash_service: PasswordHashService,
     ):
         self._repository = repository
         self._password_hash_service = password_hash_service
