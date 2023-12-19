@@ -7,18 +7,19 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from backend.database.setup import get_session
 from backend.modules.auth.dependencies import get_current_user
 from backend.modules.common.exceptions import PermissionDenied
+from backend.modules.wallet.interfaces import WalletRepositoryInterface
 from backend.modules.wallet.repositories import WalletRepository
 from backend.modules.wallet.services import WalletService
 
 
 def get_wallet_repository(
     session: Annotated[AsyncSession, Depends(get_session)]
-) -> WalletRepository:
+) -> WalletRepositoryInterface:
     return WalletRepository(session)
 
 
 def get_wallet_service(
-    repository: Annotated[WalletRepository, Depends(get_wallet_repository)]
+    repository: Annotated[WalletRepositoryInterface, Depends(get_wallet_repository)]
 ):
     return WalletService(repository)
 
