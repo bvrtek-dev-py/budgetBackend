@@ -20,7 +20,9 @@ class WalletService:
     async def update(self, wallet_id: int, name: str, description: str) -> Wallet:
         wallet = await self.get_by_id(wallet_id)
 
-        if await self._wallet_with_user_id_and_name_exists(wallet.user_id, name):
+        if await self._wallet_with_user_id_and_name_exists(
+            wallet.user_id, name, wallet.id
+        ):
             raise ObjectAlreadyExists
 
         wallet.name = name
