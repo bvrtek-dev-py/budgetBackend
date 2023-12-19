@@ -1,12 +1,13 @@
 from typing import Sequence, Optional
 
 from backend.modules.common.exceptions import ObjectDoesNotExist, ObjectAlreadyExists
+from backend.modules.wallet.interfaces import WalletRepositoryInterface
 from backend.modules.wallet.models import Wallet
 from backend.modules.wallet.repositories import WalletRepository
 
 
 class WalletService:
-    def __init__(self, repository: WalletRepository):
+    def __init__(self, repository: WalletRepositoryInterface):
         self._repository = repository
 
     async def create(self, user_id: int, name: str, description: str) -> Wallet:
