@@ -2,19 +2,14 @@
 import pytest
 from httpx import AsyncClient
 
-from backend.api.v1.user.tests.data import base_user_data
+from backend.tests.integration.user.data import base_user_data
 
-from backend.api.v1.user.tests.test_repository import InMemoryUserRepository
+from backend.tests.integration.user.repository import InMemoryUserRepository
 from backend.main import app
 from backend.modules.user.dependencies import get_user_repository
 
 
 app.dependency_overrides[get_user_repository] = lambda: InMemoryUserRepository()
-
-
-@pytest.fixture
-def async_client() -> AsyncClient:
-    return AsyncClient(app=app, base_url="http://test", follow_redirects=True)
 
 
 @pytest.mark.asyncio
