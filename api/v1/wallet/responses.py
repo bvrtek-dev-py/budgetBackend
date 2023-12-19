@@ -7,6 +7,7 @@ class WalletBaseResponse(BaseModel):
     id: int = Field(gt=0)
     name: str = Field(min_length=3, max_length=50)
     description: str = Field(min_length=3, max_length=2000)
+    user_id: int
 
 
 class WalletGetResponse(WalletBaseResponse):
