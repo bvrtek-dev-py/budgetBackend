@@ -1,35 +1,13 @@
-from datetime import datetime
 from typing import List
 
-from backend.api.v1.user.tests.data import base_user_data
 from backend.modules.user.interfaces import UserRepositoryInterface
 from backend.modules.user.models import User
+from backend.tests.integration.user.data import users
 
 
 class InMemoryUserRepository(UserRepositoryInterface):
     def __init__(self):
-        self.users: List[User] = [  # type: ignore
-            User(
-                id=1,
-                first_name=base_user_data["first_name"],
-                last_name=base_user_data["last_name"],
-                username=base_user_data["username"],
-                email=base_user_data["email"],
-                password="1234",
-                created_at=datetime.now(),
-                updated_at=datetime.now(),
-            ),
-            User(
-                id=2,
-                first_name="Łukasz",
-                last_name="Borys",
-                username="user",
-                email="user@email.pl",
-                password="1234",
-                created_at=datetime.now(),
-                updated_at=datetime.now(),
-            ),
-        ]
+        self.users = users
 
     async def save(self, user: User) -> User:
         user.id = len(self.users) + 1
