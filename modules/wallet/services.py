@@ -3,7 +3,6 @@ from typing import Sequence, Optional
 from backend.modules.common.exceptions import ObjectDoesNotExist, ObjectAlreadyExists
 from backend.modules.wallet.interfaces import WalletRepositoryInterface
 from backend.modules.wallet.models import Wallet
-from backend.modules.wallet.repositories import WalletRepository
 
 
 class WalletService:
