@@ -23,8 +23,8 @@ async def test_create_user(async_client: AsyncClient):
     data = {
         "username": "Kamil",
         "email": "pandagmail.pl",
-        "password1": "string",
-        "password2": "string",
+        "password1": "string11",
+        "password2": "string11",
         "first_name": "Kamil",
         "last_name": "Panda",
     }
@@ -51,8 +51,8 @@ async def test_create_user_password_mismatch(async_client: AsyncClient):
         "last_name": "last",
         "username": "username",
         "email": "email@email.pl",
-        "password1": "1234",
-        "password2": "12345",
+        "password1": "1234111111",
+        "password2": "12345111111",
     }
 
     # When
@@ -70,8 +70,8 @@ async def test_create_user_with_duplicated_email(async_client: AsyncClient):
         "last_name": "last",
         "username": "usernameaaa",
         "email": "email@email.pl",
-        "password1": "1234",
-        "password2": "1234",
+        "password1": "12341111111",
+        "password2": "12341111111",
     }
 
     # When
@@ -89,8 +89,8 @@ async def test_create_user_with_duplicated_username(async_client: AsyncClient):
         "last_name": "last",
         "username": "username",
         "email": "email1@email.pl",
-        "password1": "1234",
-        "password2": "1234",
+        "password1": "123411111",
+        "password2": "123411111",
     }
 
     # When
@@ -107,7 +107,7 @@ async def test_get_users(async_client: AsyncClient):
 
     # Then
     assert response.status_code == 200
-    assert len(response.json()) == 1
+    assert len(response.json()) == 2
 
 
 @pytest.mark.asyncio
@@ -155,6 +155,23 @@ async def test_update_user(async_client: AsyncClient):
 
 
 @pytest.mark.asyncio
+async def test_update_user_duplicated_username(async_client: AsyncClient):
+    # Given
+    user_id = 1
+    data = {
+        "first_name": "name",
+        "last_name": "last",
+        "username": "user",
+    }
+
+    # When
+    response = await async_client.put(f"/api/v1/users/{user_id}", json=data)
+
+    # Then
+    assert response.status_code == 409
+
+
+@pytest.mark.asyncio
 async def test_update_user_does_not_exist(async_client: AsyncClient):
     # Given
     user_id = 3
@@ -172,7 +189,7 @@ async def test_update_user_does_not_exist(async_client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_update_user_duplicated_username(async_client: AsyncClient):
+async def test_update_user_owner_duplicated_username(async_client: AsyncClient):
     # Given
     user_id = 1
     data = {
@@ -185,7 +202,7 @@ async def test_update_user_duplicated_username(async_client: AsyncClient):
     response = await async_client.put(f"/api/v1/users/{user_id}", json=data)
 
     # Then
-    assert response.status_code == 409
+    assert response.status_code == 200
 
 
 @pytest.mark.asyncio

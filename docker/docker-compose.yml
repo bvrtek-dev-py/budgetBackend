@@ -4,7 +4,7 @@ services:
   budget:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: database/Dockerfile
     ports:
       - "3306:3306"
     volumes:
