@@ -15,3 +15,4 @@ class User(BaseModel):
     email: MappedColumn[str] = mapped_column(String(255), unique=True)
     password: MappedColumn[str] = mapped_column(String(255))
     wallets: MappedColumn[List["Wallet"]] = relationship(back_populates="user")  # type: ignore
+    categories: MappedColumn[List["Category"]] = relationship(back_populates="user")  # type: ignore

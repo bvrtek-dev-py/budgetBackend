@@ -2,8 +2,10 @@ from typing import Sequence
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from backend.modules.category.models import Category
+from backend.modules.transaction.enums import TransactionType
 
 
 class CategoryRepository:
@@ -26,10 +28,43 @@ class CategoryRepository:
         await self._session.delete(category)
         await self._session.commit()
 
-    async def get_all(self) -> Sequence[Category]:
-        result = await self._session.execute(select(Category))
+    async def get_by_user_id(self, user_id: int) -> Sequence[Category]:
+        result = await self._session.execute(
+            select(Category)
+            .where(Category.user_id == user_id)
+            .options(selectinload(Category.user))
+        )
+
+        return result.scalars().all()
+
+    async def get_by_user_id_and_type(
+        self, user_id: int, transaction_type: TransactionType
+    ) -> Sequence[Category]:
+        result = await self._session.execute(
+            select(Category)
+            .where(
+                (Category.user_id == user_id)
+                & (Category.transaction_type == transaction_type)
+            )
+            .options(selectinload(Category.user))
+        )
 
         return result.scalars().all()
 
     async def get_by_id(self, category_id: int) -> Category | None:
-        return await self._session.get(Category, category_id)
+        result = await self._session.execute(
+            select(Category)
+            .where(Category.id == category_id)
+            .options(selectinload(Category.user))
+        )
+
+        return result.scalars().first()
+
+    async def get_by_name_and_user_id(self, name: str, user_id: int) -> Category | None:
+        result = await self._session.execute(
+            select(Category)
+            .where((Category.name == name) & (Category.user_id == user_id))
+            .options(selectinload(Category.user))
+        )
+
+        return result.scalars().first()

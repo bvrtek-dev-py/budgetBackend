@@ -1,9 +1,9 @@
-from typing import Sequence
+from typing import Sequence, Optional
 
 from backend.modules.transaction.enums import TransactionType
 from backend.modules.category.models import Category
 from backend.modules.category.repositories import CategoryRepository
-from backend.modules.common.exceptions import ObjectDoesNotExist
+from backend.modules.common.exceptions import ObjectDoesNotExist, ObjectAlreadyExists
 
 
 class CategoryService:
@@ -12,18 +12,28 @@ class CategoryService:
 
     async def create(
         self,
+        user_id: int,
         name: str,
         transaction_type: TransactionType,
     ) -> Category:
+        if await self._check_category_with_name_and_user_id_exists(name, user_id):
+            raise ObjectAlreadyExists
+
         category = Category(
             name=name,
             transaction_type=transaction_type,
+            user_id=user_id,
         )
 
         return await self._repository.save(category)
 
     async def update(self, category_id: int, name: str) -> Category:
         category = await self.get_by_id(category_id)
+
+        if await self._check_category_with_name_and_user_id_exists(
+            name, category.user_id, category.id
+        ):
+            raise ObjectAlreadyExists
 
         category.name = name
 
@@ -42,5 +52,25 @@ class CategoryService:
 
         return category
 
-    async def get_all(self) -> Sequence[Category]:
-        return await self._repository.get_all()
+    async def get_by_user_id(
+        self, user_id: int, transaction_type: Optional[TransactionType] = None
+    ) -> Sequence[Category]:
+        if transaction_type is not None:
+            return await self._repository.get_by_user_id_and_type(
+                user_id, transaction_type
+            )
+
+        return await self._repository.get_by_user_id(user_id)
+
+    async def _check_category_with_name_and_user_id_exists(
+        self, name: str, user_id: int, exclude_id: Optional[int] = None
+    ) -> bool:
+        category = await self._repository.get_by_name_and_user_id(name, user_id)
+
+        if category is None:
+            return False
+
+        if category.id == exclude_id:
+            return False
+
+        return True
