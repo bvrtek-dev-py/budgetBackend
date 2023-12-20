@@ -4,7 +4,6 @@ from httpx import AsyncClient
 from backend.modules.transaction.enums import TransactionType
 from backend.tests.conftest import login_user
 from backend.tests.integration.category.data import BASE_CATEGORY_DATA, BASE_CATEGORY_ID
-from backend.tests.integration.user.data import BASE_USER_ID
 
 
 @pytest.mark.asyncio
@@ -59,11 +58,9 @@ async def test_get_categories_income_type(
 
 
 @pytest.mark.asyncio
-async def test_get_categories_not_authenticated(
-    async_client: AsyncClient, test_user: dict[str, str]
-):
+async def test_get_categories_not_authenticated(async_client: AsyncClient):
     # When
-    response = await async_client.get(f"/api/v1/categories/")
+    response = await async_client.get("/api/v1/categories/")
 
     # Then
     assert response.status_code == 401

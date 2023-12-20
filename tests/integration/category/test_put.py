@@ -72,9 +72,7 @@ async def test_update_category_not_owned_name_exists(
 
 
 @pytest.mark.asyncio
-async def test_update_category_not_authenticated(
-    async_client: AsyncClient, test_user: dict[str, str]
-):
+async def test_update_category_not_authenticated(async_client: AsyncClient):
     # Given
     category_id = BASE_CATEGORY_ID
     data = {
