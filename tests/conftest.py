@@ -5,14 +5,17 @@ import pytest
 from httpx import AsyncClient
 
 from backend.main import app
+from backend.modules.category.dependencies import get_category_repository
 from backend.modules.user.dependencies import get_user_repository
 from backend.modules.wallet.dependencies import get_wallet_repository
+from backend.tests.integration.category.repository import InMemoryCategoryRepository
 from backend.tests.integration.user.data import get_user_db
 from backend.tests.integration.user.repository import InMemoryUserRepository
 from backend.tests.integration.wallet.repository import InMemoryWalletRepository
 
 app.dependency_overrides[get_user_repository] = lambda: InMemoryUserRepository()
 app.dependency_overrides[get_wallet_repository] = lambda: InMemoryWalletRepository()
+app.dependency_overrides[get_category_repository] = lambda: InMemoryCategoryRepository()
 
 
 @pytest.fixture
