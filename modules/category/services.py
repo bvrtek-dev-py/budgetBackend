@@ -1,13 +1,13 @@
 from typing import Sequence, Optional
 
-from backend.modules.transaction.enums import TransactionType
+from backend.modules.category.interfaces import CategoryRepositoryInterface
 from backend.modules.category.models import Category
-from backend.modules.category.repositories import CategoryRepository
 from backend.modules.common.exceptions import ObjectDoesNotExist, ObjectAlreadyExists
+from backend.modules.transaction.enums import TransactionType
 
 
 class CategoryService:
-    def __init__(self, repository: CategoryRepository):
+    def __init__(self, repository: CategoryRepositoryInterface):
         self._repository = repository
 
     async def create(
