@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.database.setup import get_session
 from backend.modules.auth.dependencies import get_current_user
+from backend.modules.category.interfaces import CategoryRepositoryInterface
 from backend.modules.category.repositories import CategoryRepository
 from backend.modules.category.services import CategoryService
 from backend.modules.common.exceptions import PermissionDenied
@@ -12,12 +13,14 @@ from backend.modules.common.exceptions import PermissionDenied
 
 def get_category_repository(
     session: Annotated[AsyncSession, Depends(get_session)]
-) -> CategoryRepository:
+) -> CategoryRepositoryInterface:
     return CategoryRepository(session)
 
 
 def get_category_service(
-    category_repository: Annotated[CategoryRepository, Depends(get_category_repository)]
+    category_repository: Annotated[
+        CategoryRepositoryInterface, Depends(get_category_repository)
+    ]
 ) -> CategoryService:
     return CategoryService(category_repository)
 

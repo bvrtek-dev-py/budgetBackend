@@ -4,11 +4,12 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from backend.modules.category.interfaces import CategoryRepositoryInterface
 from backend.modules.category.models import Category
 from backend.modules.transaction.enums import TransactionType
 
 
-class CategoryRepository:
+class CategoryRepository(CategoryRepositoryInterface):
     def __init__(self, session: AsyncSession):
         self._session = session
 
