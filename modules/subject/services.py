@@ -1,12 +1,12 @@
 from typing import Sequence, Optional
 
 from backend.modules.common.exceptions import ObjectDoesNotExist, ObjectAlreadyExists
+from backend.modules.subject.interfaces import SubjectRepositoryInterface
 from backend.modules.subject.models import Subject
-from backend.modules.subject.repositories import SubjectRepository
 
 
 class SubjectService:
-    def __init__(self, repository: SubjectRepository):
+    def __init__(self, repository: SubjectRepositoryInterface):
         self._repository = repository
 
     async def create(self, name: str, user_id: int) -> Subject:
