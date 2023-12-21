@@ -1,15 +1,8 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
-class SubjectCreateRequest(BaseModel):
-    name: str
-
-    class ConfigDict:
-        frozen = True
-
-
-class SubjectUpdateRequest(BaseModel):
-    name: str
+class SubjectRequest(BaseModel):
+    name: str = Field(min_length=3, max_length=50)
 
     class ConfigDict:
         frozen = True

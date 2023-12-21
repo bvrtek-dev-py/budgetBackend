@@ -1,6 +1,6 @@
-from typing import Sequence
+from typing import Sequence, Optional
 
-from backend.modules.common.exceptions import ObjectDoesNotExist
+from backend.modules.common.exceptions import ObjectDoesNotExist, ObjectAlreadyExists
 from backend.modules.subject.models import Subject
 from backend.modules.subject.repositories import SubjectRepository
 
@@ -9,13 +9,21 @@ class SubjectService:
     def __init__(self, repository: SubjectRepository):
         self._repository = repository
 
-    async def create(self, name: str) -> Subject:
-        subject = Subject(name=name)
+    async def create(self, name: str, user_id: int) -> Subject:
+        if await self._check_subject_with_name_and_user_id_exists(name, user_id):
+            raise ObjectAlreadyExists
+
+        subject = Subject(name=name, user_id=user_id)
 
         return await self._repository.save(subject)
 
     async def update(self, subject_id: int, name: str) -> Subject:
         subject = await self.get_by_id(subject_id)
+
+        if await self._check_subject_with_name_and_user_id_exists(
+            name, subject.user_id, subject_id
+        ):
+            raise ObjectAlreadyExists
 
         subject.name = name
 
@@ -34,5 +42,18 @@ class SubjectService:
 
         return subject
 
-    async def get_all(self) -> Sequence[Subject]:
-        return await self._repository.get_all()
+    async def get_by_user_id(self, user_id: int) -> Sequence[Subject]:
+        return await self._repository.get_by_user_id(user_id)
+
+    async def _check_subject_with_name_and_user_id_exists(
+        self, name: str, user_id: int, exclude_id: Optional[int] = None
+    ) -> bool:
+        subject = await self._repository.get_by_name_and_user_id(name, user_id)
+
+        if subject is None:
+            return False
+
+        if subject.id == exclude_id:
+            return False
+
+        return True
