@@ -13,7 +13,7 @@ from backend.modules.subject.services import SubjectService
 
 def get_subject_repository(
     session: Annotated[AsyncSession, Depends(get_session)]
-) -> SubjectRepository:
+) -> SubjectRepositoryInterface:
     return SubjectRepository(session)
 
 
