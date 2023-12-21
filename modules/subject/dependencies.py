@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from backend.database.setup import get_session
 from backend.modules.auth.dependencies import get_current_user
 from backend.modules.common.exceptions import PermissionDenied
+from backend.modules.subject.interfaces import SubjectRepositoryInterface
 from backend.modules.subject.repositories import SubjectRepository
 from backend.modules.subject.services import SubjectService
 
@@ -17,7 +18,7 @@ def get_subject_repository(
 
 
 def get_subject_service(
-    repository: Annotated[SubjectRepository, Depends(get_subject_repository)]
+    repository: Annotated[SubjectRepositoryInterface, Depends(get_subject_repository)]
 ) -> SubjectService:
     return SubjectService(repository)
 
