@@ -2,6 +2,7 @@ from typing import Sequence
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from backend.modules.subject.models import Subject
 
@@ -26,10 +27,29 @@ class SubjectRepository:
         await self._session.delete(subject)
         await self._session.commit()
 
-    async def get_all(self) -> Sequence[Subject]:
-        result = await self._session.execute(select(Subject))
+    async def get_by_user_id(self, user_id: int) -> Sequence[Subject]:
+        result = await self._session.execute(
+            select(Subject)
+            .where(Subject.user_id == user_id)
+            .options(selectinload(Subject.user))
+        )
 
         return result.scalars().all()
 
     async def get_by_id(self, subject_id: int) -> Subject | None:
-        return await self._session.get(Subject, subject_id)
+        result = await self._session.execute(
+            select(Subject)
+            .where(Subject.id == subject_id)
+            .options(selectinload(Subject.user))
+        )
+
+        return result.scalars().first()
+
+    async def get_by_name_and_user_id(self, name: str, user_id: int) -> Subject | None:
+        result = await self._session.execute(
+            select(Subject)
+            .where((Subject.name == name) & (Subject.user_id == user_id))
+            .options(selectinload(Subject.user))
+        )
+
+        return result.scalars().first()
