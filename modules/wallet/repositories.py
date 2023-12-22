@@ -32,7 +32,7 @@ class WalletRepository(WalletRepositoryInterface):
         result = await self._session.execute(
             select(Wallet)
             .where(Wallet.user_id == user_id)
-            .options(selectinload(Wallet.user))
+            .options(selectinload(Wallet.user), selectinload(Wallet.transactions))
         )
 
         return result.scalars().all()
@@ -41,7 +41,7 @@ class WalletRepository(WalletRepositoryInterface):
         result = await self._session.execute(
             select(Wallet)
             .where(Wallet.id == wallet_id)
-            .options(selectinload(Wallet.user))
+            .options(selectinload(Wallet.user), selectinload(Wallet.transactions))
         )
         return result.scalars().first()
 
@@ -49,7 +49,7 @@ class WalletRepository(WalletRepositoryInterface):
         result = await self._session.execute(
             select(Wallet)
             .where((Wallet.user_id == user_id) & (Wallet.name == name))
-            .options(selectinload(Wallet.user))
+            .options(selectinload(Wallet.user), selectinload(Wallet.transactions))
         )
 
         return result.scalars().first()

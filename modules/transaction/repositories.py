@@ -2,7 +2,9 @@ from typing import Sequence
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
+from backend.modules.transaction.enums import TransactionType
 from backend.modules.transaction.models import Transaction
 
 
@@ -27,9 +29,34 @@ class TransactionRepository:
         await self._session.commit()
 
     async def get_all(self) -> Sequence[Transaction]:
-        result = await self._session.execute(select(Transaction))
+        result = await self._session.execute(
+            select(Transaction).options(
+                selectinload(Transaction.user), selectinload(Transaction.user)
+            )
+        )
 
         return result.scalars().all()
 
     async def get_by_id(self, transaction_id: int) -> Transaction | None:
-        return await self._session.get(Transaction, transaction_id)
+        result = await self._session.execute(
+            select(Transaction)
+            .where((Transaction.id == transaction_id))
+            .options(selectinload(Transaction.user), selectinload(Transaction.user))
+        )
+
+        return result.scalars().first()
+
+    async def get_by_name_and_wallet_and_type(
+        self, name: str, wallet_id: int, transaction_type: TransactionType
+    ) -> Transaction | None:
+        result = await self._session.execute(
+            select(Transaction)
+            .where(
+                (Transaction.name == name)
+                & (Transaction.wallet_id == wallet_id)
+                & (Transaction.type == transaction_type)
+            )
+            .options(selectinload(Transaction.user), selectinload(Transaction.user))
+        )
+
+        return result.scalars().first()

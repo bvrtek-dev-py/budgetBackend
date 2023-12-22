@@ -17,3 +17,6 @@ class User(BaseModel):
     wallets: MappedColumn[List["Wallet"]] = relationship(back_populates="user")  # type: ignore
     categories: MappedColumn[List["Category"]] = relationship(back_populates="user")  # type: ignore
     subjects: MappedColumn[List["Subject"]] = relationship(back_populates="user")  # type: ignore
+    transactions: MappedColumn[List["Transaction"]] = relationship(  # type: ignore
+        back_populates="user"
+    )
