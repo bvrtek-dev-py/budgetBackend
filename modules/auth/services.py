@@ -4,6 +4,7 @@ from jose import jwt, JWTError
 from passlib.context import CryptContext
 
 from backend.modules.auth.exceptions import InvalidCredentials
+from backend.modules.auth.schemas import TokenData, CurrentUserData
 
 
 class PasswordHashService:
@@ -35,16 +36,16 @@ class TokenService:
         self.secret_key = secret_key
         self.token_expire_minutes = token_expire_minutes
 
-    def create_access_token(self, data: dict) -> str:
-        to_encode = data.copy()
+    def create_access_token(self, data: TokenData) -> str:
+        to_encode = data.model_copy().model_dump()
         to_encode.update({"exp": self.get_expire_token_datetime()})
 
         return jwt.encode(  # type: ignore
             claims=to_encode, key=self.secret_key, algorithm=self.algorithm
         )
 
-    def create_refresh_token(self, data: dict) -> str:
-        to_encode = data.copy()
+    def create_refresh_token(self, data: TokenData) -> str:
+        to_encode = data.model_copy().model_dump()
         to_encode.update({"exp": self.get_expire_token_datetime()})
 
         return jwt.encode(  # type: ignore
@@ -53,17 +54,18 @@ class TokenService:
             algorithm=self.algorithm,
         )
 
-    def decode(self, token: str) -> dict[str, str]:
+    def decode(self, token: str) -> CurrentUserData:
         try:
             payload = jwt.decode(
                 token=token, key=self.secret_key, algorithms=[self.algorithm]
             )
             email = payload.get("sub")
+            user_id = payload.get("user_id")
 
-            if email is None:
+            if email is None or user_id is None:
                 raise InvalidCredentials
 
-            return {"email": email}
+            return CurrentUserData(id=user_id, email=email)
         except JWTError as exc:
             raise InvalidCredentials from exc
 

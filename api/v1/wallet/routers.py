@@ -14,10 +14,9 @@ from backend.api.v1.wallet.responses import (
     WalletGetResponse,
 )
 from backend.modules.auth.dependencies import get_current_user
+from backend.modules.auth.schemas import CurrentUserData
 from backend.modules.transaction.dependencies import get_transaction_service
 from backend.modules.transaction.services import TransactionService
-from backend.modules.user.dependencies import get_user_service
-from backend.modules.user.services import UserService
 from backend.modules.wallet.dependencies import (
     get_wallet_service,
     wallet_owner_permission,
@@ -34,12 +33,9 @@ router = APIRouter(prefix="/api/v1/wallets", tags=["APIv1 Wallet"])
 )
 async def get_user_wallets(
     wallet_service: Annotated[WalletService, Depends(get_wallet_service)],
-    user_service: Annotated[UserService, Depends(get_user_service)],
-    current_user_email: Annotated[str, Depends(get_current_user)],
+    current_user: Annotated[CurrentUserData, Depends(get_current_user)],
 ):
-    # Move to user api
-    user = await user_service.get_by_email(current_user_email)
-    return await wallet_service.get_by_user_id(user.id)
+    return await wallet_service.get_by_user_id(current_user.id)
 
 
 @router.get(
@@ -63,12 +59,12 @@ async def get_wallet(
 )
 async def create_wallet(
     request: WalletCreateRequest,
-    user_service: Annotated[UserService, Depends(get_user_service)],
+    current_user: Annotated[CurrentUserData, Depends(get_current_user)],
     wallet_service: Annotated[WalletService, Depends(get_wallet_service)],
-    current_user_email: Annotated[str, Depends(get_current_user)],
 ):
-    user = await user_service.get_by_email(current_user_email)
-    return await wallet_service.create(user.id, request.name, request.description)
+    return await wallet_service.create(
+        current_user.id, request.name, request.description
+    )
 
 
 @router.put(
@@ -108,20 +104,18 @@ async def delete_wallet(
 async def create_wallet_transaction(
     wallet_id: Annotated[int, Path(gt=0)],
     request: TransactionCreateRequest,
-    current_user_email: Annotated[str, Depends(get_current_user)],
-    user_service: Annotated[UserService, Depends(get_user_service)],
+    current_user: Annotated[CurrentUserData, Depends(get_current_user)],
     transaction_service: Annotated[
         TransactionService, Depends(get_transaction_service)
     ],
 ):
-    user = await user_service.get_by_email(current_user_email)
     return await transaction_service.create(
         request.name,
         request.value,
         request.type,
         request.description,
         request.date,
-        user.id,
+        current_user.id,
         wallet_id,
     )
 

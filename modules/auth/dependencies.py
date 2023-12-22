@@ -10,6 +10,7 @@ from backend.config.auth import (
     REFRESH_TOKEN_SECRET_KEY,
 )
 from backend.config.oauth2 import oauth2_scheme
+from backend.modules.auth.schemas import CurrentUserData
 from backend.modules.auth.services import (
     PasswordHashService,
     TokenService,
@@ -45,5 +46,5 @@ def get_token_service() -> TokenService:
 def get_current_user(
     token: Annotated[str, Depends(oauth2_scheme)],
     token_service: Annotated[TokenService, Depends(get_token_service)],
-) -> str:
-    return token_service.decode(token)["email"]
+) -> CurrentUserData:
+    return token_service.decode(token)

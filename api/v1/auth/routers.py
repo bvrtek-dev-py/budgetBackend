@@ -11,6 +11,7 @@ from backend.modules.auth.dependencies import (
     get_token_service,
 )
 from backend.modules.auth.exceptions import InvalidCredentials
+from backend.modules.auth.schemas import TokenData
 from backend.modules.auth.services import (
     PasswordVerifyService,
     TokenService,
@@ -44,8 +45,12 @@ async def login(
 
     return {
         "token_type": "Bearer",
-        "access_token": token_service.create_access_token({"sub": user.email}),
-        "refresh_token": token_service.create_refresh_token({"sub": user.email}),
+        "access_token": token_service.create_access_token(
+            TokenData(user_id=user.id, sub=user.email)
+        ),
+        "refresh_token": token_service.create_refresh_token(
+            TokenData(user_id=user.id, sub=user.email)
+        ),
         "expired_at": token_service.get_expire_token_datetime(),
     }
 
@@ -62,12 +67,13 @@ async def refresh_token(
     token: Annotated[str, Depends(oauth2_scheme)],
     token_service: Annotated[TokenService, Depends(get_token_service)],
 ):
-    email = token_service.decode(token)["email"]
+    decoded_data = token_service.decode(token)
+    token_data = TokenData(user_id=decoded_data.id, sub=decoded_data.email)
 
     return {
         "token_type": "Bearer",
-        "access_token": token_service.create_access_token({"sub": email}),
-        "refresh_token": token_service.create_refresh_token({"sub": email}),
+        "access_token": token_service.create_access_token(token_data),
+        "refresh_token": token_service.create_refresh_token(token_data),
         "expired_at": token_service.get_expire_token_datetime(),
     }
 

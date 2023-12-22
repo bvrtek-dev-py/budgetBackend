@@ -10,14 +10,13 @@ from backend.api.v1.category.requests import (
 from backend.api.v1.category.responses import CategoryBaseResponse, CategoryGetResponse
 from backend.api.v1.common.responses import ErrorResponse
 from backend.modules.auth.dependencies import get_current_user
+from backend.modules.auth.schemas import CurrentUserData
 from backend.modules.category.dependencies import (
     get_category_service,
     category_owner_permission,
 )
 from backend.modules.category.services import CategoryService
 from backend.modules.transaction.enums import TransactionType
-from backend.modules.user.dependencies import get_user_service
-from backend.modules.user.services import UserService
 
 router = APIRouter(prefix="/api/v1/categories", tags=["APIv1 Category"])
 
@@ -34,13 +33,11 @@ router = APIRouter(prefix="/api/v1/categories", tags=["APIv1 Category"])
 )
 async def create_category(
     request: CategoryCreateRequest,
-    current_user_email: Annotated[str, Depends(get_current_user)],
-    user_service: Annotated[UserService, Depends(get_user_service)],
+    current_user: Annotated[CurrentUserData, Depends(get_current_user)],
     category_service: Annotated[CategoryService, Depends(get_category_service)],
 ):
-    user = await user_service.get_by_email(current_user_email)
     return await category_service.create(
-        user.id,
+        current_user.id,
         request.name,
         request.transaction_type,
     )
@@ -96,13 +93,11 @@ async def get_category(
     response_model=List[CategoryGetResponse],
 )
 async def get_user_categories(
-    current_user_email: Annotated[str, Depends(get_current_user)],
-    user_service: Annotated[UserService, Depends(get_user_service)],
+    current_user: Annotated[CurrentUserData, Depends(get_current_user)],
     category_service: Annotated[CategoryService, Depends(get_category_service)],
     transaction_type: Optional[TransactionType] = None,
 ):
-    user = await user_service.get_by_email(current_user_email)
-    return await category_service.get_by_user_id(user.id, transaction_type)
+    return await category_service.get_by_user_id(current_user.id, transaction_type)
 
 
 @router.delete(
