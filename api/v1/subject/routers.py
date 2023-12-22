@@ -9,13 +9,12 @@ from backend.api.v1.subject.requests import (
 )
 from backend.api.v1.subject.responses import SubjectBaseResponse, SubjectGetResponse
 from backend.modules.auth.dependencies import get_current_user
+from backend.modules.auth.schemas import CurrentUserData
 from backend.modules.subject.dependencies import (
     get_subject_service,
     subject_owner_permission,
 )
 from backend.modules.subject.services import SubjectService
-from backend.modules.user.dependencies import get_user_service
-from backend.modules.user.services import UserService
 
 router = APIRouter(prefix="/api/v1/subjects", tags=["APIv1 Subject"])
 
@@ -32,12 +31,10 @@ router = APIRouter(prefix="/api/v1/subjects", tags=["APIv1 Subject"])
 )
 async def create_subject(
     request: SubjectRequest,
-    current_user_email: Annotated[str, Depends(get_current_user)],
-    user_service: Annotated[UserService, Depends(get_user_service)],
+    current_user: Annotated[CurrentUserData, Depends(get_current_user)],
     subject_service: Annotated[SubjectService, Depends(get_subject_service)],
 ):
-    user = await user_service.get_by_email(current_user_email)
-    return await subject_service.create(request.name, user.id)
+    return await subject_service.create(request.name, current_user.id)
 
 
 @router.put(
@@ -90,12 +87,10 @@ async def get_subject(
     status_code=status.HTTP_200_OK,
 )
 async def get_user_subjects(
-    current_user_email: Annotated[str, Depends(get_current_user)],
-    user_service: Annotated[UserService, Depends(get_user_service)],
+    current_user: Annotated[CurrentUserData, Depends(get_current_user)],
     subject_service: Annotated[SubjectService, Depends(get_subject_service)],
 ):
-    user = await user_service.get_by_email(current_user_email)
-    return await subject_service.get_by_user_id(user.id)
+    return await subject_service.get_by_user_id(current_user.id)
 
 
 @router.delete(

@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.database.setup import get_session
 from backend.modules.auth.dependencies import get_current_user
+from backend.modules.auth.schemas import CurrentUserData
 from backend.modules.common.exceptions import PermissionDenied
 from backend.modules.transaction.repositories import TransactionRepository
 from backend.modules.transaction.services import TransactionService
@@ -30,12 +31,12 @@ def _get_transaction_id(transaction_id: int = Path(...)) -> int:
 
 async def transaction_owner_permission(
     transaction_id: Annotated[int, Depends(_get_transaction_id)],
-    current_user_email: Annotated[str, Depends(get_current_user)],
+    current_user: Annotated[CurrentUserData, Depends(get_current_user)],
     transaction_service: Annotated[
         TransactionService, Depends(get_transaction_service)
     ],
 ):
     category = await transaction_service.get_by_id(transaction_id)
 
-    if category.user.email != current_user_email:
+    if category.user.id != current_user.id:
         raise PermissionDenied

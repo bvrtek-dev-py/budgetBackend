@@ -8,6 +8,7 @@ from backend.api.v1.transaction.responses import TransactionBaseResponse
 from backend.api.v1.user.requests import UserCreateRequest, UserUpdateRequest
 from backend.api.v1.user.responses import UserBaseResponse
 from backend.modules.auth.dependencies import get_current_user
+from backend.modules.auth.schemas import CurrentUserData
 from backend.modules.user.dependencies import get_user_service
 from backend.modules.user.services import UserService
 
@@ -100,8 +101,8 @@ async def delete_user(
     status_code=status.HTTP_200_OK,
 )
 async def get_user_transactions(
-    current_user_email: Annotated[str, Depends(get_current_user)],
+    current_user: Annotated[CurrentUserData, Depends(get_current_user)],
     user_service: Annotated[UserService, Depends(get_user_service)],
 ):
-    user = await user_service.get_by_email(current_user_email)
+    user = await user_service.get_by_id(current_user.id)
     return user.transactions

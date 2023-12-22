@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.database.setup import get_session
 from backend.modules.auth.dependencies import get_current_user
+from backend.modules.auth.schemas import CurrentUserData
 from backend.modules.category.interfaces import CategoryRepositoryInterface
 from backend.modules.category.repositories import CategoryRepository
 from backend.modules.category.services import CategoryService
@@ -31,10 +32,10 @@ def _get_category_id(category_id: int = Path(...)) -> int:
 
 async def category_owner_permission(
     category_id: Annotated[int, Depends(_get_category_id)],
-    current_user_email: Annotated[str, Depends(get_current_user)],
+    current_user: Annotated[CurrentUserData, Depends(get_current_user)],
     category_service: Annotated[CategoryService, Depends(get_category_service)],
 ):
     category = await category_service.get_by_id(category_id)
 
-    if category.user.email != current_user_email:
+    if category.user.id != current_user.id:
         raise PermissionDenied

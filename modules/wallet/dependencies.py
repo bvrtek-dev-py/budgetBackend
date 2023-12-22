@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.database.setup import get_session
 from backend.modules.auth.dependencies import get_current_user
+from backend.modules.auth.schemas import CurrentUserData
 from backend.modules.common.exceptions import PermissionDenied
 from backend.modules.wallet.interfaces import WalletRepositoryInterface
 from backend.modules.wallet.repositories import WalletRepository
@@ -30,10 +31,10 @@ def get_wallet_id(wallet_id: int = Path(...)) -> int:  # type: ignore
 
 async def wallet_owner_permission(
     wallet_id: Annotated[int, Depends(get_wallet_id)],
-    current_user_email: Annotated[str, Depends(get_current_user)],
+    current_user: Annotated[CurrentUserData, Depends(get_current_user)],
     wallet_service: Annotated[WalletService, Depends(get_wallet_service)],
 ):
     wallet = await wallet_service.get_by_id(wallet_id)
 
-    if wallet.user.email != current_user_email:
+    if wallet.user.id != current_user.id:
         raise PermissionDenied
