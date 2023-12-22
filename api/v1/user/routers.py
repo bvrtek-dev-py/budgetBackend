@@ -4,8 +4,10 @@ from fastapi import APIRouter, Depends, Path
 from fastapi import status
 
 from backend.api.v1.common.responses import ErrorResponse
+from backend.api.v1.transaction.responses import TransactionBaseResponse
 from backend.api.v1.user.requests import UserCreateRequest, UserUpdateRequest
 from backend.api.v1.user.responses import UserBaseResponse
+from backend.modules.auth.dependencies import get_current_user
 from backend.modules.user.dependencies import get_user_service
 from backend.modules.user.services import UserService
 
@@ -86,3 +88,20 @@ async def delete_user(
     user_id: int, user_service: Annotated[UserService, Depends(get_user_service)]
 ):
     return await user_service.delete(user_id)
+
+
+@router.get(
+    "/me/transactions",
+    responses={
+        200: {"model": List[TransactionBaseResponse]},
+        401: {"model": ErrorResponse},
+    },
+    response_model=List[TransactionBaseResponse],
+    status_code=status.HTTP_200_OK,
+)
+async def get_user_transactions(
+    current_user_email: Annotated[str, Depends(get_current_user)],
+    user_service: Annotated[UserService, Depends(get_user_service)],
+):
+    user = await user_service.get_by_email(current_user_email)
+    return user.transactions

@@ -30,20 +30,36 @@ class UserRepository(UserRepositoryInterface):
 
     async def get_all(self) -> Sequence[User]:
         result = await self._session.execute(
-            select(User).options(selectinload(User.wallets))
+            select(User).options(
+                selectinload(User.wallets),
+                selectinload(User.subjects),
+                selectinload(User.transactions),
+            )
         )
 
         return result.scalars().all()
 
     async def get_by_id(self, user_id: int) -> User | None:
         result = await self._session.execute(
-            select(User).where(User.id == user_id).options(selectinload(User.wallets))
+            select(User)
+            .where(User.id == user_id)
+            .options(
+                selectinload(User.wallets),
+                selectinload(User.subjects),
+                selectinload(User.transactions),
+            )
         )
         return result.scalars().first()
 
     async def get_by_email(self, email: str) -> User | None:
         result = await self._session.execute(
-            select(User).where(User.email == email).options(selectinload(User.wallets))
+            select(User)
+            .where(User.email == email)
+            .options(
+                selectinload(User.wallets),
+                selectinload(User.subjects),
+                selectinload(User.transactions),
+            )
         )
         return result.scalars().first()
 
@@ -51,6 +67,10 @@ class UserRepository(UserRepositoryInterface):
         result = await self._session.execute(
             select(User)
             .where(User.username == username)
-            .options(selectinload(User.wallets))
+            .options(
+                selectinload(User.wallets),
+                selectinload(User.subjects),
+                selectinload(User.transactions),
+            )
         )
         return result.scalars().first()
