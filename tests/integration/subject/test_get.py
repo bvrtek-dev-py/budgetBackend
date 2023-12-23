@@ -8,21 +8,6 @@ from backend.tests.integration.subject.data import BASE_SUBJECT_ID, BASE_SUBJECT
 
 
 @pytest.mark.asyncio
-async def test_get_subjects(async_client: AsyncClient, test_user: Dict[str, str]):
-    # Given
-    token = await login_user(async_client, test_user)
-
-    # When
-    response = await async_client.get(
-        "/api/v1/subjects/", headers={"Authorization": f"Bearer {token}"}
-    )
-
-    # Then
-    assert response.status_code == 200
-    assert len(response.json()) == 2
-
-
-@pytest.mark.asyncio
 async def test_get_subject_by_id(async_client: AsyncClient, test_user: Dict[str, str]):
     # Given
     token = await login_user(async_client, test_user)

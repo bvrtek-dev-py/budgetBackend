@@ -1,8 +1,13 @@
 # pylint: disable=W0611,W0108,W0621
+from typing import Dict
+
 import pytest
 from httpx import AsyncClient
 
+from backend.modules.transaction.enums import TransactionType
+from backend.tests.conftest import login_user
 from backend.tests.integration.user.data import BASE_USER_DATA, BASE_USER_ID
+from backend.tests.integration.wallet.data import BASE_WALLET_DATA
 
 
 @pytest.mark.asyncio
@@ -39,3 +44,97 @@ async def test_get_user_by_id_does_not_exist(async_client: AsyncClient):
 
     # Then
     assert response.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_get_categories(async_client: AsyncClient, test_user: dict[str, str]):
+    # Given
+    token = await login_user(async_client, test_user)
+
+    # When
+    response = await async_client.get(
+        "/api/v1/users/me/categories/", headers={"Authorization": f"Bearer {token}"}
+    )
+
+    # Then
+    assert response.status_code == 200
+    assert len(response.json()) == 2
+
+
+@pytest.mark.asyncio
+async def test_get_categories_expense_type(
+    async_client: AsyncClient, test_user: dict[str, str]
+):
+    # Given
+    token = await login_user(async_client, test_user)
+    query = f"?transaction_type={TransactionType.EXPENSE.value}"
+
+    # When
+    response = await async_client.get(
+        f"/api/v1/users/me/categories/{query}",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    # Then
+    assert response.status_code == 200
+    assert len(response.json()) == 1
+
+
+@pytest.mark.asyncio
+async def test_get_categories_income_type(
+    async_client: AsyncClient, test_user: dict[str, str]
+):
+    # Given
+    token = await login_user(async_client, test_user)
+    query = f"?transaction_type={TransactionType.INCOME.value}"
+
+    # When
+    response = await async_client.get(
+        f"/api/v1/users/me/categories/{query}",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
+    # Then
+    assert response.status_code == 200
+    assert len(response.json()) == 1
+
+
+@pytest.mark.asyncio
+async def test_get_categories_not_authenticated(async_client: AsyncClient):
+    # When
+    response = await async_client.get("/api/v1/users/me/categories/")
+
+    # Then
+    assert response.status_code == 401
+
+
+@pytest.mark.asyncio
+async def test_get_wallets(async_client: AsyncClient, test_user: Dict[str, str]):
+    # Given
+    token = await login_user(async_client, test_user)
+    data = BASE_WALLET_DATA
+
+    # When
+    response = await async_client.get(
+        "/api/v1/users/me/wallets", headers={"Authorization": f"Bearer {token}"}
+    )
+
+    # Then
+    assert response.status_code == 200
+    assert data.items() <= response.json()[0].items()
+    assert 1 == len(response.json())
+
+
+@pytest.mark.asyncio
+async def test_get_subjects(async_client: AsyncClient, test_user: Dict[str, str]):
+    # Given
+    token = await login_user(async_client, test_user)
+
+    # When
+    response = await async_client.get(
+        "/api/v1/users/me/subjects/", headers={"Authorization": f"Bearer {token}"}
+    )
+
+    # Then
+    assert response.status_code == 200
+    assert len(response.json()) == 1

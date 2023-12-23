@@ -27,18 +27,6 @@ router = APIRouter(prefix="/api/v1/wallets", tags=["APIv1 Wallet"])
 
 
 @router.get(
-    "/",
-    responses={200: {"model": List[WalletGetResponse]}},
-    response_model=List[WalletGetResponse],
-)
-async def get_user_wallets(
-    wallet_service: Annotated[WalletService, Depends(get_wallet_service)],
-    current_user: Annotated[CurrentUserData, Depends(get_current_user)],
-):
-    return await wallet_service.get_by_user_id(current_user.id)
-
-
-@router.get(
     "/{wallet_id}",
     responses={200: {"model": WalletGetResponse}, 404: {"model": ErrorResponse}},
     response_model=WalletGetResponse,
