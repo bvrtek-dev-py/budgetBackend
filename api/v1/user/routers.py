@@ -1,14 +1,20 @@
-from typing import Annotated, List
+from typing import Annotated, List, Optional
 
 from fastapi import APIRouter, Depends, Path
 from fastapi import status
 
+from backend.api.v1.category.responses import CategoryGetResponse
 from backend.api.v1.common.responses import ErrorResponse
+from backend.api.v1.subject.responses import SubjectBaseResponse
 from backend.api.v1.transaction.responses import TransactionBaseResponse
 from backend.api.v1.user.requests import UserCreateRequest, UserUpdateRequest
 from backend.api.v1.user.responses import UserBaseResponse
+from backend.api.v1.wallet.responses import WalletGetResponse
 from backend.modules.auth.dependencies import get_current_user
 from backend.modules.auth.schemas import CurrentUserData
+from backend.modules.category.dependencies import get_category_service
+from backend.modules.category.services import CategoryService
+from backend.modules.transaction.enums import TransactionType
 from backend.modules.user.dependencies import get_user_service
 from backend.modules.user.services import UserService
 
@@ -92,6 +98,24 @@ async def delete_user(
 
 
 @router.get(
+    "/me/categories",
+    responses={
+        200: {"model": List[CategoryGetResponse]},
+        401: {"model": ErrorResponse},
+    },
+    status_code=status.HTTP_200_OK,
+    response_model=List[CategoryGetResponse],
+)
+async def get_user_categories(
+    current_user: Annotated[CurrentUserData, Depends(get_current_user)],
+    category_service: Annotated[CategoryService, Depends(get_category_service)],
+    transaction_type: Optional[TransactionType] = None,
+):
+    # Look for different solution (using relationship)
+    return await category_service.get_by_user_id(current_user.id, transaction_type)
+
+
+@router.get(
     "/me/transactions",
     responses={
         200: {"model": List[TransactionBaseResponse]},
@@ -106,3 +130,33 @@ async def get_user_transactions(
 ):
     user = await user_service.get_by_id(current_user.id)
     return user.transactions
+
+
+@router.get(
+    "/me/subjects",
+    responses={
+        200: {"model": List[SubjectBaseResponse]},
+        401: {"model": ErrorResponse},
+    },
+    response_model=List[SubjectBaseResponse],
+    status_code=status.HTTP_200_OK,
+)
+async def get_user_subjects(
+    current_user: Annotated[CurrentUserData, Depends(get_current_user)],
+    user_service: Annotated[UserService, Depends(get_user_service)],
+):
+    user = await user_service.get_by_id(current_user.id)
+    return user.subjects
+
+
+@router.get(
+    "/me/wallets",
+    responses={200: {"model": List[WalletGetResponse]}},
+    response_model=List[WalletGetResponse],
+)
+async def get_user_wallets(
+    current_user: Annotated[CurrentUserData, Depends(get_current_user)],
+    user_service: Annotated[UserService, Depends(get_user_service)],
+):
+    user = await user_service.get_by_id(current_user.id)
+    return user.wallets

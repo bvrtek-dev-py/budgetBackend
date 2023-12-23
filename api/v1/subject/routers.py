@@ -1,4 +1,4 @@
-from typing import Annotated, List
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, Path
 from fastapi import status
@@ -75,22 +75,6 @@ async def get_subject(
     subject_service: Annotated[SubjectService, Depends(get_subject_service)],
 ):
     return await subject_service.get_by_id(subject_id)
-
-
-@router.get(
-    "/",
-    responses={
-        200: {"model": List[SubjectBaseResponse]},
-        401: {"model": ErrorResponse},
-    },
-    response_model=List[SubjectBaseResponse],
-    status_code=status.HTTP_200_OK,
-)
-async def get_user_subjects(
-    current_user: Annotated[CurrentUserData, Depends(get_current_user)],
-    subject_service: Annotated[SubjectService, Depends(get_subject_service)],
-):
-    return await subject_service.get_by_user_id(current_user.id)
 
 
 @router.delete(
