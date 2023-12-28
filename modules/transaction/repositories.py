@@ -1,10 +1,10 @@
+from datetime import date
 from typing import Sequence
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from backend.modules.transaction.enums import TransactionType
 from backend.modules.transaction.models import Transaction
 
 
@@ -47,14 +47,14 @@ class TransactionRepository:
         return result.scalars().first()
 
     async def get_by_name_and_wallet_and_type(
-        self, name: str, wallet_id: int, transaction_type: TransactionType
+        self, name: str, wallet_id: int, transaction_date: date
     ) -> Transaction | None:
         result = await self._session.execute(
             select(Transaction)
             .where(
                 (Transaction.name == name)
                 & (Transaction.wallet_id == wallet_id)
-                & (Transaction.type == transaction_type)
+                & (Transaction.date == transaction_date)
             )
             .options(selectinload(Transaction.user), selectinload(Transaction.user))
         )

@@ -1,4 +1,4 @@
-from datetime import date as date_type
+from datetime import date
 from decimal import Decimal
 from typing import Sequence, Optional
 
@@ -18,11 +18,11 @@ class TransactionService:
         value: Decimal,
         transaction_type: TransactionType,
         description: str,
-        date: date_type,
+        transaction_date: date,
         user_id: int,
         wallet_id: int,
     ) -> Transaction:
-        if await self._check_constraint_blockade(name, transaction_type, wallet_id):
+        if await self._check_constraint_blockade(name, transaction_date, wallet_id):
             raise ObjectAlreadyExists
 
         transaction = Transaction(
@@ -30,7 +30,7 @@ class TransactionService:
             value=value,
             type=transaction_type,
             description=description,
-            date=date,
+            date=transaction_date,
             user_id=user_id,
             wallet_id=wallet_id,
         )
@@ -43,19 +43,19 @@ class TransactionService:
         name: str,
         value: Decimal,
         description: str,
-        date: date_type,
+        transaction_date: date,
     ) -> Transaction:
         transaction = await self.get_by_id(transaction_id)
 
         if await self._check_constraint_blockade(
-            name, transaction.type, transaction.wallet_id, transaction_id
+            name, transaction_date, transaction.wallet_id, transaction_id
         ):
             raise ObjectAlreadyExists
 
         transaction.name = name
         transaction.value = value
         transaction.description = description
-        transaction.date = date
+        transaction.date = transaction_date
 
         return await self._repository.update(transaction)
 
@@ -78,12 +78,12 @@ class TransactionService:
     async def _check_constraint_blockade(
         self,
         name: str,
-        transaction_type: TransactionType,
+        transaction_date: date,
         wallet_id: int,
         excluded_id: Optional[int] = None,
     ) -> bool:
         transaction = await self._repository.get_by_name_and_wallet_and_type(
-            name, wallet_id, transaction_type
+            name, wallet_id, transaction_date
         )
 
         if transaction is None:
