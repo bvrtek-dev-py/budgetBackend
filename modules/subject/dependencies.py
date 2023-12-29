@@ -35,5 +35,5 @@ async def subject_owner_permission(
 ):
     subject = await wallet_service.get_by_id(subject_id)
 
-    if subject.user.id != current_user.id:
+    if subject.user_id != current_user.id:
         raise PermissionDenied

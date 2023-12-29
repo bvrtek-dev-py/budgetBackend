@@ -4,7 +4,7 @@ from typing import List
 from backend.modules.category.interfaces import CategoryRepositoryInterface
 from backend.modules.category.models import Category
 from backend.modules.transaction.enums import TransactionType
-from backend.tests.integration.category.data import get_category_data
+from backend.tests.database import get_category_data
 
 
 class InMemoryCategoryRepository(CategoryRepositoryInterface):

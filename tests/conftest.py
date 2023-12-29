@@ -9,9 +9,9 @@ from backend.modules.category.dependencies import get_category_repository
 from backend.modules.subject.dependencies import get_subject_repository
 from backend.modules.user.dependencies import get_user_repository
 from backend.modules.wallet.dependencies import get_wallet_repository
+from backend.tests.database import get_user_db
 from backend.tests.integration.category.repository import InMemoryCategoryRepository
 from backend.tests.integration.subject.repository import InMemorySubjectRepository
-from backend.tests.integration.user.data import get_user_db
 from backend.tests.integration.user.repository import InMemoryUserRepository
 from backend.tests.integration.wallet.repository import InMemoryWalletRepository
 

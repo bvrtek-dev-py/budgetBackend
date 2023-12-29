@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from backend.modules.wallet.interfaces import WalletRepositoryInterface
 from backend.modules.wallet.models import Wallet
-from backend.tests.integration.wallet.data import get_wallet_data
+from backend.tests.database import get_wallet_data
 
 
 class InMemoryWalletRepository(WalletRepositoryInterface):

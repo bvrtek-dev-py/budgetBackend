@@ -37,5 +37,5 @@ async def category_owner_permission(
 ):
     category = await category_service.get_by_id(category_id)
 
-    if category.user.id != current_user.id:
+    if category.user_id != current_user.id:
         raise PermissionDenied

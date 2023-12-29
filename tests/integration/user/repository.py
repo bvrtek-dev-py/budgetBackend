@@ -2,7 +2,7 @@ from typing import List
 
 from backend.modules.user.interfaces import UserRepositoryInterface
 from backend.modules.user.models import User
-from backend.tests.integration.user.data import get_user_db
+from backend.tests.database import get_user_db
 
 
 class InMemoryUserRepository(UserRepositoryInterface):
