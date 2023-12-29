@@ -36,5 +36,5 @@ async def wallet_owner_permission(
 ):
     wallet = await wallet_service.get_by_id(wallet_id)
 
-    if wallet.user.id != current_user.id:
+    if wallet.user_id != current_user.id:
         raise PermissionDenied

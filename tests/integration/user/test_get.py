@@ -6,8 +6,7 @@ from httpx import AsyncClient
 
 from backend.modules.transaction.enums import TransactionType
 from backend.tests.conftest import login_user
-from backend.tests.integration.user.data import BASE_USER_DATA, BASE_USER_ID
-from backend.tests.integration.wallet.data import BASE_WALLET_DATA
+from backend.tests.database import BASE_USER_ID, BASE_USER_DATA, BASE_WALLET_DATA
 
 
 @pytest.mark.asyncio

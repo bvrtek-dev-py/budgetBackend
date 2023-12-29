@@ -3,7 +3,7 @@ from typing import List
 
 from backend.modules.subject.interfaces import SubjectRepositoryInterface
 from backend.modules.subject.models import Subject
-from backend.tests.integration.subject.data import get_subject_data
+from backend.tests.database import get_subject_data
 
 
 class InMemorySubjectRepository(SubjectRepositoryInterface):

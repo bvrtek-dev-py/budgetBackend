@@ -4,7 +4,7 @@ import pytest
 from httpx import AsyncClient
 
 from backend.tests.conftest import login_user
-from backend.tests.integration.subject.data import BASE_SUBJECT_ID
+from backend.tests.database import BASE_SUBJECT_ID
 
 
 @pytest.mark.asyncio
