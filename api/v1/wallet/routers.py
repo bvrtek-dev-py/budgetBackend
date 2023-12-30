@@ -106,6 +106,7 @@ async def create_wallet_transaction(
         request.date,
         current_user.id,
         wallet_id,
+        request.subject_id,
     )
 
 

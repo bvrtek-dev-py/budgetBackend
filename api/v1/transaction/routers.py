@@ -38,7 +38,7 @@ async def update_transaction(
     ],
 ):
     return await transaction_service.update(
-        transaction_id, request.name, request.value, request.description, request.date
+        transaction_id, request.name, request.value, request.description, request.date, request.type
     )
 
 
