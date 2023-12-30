@@ -6,6 +6,8 @@ from backend.modules.common.exceptions import ObjectDoesNotExist, ObjectAlreadyE
 from backend.modules.transaction.enums import TransactionType
 from backend.modules.transaction.models import Transaction
 from backend.modules.transaction.repositories import TransactionRepository
+from backend.modules.user.models import User
+from backend.modules.wallet.models import Wallet
 
 
 class TransactionService:
@@ -93,3 +95,21 @@ class TransactionService:
             return False
 
         return True
+
+    async def get_user_transactions(
+        self,
+        user: User,
+        start_date: Optional[date] = None,
+        end_date: Optional[date] = None,
+    ) -> Sequence[Transaction]:
+        return await self._repository.get_user_transactions(user, start_date, end_date)
+
+    async def get_wallet_transactions(
+        self,
+        wallet: Wallet,
+        start_date: Optional[date] = None,
+        end_date: Optional[date] = None,
+    ) -> Sequence[Transaction]:
+        return await self._repository.get_user_transactions(
+            wallet.user, start_date, end_date
+        )

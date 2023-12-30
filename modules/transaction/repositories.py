@@ -1,11 +1,13 @@
 from datetime import date
-from typing import Sequence
+from typing import Sequence, Optional
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from backend.modules.transaction.models import Transaction
+from backend.modules.user.models import User
+from backend.modules.wallet.models import Wallet
 
 
 class TransactionRepository:
@@ -31,7 +33,7 @@ class TransactionRepository:
     async def get_all(self) -> Sequence[Transaction]:
         result = await self._session.execute(
             select(Transaction).options(
-                selectinload(Transaction.user), selectinload(Transaction.user)
+                selectinload(Transaction.user), selectinload(Transaction.wallet)
             )
         )
 
@@ -41,7 +43,7 @@ class TransactionRepository:
         result = await self._session.execute(
             select(Transaction)
             .where((Transaction.id == transaction_id))
-            .options(selectinload(Transaction.user), selectinload(Transaction.user))
+            .options(selectinload(Transaction.user), selectinload(Transaction.wallet))
         )
 
         return result.scalars().first()
@@ -56,7 +58,48 @@ class TransactionRepository:
                 & (Transaction.wallet_id == wallet_id)
                 & (Transaction.date == transaction_date)
             )
-            .options(selectinload(Transaction.user), selectinload(Transaction.user))
+            .options(selectinload(Transaction.user), selectinload(Transaction.wallet))
         )
 
         return result.scalars().first()
+
+    async def get_user_transactions(
+        self,
+        user: User,
+        start_date: Optional[date] = None,
+        end_date: Optional[date] = None,
+    ) -> Sequence[Transaction]:
+        query = select(Transaction).where(Transaction.user_id == user.id)
+
+        if start_date is not None:
+            query = query.where(Transaction.date >= start_date)
+
+        if end_date is not None:
+            query = query.where(Transaction.date <= end_date)
+
+        result = await self._session.execute(
+            query.options(
+                selectinload(Transaction.user), selectinload(Transaction.wallet)
+            )
+        )
+
+        return result.scalars().all()
+
+    async def get_wallet_transactions(
+        self, wallet: Wallet, start_date: date, end_date: date
+    ) -> Sequence[Transaction]:
+        query = select(Transaction).where(Transaction.wallet_id == wallet.id)
+
+        if start_date is not None:
+            query = query.where(Transaction.date >= start_date)
+
+        if end_date is not None:
+            query = query.where(Transaction.date <= end_date)
+
+        result = await self._session.execute(
+            query.options(
+                selectinload(Transaction.user), selectinload(Transaction.wallet)
+            )
+        )
+
+        return result.scalars().all()
