@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date as date_type
 from decimal import Decimal
 
 from pydantic import BaseModel
@@ -11,5 +11,6 @@ class TransactionBaseResponse(BaseModel):
     name: str
     value: Decimal
     type: TransactionType
+    date: date_type
     created_at: datetime
     updated_at: datetime

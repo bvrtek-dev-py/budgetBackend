@@ -1,3 +1,4 @@
+from datetime import date
 from typing import Annotated, List, Optional
 
 from fastapi import APIRouter, Depends, Path
@@ -14,7 +15,9 @@ from backend.modules.auth.dependencies import get_current_user
 from backend.modules.auth.schemas import CurrentUserData
 from backend.modules.category.dependencies import get_category_service
 from backend.modules.category.services import CategoryService
+from backend.modules.transaction.dependencies import get_transaction_service
 from backend.modules.transaction.enums import TransactionType
+from backend.modules.transaction.services import TransactionService
 from backend.modules.user.dependencies import get_user_service
 from backend.modules.user.services import UserService
 
@@ -127,9 +130,14 @@ async def get_user_categories(
 async def get_user_transactions(
     current_user: Annotated[CurrentUserData, Depends(get_current_user)],
     user_service: Annotated[UserService, Depends(get_user_service)],
+    transaction_service: Annotated[
+        TransactionService, Depends(get_transaction_service)
+    ],
+    start_date: Optional[date] = None,
+    end_date: Optional[date] = None,
 ):
     user = await user_service.get_by_id(current_user.id)
-    return user.transactions
+    return await transaction_service.get_user_transactions(user, start_date, end_date)
 
 
 @router.get(

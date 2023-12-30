@@ -1,4 +1,5 @@
-from typing import List, Annotated
+from datetime import date
+from typing import List, Annotated, Optional
 
 from fastapi import APIRouter, Depends, Path, status
 
@@ -118,6 +119,13 @@ async def create_wallet_transaction(
 async def get_wallet_transactions(
     wallet_id: Annotated[int, Path(gt=0)],
     wallet_service: Annotated[WalletService, Depends(get_wallet_service)],
+    transactions_service: Annotated[
+        TransactionService, Depends(get_transaction_service)
+    ],
+    start_date: Optional[date] = None,
+    end_date: Optional[date] = None,
 ):
     wallet = await wallet_service.get_by_id(wallet_id)
-    return wallet.transactions
+    return await transactions_service.get_wallet_transactions(
+        wallet, start_date, end_date
+    )
