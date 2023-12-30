@@ -86,7 +86,7 @@ class TransactionRepository:
         return result.scalars().all()
 
     async def get_wallet_transactions(
-        self, wallet: Wallet, start_date: date, end_date: date
+        self, wallet: Wallet, start_date: Optional[date], end_date: Optional[date]
     ) -> Sequence[Transaction]:
         query = select(Transaction).where(Transaction.wallet_id == wallet.id)
 
