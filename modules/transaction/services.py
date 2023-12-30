@@ -110,6 +110,6 @@ class TransactionService:
         start_date: Optional[date] = None,
         end_date: Optional[date] = None,
     ) -> Sequence[Transaction]:
-        return await self._repository.get_user_transactions(
-            wallet.user, start_date, end_date
+        return await self._repository.get_wallet_transactions(
+            wallet, start_date, end_date
         )
