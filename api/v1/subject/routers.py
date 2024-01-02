@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, Path
 from fastapi import status
 
 from backend.api.v1.common.responses import ErrorResponse
+from backend.api.v1.common.validators import validate_date_range
 from backend.api.v1.subject.requests import (
     SubjectRequest,
 )
@@ -19,7 +20,6 @@ from backend.modules.subject.dependencies import (
 from backend.modules.subject.services import SubjectService
 from backend.modules.transaction.dependencies import get_transaction_service
 from backend.modules.transaction.services import TransactionService
-from backend.modules.user.services import UserService
 
 router = APIRouter(prefix="/api/v1/subjects", tags=["APIv1 Subject"])
 
@@ -118,7 +118,11 @@ async def get_subject_transactions(
     start_date: Optional[date] = None,
     end_date: Optional[date] = None,
 ):
+    if start_date is not None and end_date is not None:
+        validate_date_range(start_date, end_date)
+
     subject = await transaction_service.get_by_id(transaction_id)
+
     return await transaction_service.get_subject_transactions(
         subject, start_date, end_date
     )

@@ -24,7 +24,7 @@ class TransactionService:
         transaction_date: date,
         user_id: int,
         wallet_id: int,
-        subject_id: int
+        subject_id: int,
     ) -> Transaction:
         if await self._check_constraint_blockade(name, transaction_date, wallet_id):
             raise ObjectAlreadyExists
@@ -37,7 +37,7 @@ class TransactionService:
             date=transaction_date,
             user_id=user_id,
             wallet_id=wallet_id,
-            subject_id=subject_id
+            subject_id=subject_id,
         )
 
         return await self._repository.save(transaction)
@@ -49,7 +49,7 @@ class TransactionService:
         value: Decimal,
         description: str,
         transaction_date: date,
-        subject_id: int
+        subject_id: int,
     ) -> Transaction:
         transaction = await self.get_by_id(transaction_id)
 
@@ -120,7 +120,10 @@ class TransactionService:
         )
 
     async def get_subject_transactions(
-        self, subject: Subject, start_date: date, end_date: date
+        self,
+        subject: Subject,
+        start_date: Optional[date] = None,
+        end_date: Optional[date] = None,
     ) -> Sequence[Transaction]:
         return await self._repository.get_subject_transactions(
             subject, start_date, end_date

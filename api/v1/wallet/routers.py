@@ -4,6 +4,7 @@ from typing import List, Annotated, Optional
 from fastapi import APIRouter, Depends, Path, status
 
 from backend.api.v1.common.responses import ErrorResponse
+from backend.api.v1.common.validators import validate_date_range
 from backend.api.v1.transaction.requests import TransactionCreateRequest
 from backend.api.v1.transaction.responses import TransactionBaseResponse
 from backend.api.v1.wallet.requests import (
@@ -16,6 +17,9 @@ from backend.api.v1.wallet.responses import (
 )
 from backend.modules.auth.dependencies import get_current_user
 from backend.modules.auth.schemas import CurrentUserData
+from backend.modules.common.exceptions import PermissionDenied
+from backend.modules.subject.dependencies import get_subject_validator
+from backend.modules.subject.validators import SubjectValidator
 from backend.modules.transaction.dependencies import get_transaction_service
 from backend.modules.transaction.services import TransactionService
 from backend.modules.wallet.dependencies import (
@@ -97,7 +101,16 @@ async def create_wallet_transaction(
     transaction_service: Annotated[
         TransactionService, Depends(get_transaction_service)
     ],
+    subject_validator: Annotated[SubjectValidator, Depends(get_subject_validator)],
 ):
+    if (
+        await subject_validator.user_is_subject_owner(
+            current_user.id, request.subject_id
+        )
+        is False
+    ):
+        raise PermissionDenied
+
     return await transaction_service.create(
         request.name,
         request.value,
@@ -126,7 +139,11 @@ async def get_wallet_transactions(
     start_date: Optional[date] = None,
     end_date: Optional[date] = None,
 ):
+    if start_date is not None and end_date is not None:
+        validate_date_range(start_date, end_date)
+
     wallet = await wallet_service.get_by_id(wallet_id)
+
     return await transactions_service.get_wallet_transactions(
         wallet, start_date, end_date
     )

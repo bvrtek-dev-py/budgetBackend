@@ -6,6 +6,7 @@ from fastapi import status
 
 from backend.api.v1.category.responses import CategoryGetResponse
 from backend.api.v1.common.responses import ErrorResponse
+from backend.api.v1.common.validators import validate_date_range
 from backend.api.v1.subject.responses import SubjectBaseResponse
 from backend.api.v1.transaction.responses import TransactionBaseResponse
 from backend.api.v1.user.requests import UserCreateRequest, UserUpdateRequest
@@ -136,6 +137,9 @@ async def get_user_transactions(
     start_date: Optional[date] = None,
     end_date: Optional[date] = None,
 ):
+    if start_date is not None and end_date is not None:
+        validate_date_range(start_date, end_date)
+
     user = await user_service.get_by_id(current_user.id)
     return await transaction_service.get_user_transactions(user, start_date, end_date)
 
