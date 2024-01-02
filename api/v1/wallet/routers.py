@@ -14,6 +14,7 @@ from backend.api.v1.wallet.requests import (
 from backend.api.v1.wallet.responses import (
     WalletBaseResponse,
     WalletGetResponse,
+    WalletBalanceResponse,
 )
 from backend.modules.auth.dependencies import get_current_user
 from backend.modules.auth.schemas import CurrentUserData
@@ -147,3 +148,25 @@ async def get_wallet_transactions(
     return await transactions_service.get_wallet_transactions(
         wallet, start_date, end_date
     )
+
+
+@router.get(
+    "/{wallet_id}/balance",
+    responses={
+        200: {"model": WalletBalanceResponse},
+        401: {"model": ErrorResponse},
+        403: {"model": ErrorResponse},
+        404: {"model": ErrorResponse},
+    },
+    response_model=WalletBalanceResponse,
+    dependencies=[Depends(wallet_owner_permission)],
+)
+async def get_wallet_balance(
+    wallet_id: Annotated[int, Path(gt=0)],
+    wallet_service: Annotated[WalletService, Depends(get_wallet_service)],
+    transactions_service: Annotated[
+        TransactionService, Depends(get_transaction_service)
+    ],
+):
+    wallet = await wallet_service.get_by_id(wallet_id)
+    return await transactions_service.get_wallet_balance(wallet)
