@@ -1,6 +1,6 @@
 from datetime import date
 from decimal import Decimal
-from typing import Sequence, Optional, Dict
+from typing import Sequence, Optional, Dict, Any
 
 from backend.modules.common.exceptions import ObjectDoesNotExist, ObjectAlreadyExists
 from backend.modules.subject.models import Subject
@@ -129,13 +129,12 @@ class TransactionService:
             subject, start_date, end_date
         )
 
-    async def get_wallet_balance(self, wallet: Wallet) -> Dict[str, Decimal]:
+    async def get_wallet_balance(self, wallet: Wallet) -> Dict[str, Any]:
         incomes = await self._repository.get_sum_value_by_type_and_wallet_id(
             wallet.id, TransactionType.INCOME
         )
         expenses = await self._repository.get_sum_value_by_type_and_wallet_id(
             wallet.id, TransactionType.EXPENSE
         )
-        incomes, expenses = incomes or Decimal(0), expenses or Decimal(0)
 
         return {"id": wallet.id, "balance": incomes - expenses}

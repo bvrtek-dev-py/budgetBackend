@@ -142,4 +142,4 @@ class TransactionRepository:
             )
         )
 
-        return result.scalar()  # type: ignore
+        return result.scalar() or Decimal(0)
