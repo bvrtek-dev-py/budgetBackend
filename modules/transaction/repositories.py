@@ -1,6 +1,6 @@
 from datetime import date
 from decimal import Decimal
-from typing import Sequence, Optional
+from typing import Sequence, Optional, Any
 
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -135,7 +135,7 @@ class TransactionRepository:
     async def get_sum_value_by_type_and_wallet_id(
         self, wallet_id: int, transaction_type: TransactionType
     ) -> Decimal:
-        result = await self._session.execute(
+        result: Any = await self._session.execute(
             select(func.sum(Transaction.value)).filter(
                 (Transaction.type == transaction_type)
                 & (Transaction.wallet_id == wallet_id)
