@@ -5,6 +5,8 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from backend.modules.subject.models import Subject
+from backend.modules.transaction.filters import filter_query_by_date_range
 from backend.modules.transaction.models import Transaction
 from backend.modules.user.models import User
 from backend.modules.wallet.models import Wallet
@@ -33,7 +35,9 @@ class TransactionRepository:
     async def get_all(self) -> Sequence[Transaction]:
         result = await self._session.execute(
             select(Transaction).options(
-                selectinload(Transaction.user), selectinload(Transaction.wallet)
+                selectinload(Transaction.user),
+                selectinload(Transaction.wallet),
+                selectinload(Transaction.subject),
             )
         )
 
@@ -43,7 +47,11 @@ class TransactionRepository:
         result = await self._session.execute(
             select(Transaction)
             .where((Transaction.id == transaction_id))
-            .options(selectinload(Transaction.user), selectinload(Transaction.wallet))
+            .options(
+                selectinload(Transaction.user),
+                selectinload(Transaction.wallet),
+                selectinload(Transaction.subject),
+            )
         )
 
         return result.scalars().first()
@@ -58,7 +66,11 @@ class TransactionRepository:
                 & (Transaction.wallet_id == wallet_id)
                 & (Transaction.date == transaction_date)
             )
-            .options(selectinload(Transaction.user), selectinload(Transaction.wallet))
+            .options(
+                selectinload(Transaction.user),
+                selectinload(Transaction.wallet),
+                selectinload(Transaction.subject),
+            )
         )
 
         return result.scalars().first()
@@ -71,15 +83,13 @@ class TransactionRepository:
     ) -> Sequence[Transaction]:
         query = select(Transaction).where(Transaction.user_id == user.id)
 
-        if start_date is not None:
-            query = query.where(Transaction.date >= start_date)
-
-        if end_date is not None:
-            query = query.where(Transaction.date <= end_date)
+        query = filter_query_by_date_range(query, start_date, end_date)
 
         result = await self._session.execute(
             query.options(
-                selectinload(Transaction.user), selectinload(Transaction.wallet)
+                selectinload(Transaction.user),
+                selectinload(Transaction.wallet),
+                selectinload(Transaction.subject),
             )
         )
 
@@ -90,15 +100,30 @@ class TransactionRepository:
     ) -> Sequence[Transaction]:
         query = select(Transaction).where(Transaction.wallet_id == wallet.id)
 
-        if start_date is not None:
-            query = query.where(Transaction.date >= start_date)
-
-        if end_date is not None:
-            query = query.where(Transaction.date <= end_date)
+        query = filter_query_by_date_range(query, start_date, end_date)
 
         result = await self._session.execute(
             query.options(
-                selectinload(Transaction.user), selectinload(Transaction.wallet)
+                selectinload(Transaction.user),
+                selectinload(Transaction.wallet),
+                selectinload(Transaction.subject),
+            )
+        )
+
+        return result.scalars().all()
+
+    async def get_subject_transactions(
+        self, subject: Subject, start_date: Optional[date], end_date: Optional[date]
+    ) -> Sequence[Transaction]:
+        query = select(Transaction).where(Transaction.subject_id == subject.id)
+
+        query = filter_query_by_date_range(query, start_date, end_date)
+
+        result = await self._session.execute(
+            query.options(
+                selectinload(Transaction.user),
+                selectinload(Transaction.wallet),
+                selectinload(Transaction.subject),
             )
         )
 

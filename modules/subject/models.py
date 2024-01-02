@@ -10,4 +10,8 @@ class Subject(BaseModel):
 
     name: MappedColumn[str] = mapped_column(String(50))
     user_id: MappedColumn[int] = mapped_column(Integer, ForeignKey("users.id"))
+
     user: MappedColumn["User"] = relationship(back_populates="subjects")  # type: ignore
+    transactions: MappedColumn["Transaction"] = relationship(  # type: ignore
+        back_populates="subject"
+    )

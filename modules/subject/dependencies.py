@@ -10,6 +10,7 @@ from backend.modules.common.exceptions import PermissionDenied
 from backend.modules.subject.interfaces import SubjectRepositoryInterface
 from backend.modules.subject.repositories import SubjectRepository
 from backend.modules.subject.services import SubjectService
+from backend.modules.subject.validators import SubjectValidator
 
 
 def get_subject_repository(
@@ -24,6 +25,12 @@ def get_subject_service(
     return SubjectService(repository)
 
 
+def get_subject_validator(
+    service: Annotated[SubjectService, Depends(get_subject_service)]
+) -> SubjectValidator:
+    return SubjectValidator(service)
+
+
 def _get_subject_id(subject_id: int = Path(...)) -> int:
     return subject_id
 
@@ -31,9 +38,10 @@ def _get_subject_id(subject_id: int = Path(...)) -> int:
 async def subject_owner_permission(
     subject_id: Annotated[int, Depends(_get_subject_id)],
     current_user: Annotated[CurrentUserData, Depends(get_current_user)],
-    wallet_service: Annotated[SubjectService, Depends(get_subject_service)],
+    subject_validator: Annotated[SubjectValidator, Depends(get_subject_validator)],
 ):
-    subject = await wallet_service.get_by_id(subject_id)
-
-    if subject.user_id != current_user.id:
+    if (
+        await subject_validator.user_is_subject_owner(current_user.id, subject_id)
+        is False
+    ):
         raise PermissionDenied

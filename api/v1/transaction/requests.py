@@ -12,6 +12,7 @@ class TransactionCreateRequest(BaseModel):
     type: TransactionType
     description: str
     date: date
+    subject_id: int
 
 
 class TransactionUpdateRequest(BaseModel):
@@ -19,3 +20,4 @@ class TransactionUpdateRequest(BaseModel):
     value: Decimal
     description: str
     date: date
+    subject_id: int
