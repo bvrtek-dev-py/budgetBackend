@@ -11,7 +11,7 @@ class WalletService:
 
     async def create(self, user_id: int, name: str, description: str) -> Wallet:
         if await self._wallet_with_user_id_and_name_exists(user_id, name):
-            raise ObjectAlreadyExists
+            raise ObjectAlreadyExists()
 
         wallet = Wallet(name=name, description=description, user_id=user_id)
 
@@ -23,7 +23,7 @@ class WalletService:
         if await self._wallet_with_user_id_and_name_exists(
             wallet.user_id, name, wallet.id
         ):
-            raise ObjectAlreadyExists
+            raise ObjectAlreadyExists()
 
         wallet.name = name
         wallet.description = description
@@ -39,7 +39,7 @@ class WalletService:
         wallet = await self._repository.get_by_id(wallet_id)
 
         if wallet is None:
-            raise ObjectDoesNotExist
+            raise ObjectDoesNotExist()
 
         return wallet
 

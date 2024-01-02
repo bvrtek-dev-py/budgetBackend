@@ -27,7 +27,7 @@ class TransactionService:
         subject_id: int,
     ) -> Transaction:
         if await self._check_constraint_blockade(name, transaction_date, wallet_id):
-            raise ObjectAlreadyExists
+            raise ObjectAlreadyExists()
 
         transaction = Transaction(
             name=name,
@@ -56,7 +56,7 @@ class TransactionService:
         if await self._check_constraint_blockade(
             name, transaction_date, transaction.wallet_id, transaction_id
         ):
-            raise ObjectAlreadyExists
+            raise ObjectAlreadyExists()
 
         transaction.name = name
         transaction.value = value
@@ -75,7 +75,7 @@ class TransactionService:
         transaction = await self._repository.get_by_id(transaction_id)
 
         if transaction is None:
-            raise ObjectDoesNotExist
+            raise ObjectDoesNotExist()
 
         return transaction
 

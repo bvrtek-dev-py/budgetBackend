@@ -39,4 +39,4 @@ async def transaction_owner_permission(
     category = await transaction_service.get_by_id(transaction_id)
 
     if category.user_id != current_user.id:
-        raise PermissionDenied
+        raise PermissionDenied()

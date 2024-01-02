@@ -41,7 +41,7 @@ async def login(
     user = await user_service.get_by_username_or_email(form_data.username)
 
     if not verify_service.verify(form_data.password, user.password):
-        raise InvalidCredentials
+        raise InvalidCredentials()
 
     return {
         "token_type": "Bearer",

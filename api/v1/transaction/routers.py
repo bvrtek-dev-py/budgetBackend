@@ -50,7 +50,7 @@ async def update_transaction(
         )
         is False
     ):
-        raise PermissionDenied
+        raise PermissionDenied()
 
     return await transaction_service.update(
         transaction_id,

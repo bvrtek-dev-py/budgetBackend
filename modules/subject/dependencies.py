@@ -44,4 +44,4 @@ async def subject_owner_permission(
         await subject_validator.user_is_subject_owner(current_user.id, subject_id)
         is False
     ):
-        raise PermissionDenied
+        raise PermissionDenied()

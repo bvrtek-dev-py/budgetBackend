@@ -17,7 +17,7 @@ class CategoryService:
         transaction_type: TransactionType,
     ) -> Category:
         if await self._check_category_with_name_and_user_id_exists(name, user_id):
-            raise ObjectAlreadyExists
+            raise ObjectAlreadyExists()
 
         category = Category(
             name=name,
@@ -33,7 +33,7 @@ class CategoryService:
         if await self._check_category_with_name_and_user_id_exists(
             name, category.user_id, category.id
         ):
-            raise ObjectAlreadyExists
+            raise ObjectAlreadyExists()
 
         category.name = name
 
@@ -48,7 +48,7 @@ class CategoryService:
         category = await self._repository.get_by_id(category_id)
 
         if category is None:
-            raise ObjectDoesNotExist
+            raise ObjectDoesNotExist()
 
         return category
 
