@@ -1,11 +1,13 @@
 from datetime import date
-from typing import Sequence, Optional
+from decimal import Decimal
+from typing import Sequence, Optional, Any
 
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from backend.modules.subject.models import Subject
+from backend.modules.transaction.enums import TransactionType
 from backend.modules.transaction.filters import filter_query_by_date_range
 from backend.modules.transaction.models import Transaction
 from backend.modules.user.models import User
@@ -128,3 +130,16 @@ class TransactionRepository:
         )
 
         return result.scalars().all()
+
+    # pylint: disable=E1102
+    async def get_sum_value_by_type_and_wallet_id(
+        self, wallet_id: int, transaction_type: TransactionType
+    ) -> Decimal:
+        result: Any = await self._session.execute(
+            select(func.sum(Transaction.value)).filter(
+                (Transaction.type == transaction_type)
+                & (Transaction.wallet_id == wallet_id)
+            )
+        )
+
+        return result.scalar() or Decimal(0)
