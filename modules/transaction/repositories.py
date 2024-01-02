@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from backend.modules.subject.models import Subject
+from backend.modules.transaction.filters import filter_query_by_date_range
 from backend.modules.transaction.models import Transaction
 from backend.modules.user.models import User
 from backend.modules.wallet.models import Wallet
@@ -82,11 +83,7 @@ class TransactionRepository:
     ) -> Sequence[Transaction]:
         query = select(Transaction).where(Transaction.user_id == user.id)
 
-        if start_date is not None:
-            query = query.where(Transaction.date >= start_date)
-
-        if end_date is not None:
-            query = query.where(Transaction.date <= end_date)
+        query = filter_query_by_date_range(query, start_date, end_date)
 
         result = await self._session.execute(
             query.options(
@@ -103,11 +100,7 @@ class TransactionRepository:
     ) -> Sequence[Transaction]:
         query = select(Transaction).where(Transaction.wallet_id == wallet.id)
 
-        if start_date is not None:
-            query = query.where(Transaction.date >= start_date)
-
-        if end_date is not None:
-            query = query.where(Transaction.date <= end_date)
+        query = filter_query_by_date_range(query, start_date, end_date)
 
         result = await self._session.execute(
             query.options(
@@ -124,11 +117,7 @@ class TransactionRepository:
     ) -> Sequence[Transaction]:
         query = select(Transaction).where(Transaction.subject_id == subject.id)
 
-        if start_date is not None:
-            query = query.where(Transaction.date >= start_date)
-
-        if end_date is not None:
-            query = query.where(Transaction.date <= end_date)
+        query = filter_query_by_date_range(query, start_date, end_date)
 
         result = await self._session.execute(
             query.options(
