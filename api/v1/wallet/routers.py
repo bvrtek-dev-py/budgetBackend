@@ -110,7 +110,7 @@ async def create_wallet_transaction(
         )
         is False
     ):
-        raise PermissionDenied
+        raise PermissionDenied()
 
     return await transaction_service.create(
         request.name,

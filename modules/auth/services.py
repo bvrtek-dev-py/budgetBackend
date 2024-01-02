@@ -63,11 +63,11 @@ class TokenService:
             user_id = payload.get("user_id")
 
             if email is None or user_id is None:
-                raise InvalidCredentials
+                raise InvalidCredentials()
 
             return CurrentUserData(id=user_id, email=email)
         except JWTError as exc:
-            raise InvalidCredentials from exc
+            raise InvalidCredentials() from exc
 
     def get_expire_token_datetime(self) -> datetime:
         return datetime.utcnow() + timedelta(minutes=self.token_expire_minutes)

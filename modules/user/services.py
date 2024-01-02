@@ -27,13 +27,13 @@ class UserService:
         password2: str,
     ) -> User:
         if password1 != password2:
-            raise PasswordDoesNotMatch
+            raise PasswordDoesNotMatch()
 
         if await self._check_username_exists(username):
-            raise ObjectAlreadyExists
+            raise ObjectAlreadyExists()
 
         if await self._check_email_exists(email):
-            raise ObjectAlreadyExists
+            raise ObjectAlreadyExists()
 
         user = User(
             username=username,
@@ -51,7 +51,7 @@ class UserService:
         user = await self.get_by_id(user_id)
 
         if await self._check_username_exists(username, user_id):
-            raise ObjectAlreadyExists
+            raise ObjectAlreadyExists()
 
         user.username = username
         user.first_name = first_name
@@ -68,7 +68,7 @@ class UserService:
         user = await self._repository.get_by_id(user_id)
 
         if user is None:
-            raise ObjectDoesNotExist
+            raise ObjectDoesNotExist()
 
         return user
 
@@ -76,7 +76,7 @@ class UserService:
         user = await self._repository.get_by_email(email)
 
         if user is None:
-            raise ObjectDoesNotExist
+            raise ObjectDoesNotExist()
 
         return user
 
@@ -89,7 +89,7 @@ class UserService:
         if user is not None:
             return user
 
-        raise ObjectDoesNotExist
+        raise ObjectDoesNotExist()
 
     async def _check_username_exists(
         self, username: str, excluded_id: Optional[int] = None

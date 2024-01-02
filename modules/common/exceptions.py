@@ -1,16 +1,21 @@
-from fastapi import HTTPException
-from starlette import status
-
-ObjectDoesNotExist = HTTPException(
-    status_code=status.HTTP_404_NOT_FOUND, detail="Object does not exist"
-)
+from http import HTTPStatus
 
 
-ObjectAlreadyExists = HTTPException(
-    status_code=status.HTTP_409_CONFLICT, detail="Object already exists"
-)
+class BaseHttpException(Exception):
+    status_code = HTTPStatus.INTERNAL_SERVER_ERROR
+    detail = "Internal server error"
 
 
-PermissionDenied = HTTPException(
-    status_code=status.HTTP_403_FORBIDDEN, detail="Permission denied"
-)
+class ObjectDoesNotExist(BaseHttpException):
+    status_code = HTTPStatus.NOT_FOUND
+    detail = "Object does not exist"
+
+
+class ObjectAlreadyExists(BaseHttpException):
+    status_code = HTTPStatus.CONFLICT
+    detail = "Object already exists"
+
+
+class PermissionDenied(BaseHttpException):
+    status_code = HTTPStatus.FORBIDDEN
+    detail = "Permission denied"

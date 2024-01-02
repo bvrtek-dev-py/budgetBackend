@@ -1,7 +1,8 @@
-from fastapi import HTTPException
-from starlette import status
+from http import HTTPStatus
+
+from backend.modules.common.exceptions import BaseHttpException
 
 
-InvalidCredentials = HTTPException(
-    status_code=status.HTTP_404_NOT_FOUND, detail="Invalid login data"
-)
+class InvalidCredentials(BaseHttpException):
+    status_code = HTTPStatus.NOT_FOUND
+    detail = "Invalid login data"

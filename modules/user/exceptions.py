@@ -1,7 +1,8 @@
-from fastapi.exceptions import HTTPException
-from fastapi import status
+from http import HTTPStatus
+
+from backend.modules.common.exceptions import BaseHttpException
 
 
-PasswordDoesNotMatch = HTTPException(
-    status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Passwords does not match"
-)
+class PasswordDoesNotMatch(BaseHttpException):
+    status_code = HTTPStatus.CONFLICT
+    detail = "Passwords does not match"

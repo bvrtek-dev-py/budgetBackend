@@ -11,7 +11,7 @@ class SubjectService:
 
     async def create(self, name: str, user_id: int) -> Subject:
         if await self._check_subject_with_name_and_user_id_exists(name, user_id):
-            raise ObjectAlreadyExists
+            raise ObjectAlreadyExists()
 
         subject = Subject(name=name, user_id=user_id)
 
@@ -23,7 +23,7 @@ class SubjectService:
         if await self._check_subject_with_name_and_user_id_exists(
             name, subject.user_id, subject_id
         ):
-            raise ObjectAlreadyExists
+            raise ObjectAlreadyExists()
 
         subject.name = name
 
@@ -38,7 +38,7 @@ class SubjectService:
         subject = await self._repository.get_by_id(subject_id)
 
         if subject is None:
-            raise ObjectDoesNotExist
+            raise ObjectDoesNotExist()
 
         return subject
 
