@@ -92,7 +92,7 @@ class TransactionRepository:
             query.options(
                 selectinload(Transaction.user),
                 selectinload(Transaction.wallet),
-                selectinload(Transaction.wallet),
+                selectinload(Transaction.subject),
             )
         )
 
@@ -113,7 +113,7 @@ class TransactionRepository:
             query.options(
                 selectinload(Transaction.user),
                 selectinload(Transaction.wallet),
-                selectinload(Transaction.wallet),
+                selectinload(Transaction.subject),
             )
         )
 
