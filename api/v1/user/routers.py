@@ -10,7 +10,7 @@ from backend.api.v1.common.validators import validate_date_range
 from backend.api.v1.subject.responses import SubjectBaseResponse
 from backend.api.v1.transaction.responses import TransactionBaseResponse
 from backend.api.v1.user.requests import UserCreateRequest, UserUpdateRequest
-from backend.api.v1.user.responses import UserBaseResponse
+from backend.api.v1.user.responses import UserBaseResponse, UserBalanceResponse
 from backend.api.v1.wallet.responses import WalletGetResponse
 from backend.modules.auth.dependencies import get_current_user
 from backend.modules.auth.schemas import CurrentUserData
@@ -172,3 +172,18 @@ async def get_user_wallets(
 ):
     user = await user_service.get_by_id(current_user.id)
     return user.wallets
+
+
+@router.get(
+    "/me/balance",
+    responses={200: {"model": UserBalanceResponse}, 401: {"model": ErrorResponse}},
+    response_model=UserBalanceResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def get_user_balance(
+    current_user: Annotated[CurrentUserData, Depends(get_current_user)],
+    transaction_service: Annotated[
+        TransactionService, Depends(get_transaction_service)
+    ],
+):
+    return await transaction_service.get_user_balance(current_user.id)

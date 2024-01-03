@@ -143,3 +143,15 @@ class TransactionRepository:
         )
 
         return result.scalar() or Decimal(0)
+
+    async def get_sum_value_by_type_and_user_id(
+        self, user_id, transaction_type: TransactionType
+    ) -> Decimal:
+        result: Any = await self._session.execute(
+            select(func.sum(Transaction.value)).filter(
+                (Transaction.type == transaction_type)
+                & (Transaction.user_id == user_id)
+            )
+        )
+
+        return result.scalar() or Decimal(0)

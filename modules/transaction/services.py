@@ -138,3 +138,13 @@ class TransactionService:
         )
 
         return {"id": wallet.id, "balance": incomes - expenses}
+
+    async def get_user_balance(self, user_id: int) -> Dict[str, Any]:
+        incomes = await self._repository.get_sum_value_by_type_and_user_id(
+            user_id, TransactionType.INCOME
+        )
+        expenses = await self._repository.get_sum_value_by_type_and_user_id(
+            user_id, TransactionType.EXPENSE
+        )
+
+        return {"id": user_id, "balance": incomes - expenses}

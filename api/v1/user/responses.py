@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from pydantic import BaseModel
 
 
@@ -11,3 +13,11 @@ class UserBaseResponse(BaseModel):
     class ConfigDict:
         frozen = True
         orm_mode = True
+
+
+class UserBalanceResponse(BaseModel):
+    id: int
+    balance: Decimal
+
+    class ConfigDict:
+        frozen = True
