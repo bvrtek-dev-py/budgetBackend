@@ -51,7 +51,9 @@ class TransactionStatisticsService:
             )
 
             month_key = f"{start_date.year}-{start_date.month}"
-            self._update_statistics(statistics["monthly"], month_key, income, expense)  # type: ignore
+            self._update_statistics(
+                statistics["monthly"], month_key, income, expense  # type: ignore
+            )
             self._update_total(statistics["total"], income, expense)  # type: ignore
             # Types are generally correct, ignored because mypy doesn't support selecting from union
 
@@ -75,7 +77,9 @@ class TransactionStatisticsService:
             )
 
             month_key = f"{start_date.year}-{start_date.month}"
-            self._update_statistics(statistics["monthly"], month_key, income, expense)  # type: ignore
+            self._update_statistics(
+                statistics["monthly"], month_key, income, expense  # type: ignore
+            )
             self._update_total(statistics["total"], income, expense)  # type: ignore
             # Types are generally correct, ignored because mypy doesn't support selecting from union
 
