@@ -8,7 +8,11 @@ from backend.modules.auth.dependencies import get_current_user
 from backend.modules.auth.schemas import CurrentUserData
 from backend.modules.common.exceptions import PermissionDenied
 from backend.modules.transaction.repositories import TransactionRepository
-from backend.modules.transaction.services import TransactionService
+from backend.modules.transaction.services.crud_service import TransactionService
+from backend.modules.transaction.services.query_service import TransactionQueryService
+from backend.modules.transaction.services.statistics_service import (
+    TransactionStatisticsService,
+)
 
 
 def get_transaction_repository(
@@ -23,6 +27,22 @@ def get_transaction_service(
     ]
 ) -> TransactionService:
     return TransactionService(transaction_repository)
+
+
+def get_transaction_query_service(
+    transaction_repository: Annotated[
+        TransactionRepository, Depends(get_transaction_repository)
+    ]
+) -> TransactionQueryService:
+    return TransactionQueryService(transaction_repository)
+
+
+def get_transaction_statistics_service(
+    transaction_repository: Annotated[
+        TransactionRepository, Depends(get_transaction_repository)
+    ]
+) -> TransactionStatisticsService:
+    return TransactionStatisticsService(transaction_repository)
 
 
 def _get_transaction_id(transaction_id: int = Path(...)) -> int:

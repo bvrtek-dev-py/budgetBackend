@@ -1,14 +1,11 @@
 from datetime import date
 from decimal import Decimal
-from typing import Sequence, Optional, Dict, Any
+from typing import Sequence, Optional
 
 from backend.modules.common.exceptions import ObjectDoesNotExist, ObjectAlreadyExists
-from backend.modules.subject.models import Subject
 from backend.modules.transaction.enums import TransactionType
 from backend.modules.transaction.models import Transaction
 from backend.modules.transaction.repositories import TransactionRepository
-from backend.modules.user.models import User
-from backend.modules.wallet.models import Wallet
 
 
 class TransactionService:
@@ -100,51 +97,3 @@ class TransactionService:
             return False
 
         return True
-
-    async def get_user_transactions(
-        self,
-        user: User,
-        start_date: Optional[date] = None,
-        end_date: Optional[date] = None,
-    ) -> Sequence[Transaction]:
-        return await self._repository.get_user_transactions(user, start_date, end_date)
-
-    async def get_wallet_transactions(
-        self,
-        wallet: Wallet,
-        start_date: Optional[date] = None,
-        end_date: Optional[date] = None,
-    ) -> Sequence[Transaction]:
-        return await self._repository.get_wallet_transactions(
-            wallet, start_date, end_date
-        )
-
-    async def get_subject_transactions(
-        self,
-        subject: Subject,
-        start_date: Optional[date] = None,
-        end_date: Optional[date] = None,
-    ) -> Sequence[Transaction]:
-        return await self._repository.get_subject_transactions(
-            subject, start_date, end_date
-        )
-
-    async def get_wallet_balance(self, wallet: Wallet) -> Dict[str, Any]:
-        incomes = await self._repository.get_sum_value_by_type_and_wallet_id(
-            wallet.id, TransactionType.INCOME
-        )
-        expenses = await self._repository.get_sum_value_by_type_and_wallet_id(
-            wallet.id, TransactionType.EXPENSE
-        )
-
-        return {"id": wallet.id, "balance": incomes - expenses}
-
-    async def get_user_balance(self, user_id: int) -> Dict[str, Any]:
-        incomes = await self._repository.get_sum_value_by_type_and_user_id(
-            user_id, TransactionType.INCOME
-        )
-        expenses = await self._repository.get_sum_value_by_type_and_user_id(
-            user_id, TransactionType.EXPENSE
-        )
-
-        return {"id": user_id, "balance": incomes - expenses}
