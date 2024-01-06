@@ -1,6 +1,6 @@
 from datetime import datetime
 from decimal import Decimal
-from typing import Dict, Union
+from typing import Dict
 
 from dateutil.relativedelta import relativedelta
 

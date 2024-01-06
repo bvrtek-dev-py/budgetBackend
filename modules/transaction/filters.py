@@ -1,5 +1,4 @@
 from datetime import date
-from decimal import Decimal
 from typing import Optional
 
 from sqlalchemy import Select
