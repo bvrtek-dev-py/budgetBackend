@@ -9,7 +9,13 @@ class TransactionStatisticResponse(BaseModel):
     income: Decimal
     expense: Decimal
 
+    class ConfigDict:
+        frozen = True
+
 
 class TransactionStatisticsResponse(BaseModel):
     total: TransactionStatisticResponse
     monthly: Dict[str, TransactionStatisticResponse]
+
+    class ConfigDict:
+        frozen = True
