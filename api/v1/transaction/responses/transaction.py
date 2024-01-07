@@ -17,3 +17,4 @@ class TransactionBaseResponse(BaseModel):
 
     class ConfigDict:
         frozen = True
+        orm_mode = True

@@ -40,10 +40,12 @@ async def create_user(
     "/{user_id}",
     responses={
         200: {"model": UserBaseResponse},
+        401: {"model": ErrorResponse},
         404: {"model": ErrorResponse},
         409: {"model": ErrorResponse},
     },
     response_model=UserBaseResponse,
+    status_code=status.HTTP_200_OK,
 )
 async def update_user(
     user_id: Annotated[int, Path(gt=0)],
@@ -59,12 +61,15 @@ async def update_user(
     "/{user_id}",
     responses={
         200: {"model": UserBaseResponse},
+        401: {"model": ErrorResponse},
         404: {"model": ErrorResponse},
     },
     response_model=UserBaseResponse,
+    status_code=status.HTTP_200_OK,
 )
 async def get_user(
-    user_id: int, user_service: Annotated[UserService, Depends(get_user_service)]
+    user_id: Annotated[int, Path(gt=0)],
+    user_service: Annotated[UserService, Depends(get_user_service)],
 ):
     return await user_service.get_by_id(user_id)
 
@@ -78,11 +83,13 @@ async def get_users(user_service: Annotated[UserService, Depends(get_user_servic
     "/{user_id}",
     responses={
         204: {},
+        401: {"model": ErrorResponse},
         404: {"model": ErrorResponse},
     },
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_user(
-    user_id: int, user_service: Annotated[UserService, Depends(get_user_service)]
+    user_id: Annotated[int, Path(gt=0)],
+    user_service: Annotated[UserService, Depends(get_user_service)],
 ):
     return await user_service.delete(user_id)

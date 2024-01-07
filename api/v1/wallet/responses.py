@@ -1,5 +1,4 @@
 from datetime import datetime
-from decimal import Decimal
 
 from pydantic import BaseModel, Field
 
@@ -10,6 +9,10 @@ class WalletBaseResponse(BaseModel):
     description: str = Field(min_length=3, max_length=2000)
     user_id: int
 
+    class ConfigDict:
+        frozen = True
+        orm_mode = True
+
 
 class WalletGetResponse(WalletBaseResponse):
     created_at: datetime
@@ -18,11 +21,3 @@ class WalletGetResponse(WalletBaseResponse):
     class ConfigDict:
         frozen = True
         orm_mode = True
-
-
-class WalletBalanceResponse(BaseModel):
-    id: int
-    balance: Decimal
-
-    class ConfigDict:
-        frozen = True

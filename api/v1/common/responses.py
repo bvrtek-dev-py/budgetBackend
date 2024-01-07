@@ -6,6 +6,3 @@ class ErrorResponse(BaseModel):
 
     class ConfigDict:
         frozen = True
-        schema_extra = {
-            "example": {"detail": "Error Response"},
-        }
