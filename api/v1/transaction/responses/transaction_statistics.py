@@ -11,6 +11,7 @@ class TransactionStatisticResponse(BaseModel):
 
     class ConfigDict:
         frozen = True
+        orm_mode = True
 
 
 class TransactionStatisticsResponse(BaseModel):
@@ -19,3 +20,4 @@ class TransactionStatisticsResponse(BaseModel):
 
     class ConfigDict:
         frozen = True
+        orm_mode = True

@@ -11,10 +11,15 @@ class CategoryBaseResponse(BaseModel):
     transaction_type: TransactionType
     user_id: int
 
+    class ConfigDict:
+        frozen = True
+        orm_mode = True
+
 
 class CategoryCreateResponse(CategoryBaseResponse):
     class ConfigDict:
         frozen = True
+        orm_mode = True
 
 
 class CategoryGetResponse(CategoryBaseResponse):
@@ -23,3 +28,4 @@ class CategoryGetResponse(CategoryBaseResponse):
 
     class ConfigDict:
         frozen = True
+        orm_mode = True

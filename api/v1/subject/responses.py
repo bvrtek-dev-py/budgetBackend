@@ -9,6 +9,7 @@ class SubjectBaseResponse(BaseModel):
 
     class ConfigDict:
         frozen = True
+        orm_mode = True
 
 
 class SubjectGetResponse(SubjectBaseResponse):
@@ -18,3 +19,4 @@ class SubjectGetResponse(SubjectBaseResponse):
 
     class ConfigDict:
         frozen = True
+        orm_mode = True
