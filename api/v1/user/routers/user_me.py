@@ -19,6 +19,7 @@ from backend.modules.auth.dependencies import get_current_user
 from backend.modules.auth.schemas import CurrentUserData
 from backend.modules.category.dependencies import get_category_service
 from backend.modules.category.services import CategoryService
+from backend.modules.common.utils import get_first_day_of_month
 from backend.modules.transaction.dependencies import (
     get_transaction_statistics_service,
     get_transaction_query_service,
@@ -143,5 +144,5 @@ async def get_user_statistics(
     ],
 ):
     return await transaction_statistics_service.get_statistics_for_user(
-        current_user.id, datetime.now().replace(day=1) - relativedelta(years=1)
+        current_user.id, get_first_day_of_month(datetime.now()) - relativedelta(years=1)
     )

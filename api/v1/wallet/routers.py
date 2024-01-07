@@ -23,6 +23,7 @@ from backend.api.v1.wallet.responses import (
 from backend.modules.auth.dependencies import get_current_user
 from backend.modules.auth.schemas import CurrentUserData
 from backend.modules.common.exceptions import PermissionDenied
+from backend.modules.common.utils import get_first_day_of_month
 from backend.modules.subject.dependencies import get_subject_validator
 from backend.modules.subject.validators import SubjectValidator
 from backend.modules.transaction.dependencies import (
@@ -181,7 +182,7 @@ async def get_wallet_statistics(
     ],
 ):
     return await statistics_service.get_statistics_for_wallet(
-        wallet_id, datetime.now().replace(day=1) - relativedelta(years=1)
+        wallet_id, get_first_day_of_month(datetime.now()) - relativedelta(years=1)
     )
 
 
