@@ -10,7 +10,7 @@ from backend.api.v1.subject.requests import (
     SubjectRequest,
 )
 from backend.api.v1.subject.responses import SubjectBaseResponse, SubjectGetResponse
-from backend.api.v1.transaction.responses import TransactionBaseResponse
+from backend.api.v1.transaction.responses.transaction import TransactionBaseResponse
 from backend.modules.auth.dependencies import get_current_user
 from backend.modules.auth.schemas import CurrentUserData
 from backend.modules.subject.dependencies import (
@@ -18,8 +18,10 @@ from backend.modules.subject.dependencies import (
     subject_owner_permission,
 )
 from backend.modules.subject.services import SubjectService
-from backend.modules.transaction.dependencies import get_transaction_service
-from backend.modules.transaction.services import TransactionService
+from backend.modules.transaction.dependencies import (
+    get_transaction_query_service,
+)
+from backend.modules.transaction.services.query_service import TransactionQueryService
 
 router = APIRouter(prefix="/api/v1/subjects", tags=["APIv1 Subject"])
 
@@ -101,7 +103,7 @@ async def delete_subject(
 
 
 @router.get(
-    "/me/transactions",
+    "/{subject_id}/transactions",
     responses={
         200: {"model": List[TransactionBaseResponse]},
         401: {"model": ErrorResponse},
@@ -111,9 +113,10 @@ async def delete_subject(
     dependencies=[Depends(subject_owner_permission)],
 )
 async def get_subject_transactions(
-    transaction_id: Annotated[int, Path(gt=0)],
-    transaction_service: Annotated[
-        TransactionService, Depends(get_transaction_service)
+    subject_id: Annotated[int, Path(gt=0)],
+    subject_service: Annotated[SubjectService, Depends(get_subject_service)],
+    transaction_query_service: Annotated[
+        TransactionQueryService, Depends(get_transaction_query_service)
     ],
     start_date: Optional[date] = None,
     end_date: Optional[date] = None,
@@ -121,8 +124,8 @@ async def get_subject_transactions(
     if start_date is not None and end_date is not None:
         validate_date_range(start_date, end_date)
 
-    subject = await transaction_service.get_by_id(transaction_id)
+    subject = await subject_service.get_by_id(subject_id)
 
-    return await transaction_service.get_subject_transactions(
+    return await transaction_query_service.get_subject_transactions(
         subject, start_date, end_date
     )

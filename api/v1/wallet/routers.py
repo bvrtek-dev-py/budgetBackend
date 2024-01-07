@@ -1,12 +1,17 @@
-from datetime import date
+from datetime import date, datetime
 from typing import List, Annotated, Optional
 
+from dateutil.relativedelta import relativedelta
 from fastapi import APIRouter, Depends, Path, status
 
 from backend.api.v1.common.responses import ErrorResponse
 from backend.api.v1.common.validators import validate_date_range
 from backend.api.v1.transaction.requests import TransactionCreateRequest
-from backend.api.v1.transaction.responses import TransactionBaseResponse
+from backend.api.v1.transaction.responses.transaction import TransactionBaseResponse
+from backend.api.v1.transaction.responses.transaction_statistics import (
+    TransactionStatisticsResponse,
+    TransactionStatisticResponse,
+)
 from backend.api.v1.wallet.requests import (
     WalletUpdateRequest,
     WalletCreateRequest,
@@ -14,15 +19,23 @@ from backend.api.v1.wallet.requests import (
 from backend.api.v1.wallet.responses import (
     WalletBaseResponse,
     WalletGetResponse,
-    WalletBalanceResponse,
 )
 from backend.modules.auth.dependencies import get_current_user
 from backend.modules.auth.schemas import CurrentUserData
 from backend.modules.common.exceptions import PermissionDenied
+from backend.modules.common.utils import get_first_day_of_month
 from backend.modules.subject.dependencies import get_subject_validator
 from backend.modules.subject.validators import SubjectValidator
-from backend.modules.transaction.dependencies import get_transaction_service
-from backend.modules.transaction.services import TransactionService
+from backend.modules.transaction.dependencies import (
+    get_transaction_service,
+    get_transaction_query_service,
+    get_transaction_statistics_service,
+)
+from backend.modules.transaction.services.crud_service import TransactionService
+from backend.modules.transaction.services.query_service import TransactionQueryService
+from backend.modules.transaction.services.statistics_service import (
+    TransactionStatisticsService,
+)
 from backend.modules.wallet.dependencies import (
     get_wallet_service,
     wallet_owner_permission,
@@ -134,8 +147,8 @@ async def create_wallet_transaction(
 async def get_wallet_transactions(
     wallet_id: Annotated[int, Path(gt=0)],
     wallet_service: Annotated[WalletService, Depends(get_wallet_service)],
-    transactions_service: Annotated[
-        TransactionService, Depends(get_transaction_service)
+    transaction_query_service: Annotated[
+        TransactionQueryService, Depends(get_transaction_query_service)
     ],
     start_date: Optional[date] = None,
     end_date: Optional[date] = None,
@@ -145,28 +158,51 @@ async def get_wallet_transactions(
 
     wallet = await wallet_service.get_by_id(wallet_id)
 
-    return await transactions_service.get_wallet_transactions(
+    return await transaction_query_service.get_wallet_transactions(
         wallet, start_date, end_date
+    )
+
+
+@router.get(
+    "/{wallet_id}/statistics",
+    responses={
+        200: {"model": TransactionStatisticsResponse},
+        401: {"model": ErrorResponse},
+        403: {"model": ErrorResponse},
+        404: {"model": ErrorResponse},
+    },
+    response_model=TransactionStatisticsResponse,
+    status_code=status.HTTP_200_OK,
+    dependencies=[Depends(wallet_owner_permission)],
+)
+async def get_wallet_statistics(
+    wallet_id: Annotated[int, Path(gt=0)],
+    statistics_service: Annotated[
+        TransactionStatisticsService, Depends(get_transaction_statistics_service)
+    ],
+):
+    return await statistics_service.get_statistics_for_wallet(
+        wallet_id, get_first_day_of_month(datetime.now()) - relativedelta(years=1)
     )
 
 
 @router.get(
     "/{wallet_id}/balance",
     responses={
-        200: {"model": WalletBalanceResponse},
+        200: {"model": TransactionStatisticResponse},
         401: {"model": ErrorResponse},
         403: {"model": ErrorResponse},
         404: {"model": ErrorResponse},
     },
-    response_model=WalletBalanceResponse,
+    response_model=TransactionStatisticResponse,
     dependencies=[Depends(wallet_owner_permission)],
 )
 async def get_wallet_balance(
     wallet_id: Annotated[int, Path(gt=0)],
     wallet_service: Annotated[WalletService, Depends(get_wallet_service)],
-    transactions_service: Annotated[
-        TransactionService, Depends(get_transaction_service)
+    transaction_statistics_service: Annotated[
+        TransactionStatisticsService, Depends(get_transaction_statistics_service)
     ],
 ):
     wallet = await wallet_service.get_by_id(wallet_id)
-    return await transactions_service.get_wallet_balance(wallet)
+    return await transaction_statistics_service.get_wallet_balance(wallet)

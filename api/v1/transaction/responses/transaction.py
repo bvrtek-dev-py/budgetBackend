@@ -14,3 +14,6 @@ class TransactionBaseResponse(BaseModel):
     date: date_type
     created_at: datetime
     updated_at: datetime
+
+    class ConfigDict:
+        frozen = True

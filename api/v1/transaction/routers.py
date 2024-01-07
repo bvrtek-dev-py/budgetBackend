@@ -7,7 +7,7 @@ from backend.api.v1.common.responses import ErrorResponse
 from backend.api.v1.transaction.requests import (
     TransactionUpdateRequest,
 )
-from backend.api.v1.transaction.responses import TransactionBaseResponse
+from backend.api.v1.transaction.responses.transaction import TransactionBaseResponse
 from backend.modules.auth.dependencies import get_current_user
 from backend.modules.auth.schemas import CurrentUserData
 from backend.modules.common.exceptions import PermissionDenied
@@ -17,7 +17,7 @@ from backend.modules.transaction.dependencies import (
     get_transaction_service,
     transaction_owner_permission,
 )
-from backend.modules.transaction.services import TransactionService
+from backend.modules.transaction.services.crud_service import TransactionService
 
 router = APIRouter(prefix="/api/v1/transactions", tags=["APIv1 Transaction"])
 

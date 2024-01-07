@@ -7,10 +7,10 @@ from backend.modules.transaction.models import Transaction
 
 
 def filter_query_by_date_range(
-    query: Select[tuple[Transaction]],
+    query: Select,
     start_date: Optional[date] = None,
     end_date: Optional[date] = None,
-) -> Select[tuple[Transaction]]:
+) -> Select:
     if start_date is not None:
         query = query.where(Transaction.date >= start_date)
 
