@@ -1,14 +1,16 @@
+from typing import Coroutine, Any
+
 import pytest
 from httpx import AsyncClient
 
-from backend.tests.conftest import login_user
 from backend.tests.database import BASE_CATEGORY_ID
 
 
 @pytest.mark.asyncio
-async def test_update_category(async_client: AsyncClient, test_user: dict[str, str]):
+async def test_update_category(
+    async_client: AsyncClient, access_token: Coroutine[Any, Any, str]
+):
     # Given
-    token = await login_user(async_client, test_user)
     category_id = BASE_CATEGORY_ID
     data = {
         "name": "new category",
@@ -18,7 +20,7 @@ async def test_update_category(async_client: AsyncClient, test_user: dict[str, s
     response = await async_client.put(
         f"/api/v1/categories/{category_id}",
         json=data,
-        headers={"Authorization": f"Bearer {token}"},
+        headers={"Authorization": f"Bearer {await access_token}"},
     )
 
     # Then
@@ -28,10 +30,9 @@ async def test_update_category(async_client: AsyncClient, test_user: dict[str, s
 
 @pytest.mark.asyncio
 async def test_update_category_owned_name_exists(
-    async_client: AsyncClient, test_user: dict[str, str]
+    async_client: AsyncClient, access_token: Coroutine[Any, Any, str]
 ):
     # Given
-    token = await login_user(async_client, test_user)
     category_id = BASE_CATEGORY_ID
     data = {
         "name": "Category 3",
@@ -41,7 +42,7 @@ async def test_update_category_owned_name_exists(
     response = await async_client.put(
         f"/api/v1/categories/{category_id}",
         json=data,
-        headers={"Authorization": f"Bearer {token}"},
+        headers={"Authorization": f"Bearer {await access_token}"},
     )
 
     # Then
@@ -50,10 +51,9 @@ async def test_update_category_owned_name_exists(
 
 @pytest.mark.asyncio
 async def test_update_category_not_owned_name_exists(
-    async_client: AsyncClient, test_user: dict[str, str]
+    async_client: AsyncClient, access_token: Coroutine[Any, Any, str]
 ):
     # Given
-    token = await login_user(async_client, test_user)
     category_id = BASE_CATEGORY_ID
     data = {
         "name": "Category 2",
@@ -63,7 +63,7 @@ async def test_update_category_not_owned_name_exists(
     response = await async_client.put(
         f"/api/v1/categories/{category_id}",
         json=data,
-        headers={"Authorization": f"Bearer {token}"},
+        headers={"Authorization": f"Bearer {await access_token}"},
     )
 
     # Then
@@ -91,10 +91,9 @@ async def test_update_category_not_authenticated(async_client: AsyncClient):
 
 @pytest.mark.asyncio
 async def test_update_category_not_owned(
-    async_client: AsyncClient, test_user: dict[str, str]
+    async_client: AsyncClient, access_token: Coroutine[Any, Any, str]
 ):
     # Given
-    token = await login_user(async_client, test_user)
     category_id = 2
     data = {
         "name": "Category 22",
@@ -104,7 +103,7 @@ async def test_update_category_not_owned(
     response = await async_client.put(
         f"/api/v1/categories/{category_id}",
         json=data,
-        headers={"Authorization": f"Bearer {token}"},
+        headers={"Authorization": f"Bearer {await access_token}"},
     )
 
     # Then

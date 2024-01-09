@@ -1,21 +1,22 @@
-from typing import Dict
+from typing import Coroutine, Any
 
 import pytest
 from httpx import AsyncClient
 
-from backend.tests.conftest import login_user
 from backend.tests.database import BASE_WALLET_ID
 
 
 @pytest.mark.asyncio
-async def test_delete_wallet(async_client: AsyncClient, test_user: Dict[str, str]):
+async def test_delete_wallet(
+    async_client: AsyncClient, access_token: Coroutine[Any, Any, str]
+):
     # Given
-    token = await login_user(async_client, test_user)
     wallet_id = BASE_WALLET_ID
 
     # When
     response = await async_client.delete(
-        f"/api/v1/wallets/{wallet_id}", headers={"Authorization": f"Bearer {token}"}
+        f"/api/v1/wallets/{wallet_id}",
+        headers={"Authorization": f"Bearer {await access_token}"},
     )
 
     # Then
@@ -24,15 +25,15 @@ async def test_delete_wallet(async_client: AsyncClient, test_user: Dict[str, str
 
 @pytest.mark.asyncio
 async def test_delete_wallet_not_owned(
-    async_client: AsyncClient, test_user: Dict[str, str]
+    async_client: AsyncClient, access_token: Coroutine[Any, Any, str]
 ):
     # Given
-    token = await login_user(async_client, test_user)
     wallet_id = 2
 
     # When
     response = await async_client.delete(
-        f"/api/v1/wallets/{wallet_id}", headers={"Authorization": f"Bearer {token}"}
+        f"/api/v1/wallets/{wallet_id}",
+        headers={"Authorization": f"Bearer {await access_token}"},
     )
 
     # Then
@@ -41,15 +42,15 @@ async def test_delete_wallet_not_owned(
 
 @pytest.mark.asyncio
 async def test_delete_wallet_does_not_exist(
-    async_client: AsyncClient, test_user: Dict[str, str]
+    async_client: AsyncClient, access_token: Coroutine[Any, Any, str]
 ):
     # Given
-    token = await login_user(async_client, test_user)
     wallet_id = 3
 
     # When
     response = await async_client.delete(
-        f"/api/v1/wallets/{wallet_id}", headers={"Authorization": f"Bearer {token}"}
+        f"/api/v1/wallets/{wallet_id}",
+        headers={"Authorization": f"Bearer {await access_token}"},
     )
 
     # Then

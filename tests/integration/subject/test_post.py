@@ -1,15 +1,14 @@
-from typing import Dict
+from typing import Coroutine, Any
 
 import pytest
 from httpx import AsyncClient
 
-from backend.tests.conftest import login_user
-
 
 @pytest.mark.asyncio
-async def test_create_subject(async_client: AsyncClient, test_user: Dict[str, str]):
+async def test_create_subject(
+    async_client: AsyncClient, access_token: Coroutine[Any, Any, str]
+):
     # Given
-    access_token = await login_user(async_client, test_user)
     data = {
         "name": "name",
     }
@@ -18,7 +17,7 @@ async def test_create_subject(async_client: AsyncClient, test_user: Dict[str, st
     response = await async_client.post(
         "/api/v1/subjects/",
         json=data,
-        headers={"Authorization": f"Bearer {access_token}"},
+        headers={"Authorization": f"Bearer {await access_token}"},
     )
 
     # Then
@@ -42,10 +41,9 @@ async def test_create_subject_not_authenticated(async_client: AsyncClient):
 
 @pytest.mark.asyncio
 async def test_create_subject_conflict(
-    async_client: AsyncClient, test_user: Dict[str, str]
+    async_client: AsyncClient, access_token: Coroutine[Any, Any, str]
 ):
     # Given
-    access_token = await login_user(async_client, test_user)
     data = {
         "name": "Subject 1",
     }
@@ -54,7 +52,7 @@ async def test_create_subject_conflict(
     response = await async_client.post(
         "/api/v1/subjects/",
         json=data,
-        headers={"Authorization": f"Bearer {access_token}"},
+        headers={"Authorization": f"Bearer {await access_token}"},
     )
 
     # Then
@@ -63,10 +61,9 @@ async def test_create_subject_conflict(
 
 @pytest.mark.asyncio
 async def test_create_subject_duplicated_name_but_not_owned(
-    async_client: AsyncClient, test_user: Dict[str, str]
+    async_client: AsyncClient, access_token: Coroutine[Any, Any, str]
 ):
     # Given
-    access_token = await login_user(async_client, test_user)
     data = {
         "name": "Subject 2",
     }
@@ -75,7 +72,7 @@ async def test_create_subject_duplicated_name_but_not_owned(
     response = await async_client.post(
         "/api/v1/subjects/",
         json=data,
-        headers={"Authorization": f"Bearer {access_token}"},
+        headers={"Authorization": f"Bearer {await access_token}"},
     )
 
     # Then

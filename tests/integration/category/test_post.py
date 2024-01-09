@@ -1,14 +1,16 @@
+from typing import Coroutine, Any
+
 import pytest
 from httpx import AsyncClient
 
-from backend.tests.conftest import login_user
 from backend.tests.database import BASE_USER_ID, BASE_CATEGORY_DATA
 
 
 @pytest.mark.asyncio
-async def test_create_category(async_client: AsyncClient, test_user: dict[str, str]):
+async def test_create_category(
+    async_client: AsyncClient, access_token: Coroutine[Any, Any, str]
+):
     # Given
-    token = await login_user(async_client, test_user)
     data = {
         "name": "new category",
         "transaction_type": "income",
@@ -16,7 +18,9 @@ async def test_create_category(async_client: AsyncClient, test_user: dict[str, s
 
     # When
     response = await async_client.post(
-        "/api/v1/categories/", json=data, headers={"Authorization": f"Bearer {token}"}
+        "/api/v1/categories/",
+        json=data,
+        headers={"Authorization": f"Bearer {await access_token}"},
     )
 
     # Then
@@ -27,10 +31,9 @@ async def test_create_category(async_client: AsyncClient, test_user: dict[str, s
 
 @pytest.mark.asyncio
 async def test_create_category_name_exists_same_user(
-    async_client: AsyncClient, test_user: dict[str, str]
+    async_client: AsyncClient, access_token: Coroutine[Any, Any, str]
 ):
     # Given
-    token = await login_user(async_client, test_user)
     data = {
         "name": BASE_CATEGORY_DATA["name"],
         "transaction_type": "income",
@@ -38,7 +41,9 @@ async def test_create_category_name_exists_same_user(
 
     # When
     response = await async_client.post(
-        "/api/v1/categories/", json=data, headers={"Authorization": f"Bearer {token}"}
+        "/api/v1/categories/",
+        json=data,
+        headers={"Authorization": f"Bearer {await access_token}"},
     )
 
     # Then
@@ -47,10 +52,9 @@ async def test_create_category_name_exists_same_user(
 
 @pytest.mark.asyncio
 async def test_create_category_name_exists_for_different_user(
-    async_client: AsyncClient, test_user: dict[str, str]
+    async_client: AsyncClient, access_token: Coroutine[Any, Any, str]
 ):
     # Given
-    token = await login_user(async_client, test_user)
     data = {
         "name": "Category 2",
         "transaction_type": "income",
@@ -58,7 +62,9 @@ async def test_create_category_name_exists_for_different_user(
 
     # When
     response = await async_client.post(
-        "/api/v1/categories/", json=data, headers={"Authorization": f"Bearer {token}"}
+        "/api/v1/categories/",
+        json=data,
+        headers={"Authorization": f"Bearer {await access_token}"},
     )
 
     # Then

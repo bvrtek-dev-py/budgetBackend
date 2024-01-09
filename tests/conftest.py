@@ -1,5 +1,5 @@
 # pylint: disable=W0621,W0108
-from typing import Dict
+from typing import Dict, Any
 
 import pytest
 from httpx import AsyncClient
@@ -32,6 +32,7 @@ def test_user() -> Dict[str, str]:
     return {"username": users[0].username, "password": "1234"}
 
 
-async def login_user(async_client: AsyncClient, test_user: Dict[str, str]):
+@pytest.fixture
+async def access_token(async_client: AsyncClient, test_user: Dict[str, str]) -> Any:
     response = await async_client.post("/api/v1/auth/login", data=test_user)
     return response.json()["access_token"]

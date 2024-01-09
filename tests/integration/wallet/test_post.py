@@ -1,14 +1,16 @@
+from typing import Coroutine, Any
+
 import pytest
 from httpx import AsyncClient
 
-from backend.tests.conftest import login_user
 from backend.tests.database import BASE_USER_ID
 
 
 @pytest.mark.asyncio
-async def test_create_wallet(async_client: AsyncClient, test_user: dict[str, str]):
+async def test_create_wallet(
+    async_client: AsyncClient, access_token: Coroutine[Any, Any, str]
+):
     # Given
-    token = await login_user(async_client, test_user)
     data = {
         "name": "Wallet",
         "description": "opis",
@@ -16,7 +18,9 @@ async def test_create_wallet(async_client: AsyncClient, test_user: dict[str, str
 
     # When
     response = await async_client.post(
-        "/api/v1/wallets", json=data, headers={"Authorization": f"Bearer {token}"}
+        "/api/v1/wallets",
+        json=data,
+        headers={"Authorization": f"Bearer {await access_token}"},
     )
 
     # Then
@@ -27,10 +31,9 @@ async def test_create_wallet(async_client: AsyncClient, test_user: dict[str, str
 
 @pytest.mark.asyncio
 async def test_create_wallet_with_duplicated_name(
-    async_client: AsyncClient, test_user: dict[str, str]
+    async_client: AsyncClient, access_token: Coroutine[Any, Any, str]
 ):
     # Given
-    token = await login_user(async_client, test_user)
     data = {
         "name": "Konto",
         "description": "opis",
@@ -38,7 +41,9 @@ async def test_create_wallet_with_duplicated_name(
 
     # When
     response = await async_client.post(
-        "/api/v1/wallets", json=data, headers={"Authorization": f"Bearer {token}"}
+        "/api/v1/wallets",
+        json=data,
+        headers={"Authorization": f"Bearer {await access_token}"},
     )
 
     # Then
