@@ -33,6 +33,6 @@ def test_user() -> Dict[str, str]:
 
 
 @pytest.fixture
-async def access_token(async_client: AsyncClient, test_user: Dict[str, str]) -> Any:
+async def access_token(async_client: AsyncClient, test_user: Dict[str, str]) -> str:
     response = await async_client.post("/api/v1/auth/login", data=test_user)
     return response.json()["access_token"]
