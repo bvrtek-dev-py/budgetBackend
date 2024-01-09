@@ -1,11 +1,11 @@
 # pylint: disable=W0611,W0108,W0621
-from typing import Dict
+from typing import Coroutine, Any
 
 import pytest
 from httpx import AsyncClient
 
 from backend.modules.transaction.enums import TransactionType
-from backend.tests.conftest import login_user
+from backend.tests.conftest import access_token
 from backend.tests.database import BASE_USER_ID, BASE_USER_DATA, BASE_WALLET_DATA
 
 
@@ -46,13 +46,13 @@ async def test_get_user_by_id_does_not_exist(async_client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_get_categories(async_client: AsyncClient, test_user: dict[str, str]):
-    # Given
-    token = await login_user(async_client, test_user)
-
+async def test_get_categories(
+    async_client: AsyncClient, access_token: Coroutine[Any, Any, str]
+):
     # When
     response = await async_client.get(
-        "/api/v1/users/me/categories/", headers={"Authorization": f"Bearer {token}"}
+        "/api/v1/users/me/categories/",
+        headers={"Authorization": f"Bearer {await access_token}"},
     )
 
     # Then
@@ -62,16 +62,15 @@ async def test_get_categories(async_client: AsyncClient, test_user: dict[str, st
 
 @pytest.mark.asyncio
 async def test_get_categories_expense_type(
-    async_client: AsyncClient, test_user: dict[str, str]
+    async_client: AsyncClient, access_token: Coroutine[Any, Any, str]
 ):
     # Given
-    token = await login_user(async_client, test_user)
     query = f"?transaction_type={TransactionType.EXPENSE.value}"
 
     # When
     response = await async_client.get(
         f"/api/v1/users/me/categories/{query}",
-        headers={"Authorization": f"Bearer {token}"},
+        headers={"Authorization": f"Bearer {await access_token}"},
     )
 
     # Then
@@ -81,16 +80,15 @@ async def test_get_categories_expense_type(
 
 @pytest.mark.asyncio
 async def test_get_categories_income_type(
-    async_client: AsyncClient, test_user: dict[str, str]
+    async_client: AsyncClient, access_token: Coroutine[Any, Any, str]
 ):
     # Given
-    token = await login_user(async_client, test_user)
     query = f"?transaction_type={TransactionType.INCOME.value}"
 
     # When
     response = await async_client.get(
         f"/api/v1/users/me/categories/{query}",
-        headers={"Authorization": f"Bearer {token}"},
+        headers={"Authorization": f"Bearer {await access_token}"},
     )
 
     # Then
@@ -108,14 +106,16 @@ async def test_get_categories_not_authenticated(async_client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_get_wallets(async_client: AsyncClient, test_user: Dict[str, str]):
+async def test_get_wallets(
+    async_client: AsyncClient, access_token: Coroutine[Any, Any, str]
+):
     # Given
-    token = await login_user(async_client, test_user)
     data = BASE_WALLET_DATA
 
     # When
     response = await async_client.get(
-        "/api/v1/users/me/wallets", headers={"Authorization": f"Bearer {token}"}
+        "/api/v1/users/me/wallets",
+        headers={"Authorization": f"Bearer {await access_token}"},
     )
 
     # Then
@@ -125,13 +125,13 @@ async def test_get_wallets(async_client: AsyncClient, test_user: Dict[str, str])
 
 
 @pytest.mark.asyncio
-async def test_get_subjects(async_client: AsyncClient, test_user: Dict[str, str]):
-    # Given
-    token = await login_user(async_client, test_user)
-
+async def test_get_subjects(
+    async_client: AsyncClient, access_token: Coroutine[Any, Any, str]
+):
     # When
     response = await async_client.get(
-        "/api/v1/users/me/subjects/", headers={"Authorization": f"Bearer {token}"}
+        "/api/v1/users/me/subjects/",
+        headers={"Authorization": f"Bearer {await access_token}"},
     )
 
     # Then

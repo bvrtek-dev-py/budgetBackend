@@ -1,23 +1,24 @@
-from typing import Dict
+from typing import Coroutine, Any
 
 import pytest
 from httpx import AsyncClient
 
-from backend.tests.conftest import login_user
+from backend.tests.conftest import access_token
 from backend.tests.database import BASE_SUBJECT_ID
 
 
 @pytest.mark.asyncio
-async def test_update_subject(async_client: AsyncClient, test_user: Dict[str, str]):
+async def test_update_subject(
+    async_client: AsyncClient, access_token: Coroutine[Any, Any, str]
+):
     # Given
-    token = await login_user(async_client, test_user)
     data = {"name": "new name"}
 
     # When
     response = await async_client.put(
         f"/api/v1/subjects/{BASE_SUBJECT_ID}",
         json=data,
-        headers={"Authorization": f"Bearer {token}"},
+        headers={"Authorization": f"Bearer {await access_token}"},
     )
 
     # Then
@@ -42,10 +43,9 @@ async def test_update_subject_not_authenticated(async_client: AsyncClient):
 
 @pytest.mark.asyncio
 async def test_update_subject_permission_denied(
-    async_client: AsyncClient, test_user: Dict[str, str]
+    async_client: AsyncClient, access_token: Coroutine[Any, Any, str]
 ):
     # Given
-    token = await login_user(async_client, test_user)
     data = {"name": "new name"}
     subject_id = 2
 
@@ -53,7 +53,7 @@ async def test_update_subject_permission_denied(
     response = await async_client.put(
         f"/api/v1/subjects/{subject_id}",
         json=data,
-        headers={"Authorization": f"Bearer {token}"},
+        headers={"Authorization": f"Bearer {await access_token}"},
     )
 
     # Then
@@ -62,10 +62,9 @@ async def test_update_subject_permission_denied(
 
 @pytest.mark.asyncio
 async def test_update_subject_does_not_exist(
-    async_client: AsyncClient, test_user: Dict[str, str]
+    async_client: AsyncClient, access_token: Coroutine[Any, Any, str]
 ):
     # Given
-    token = await login_user(async_client, test_user)
     data = {"name": "new name"}
     subject_id = 5
 
@@ -73,7 +72,7 @@ async def test_update_subject_does_not_exist(
     response = await async_client.put(
         f"/api/v1/subjects/{subject_id}",
         json=data,
-        headers={"Authorization": f"Bearer {token}"},
+        headers={"Authorization": f"Bearer {await access_token}"},
     )
 
     # Then
@@ -82,17 +81,16 @@ async def test_update_subject_does_not_exist(
 
 @pytest.mark.asyncio
 async def test_update_subject_conflict(
-    async_client: AsyncClient, test_user: Dict[str, str]
+    async_client: AsyncClient, access_token: Coroutine[Any, Any, str]
 ):
     # Given
-    token = await login_user(async_client, test_user)
     data = {"name": "Subject 3"}
 
     # When
     response = await async_client.put(
         f"/api/v1/subjects/{BASE_SUBJECT_ID}",
         json=data,
-        headers={"Authorization": f"Bearer {token}"},
+        headers={"Authorization": f"Bearer {await access_token}"},
     )
 
     # Then
@@ -101,17 +99,15 @@ async def test_update_subject_conflict(
 
 @pytest.mark.asyncio
 async def test_update_subject_same_name_but_same_object(
-    async_client: AsyncClient, test_user: Dict[str, str]
+    async_client: AsyncClient, access_token: Coroutine[Any, Any, str]
 ):
-    # Given
-    token = await login_user(async_client, test_user)
     data = {"name": "Subject 1"}
 
     # When
     response = await async_client.put(
         f"/api/v1/subjects/{BASE_SUBJECT_ID}",
         json=data,
-        headers={"Authorization": f"Bearer {token}"},
+        headers={"Authorization": f"Bearer {await access_token}"},
     )
 
     # Then

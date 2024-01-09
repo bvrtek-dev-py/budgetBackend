@@ -1,21 +1,20 @@
-from typing import Dict
+from typing import Coroutine, Any
 
 import pytest
 from httpx import AsyncClient
 
-from backend.tests.conftest import login_user
+from backend.tests.conftest import access_token
 from backend.tests.database import BASE_SUBJECT_ID
 
 
 @pytest.mark.asyncio
-async def test_delete_subject(async_client: AsyncClient, test_user: Dict[str, str]):
-    # Given
-    token = await login_user(async_client, test_user)
-
+async def test_delete_subject(
+    async_client: AsyncClient, access_token: Coroutine[Any, Any, str]
+):
     # When
     response = await async_client.delete(
         f"/api/v1/subjects/{BASE_SUBJECT_ID}",
-        headers={"Authorization": f"Bearer {token}"},
+        headers={"Authorization": f"Bearer {await access_token}"},
     )
 
     # Then
@@ -33,16 +32,15 @@ async def test_delete_subject_not_authenticated(async_client: AsyncClient):
 
 @pytest.mark.asyncio
 async def test_delete_subject_permission_denied(
-    async_client: AsyncClient, test_user: Dict[str, str]
+    async_client: AsyncClient, access_token: Coroutine[Any, Any, str]
 ):
     # Given
-    token = await login_user(async_client, test_user)
     subject_id = 2
 
     # When
     response = await async_client.delete(
         f"/api/v1/subjects/{subject_id}",
-        headers={"Authorization": f"Bearer {token}"},
+        headers={"Authorization": f"Bearer {await access_token}"},
     )
 
     # Then
@@ -51,16 +49,15 @@ async def test_delete_subject_permission_denied(
 
 @pytest.mark.asyncio
 async def test_delete_subject_does_not_exist(
-    async_client: AsyncClient, test_user: Dict[str, str]
+    async_client: AsyncClient, access_token: Coroutine[Any, Any, str]
 ):
     # Given
-    token = await login_user(async_client, test_user)
     subject_id = 5
 
     # When
     response = await async_client.delete(
         f"/api/v1/subjects/{subject_id}",
-        headers={"Authorization": f"Bearer {token}"},
+        headers={"Authorization": f"Bearer {await access_token}"},
     )
 
     # Then
