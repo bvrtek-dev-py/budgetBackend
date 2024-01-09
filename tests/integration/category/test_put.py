@@ -3,7 +3,6 @@ from typing import Coroutine, Any
 import pytest
 from httpx import AsyncClient
 
-from backend.tests.conftest import access_token
 from backend.tests.database import BASE_CATEGORY_ID
 
 
