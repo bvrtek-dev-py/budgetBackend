@@ -17,6 +17,9 @@ from backend.modules.transaction.dependencies import (
     get_transaction_service,
     transaction_owner_permission,
 )
+from backend.modules.transaction.schemas import (
+    TransactionUpdateDTO,
+)
 from backend.modules.transaction.services.crud_service import TransactionService
 
 router = APIRouter(prefix="/api/v1/transactions", tags=["APIv1 Transaction"])
@@ -53,12 +56,7 @@ async def update_transaction(
         raise PermissionDenied()
 
     return await transaction_service.update(
-        transaction_id,
-        request.name,
-        request.value,
-        request.description,
-        request.date,
-        request.subject_id,
+        transaction_id, TransactionUpdateDTO(**request.model_dump())
     )
 
 

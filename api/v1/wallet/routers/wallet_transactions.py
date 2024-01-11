@@ -24,6 +24,7 @@ from backend.modules.transaction.dependencies import (
     get_transaction_query_service,
     get_transaction_statistics_service,
 )
+from backend.modules.transaction.schemas import TransactionCreateDTO
 from backend.modules.transaction.services.crud_service import TransactionService
 from backend.modules.transaction.services.query_service import TransactionQueryService
 from backend.modules.transaction.services.statistics_service import (
@@ -69,14 +70,7 @@ async def create_wallet_transaction(
         raise PermissionDenied()
 
     return await transaction_service.create(
-        request.name,
-        request.value,
-        request.type,
-        request.description,
-        request.date,
-        current_user.id,
-        wallet_id,
-        request.subject_id,
+        wallet_id, current_user.id, TransactionCreateDTO(**request.model_dump())
     )
 
 

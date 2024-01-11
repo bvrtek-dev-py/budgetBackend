@@ -2,9 +2,9 @@ from typing import Sequence, Optional
 
 from backend.modules.auth.services import PasswordHashService
 from backend.modules.common.exceptions import ObjectDoesNotExist, ObjectAlreadyExists
-from backend.modules.user.exceptions import PasswordDoesNotMatch
 from backend.modules.user.interfaces import UserRepositoryInterface
 from backend.modules.user.models import User
+from backend.modules.user.schemas import UserCreateDTO, UserUpdateDTO
 
 
 class UserService:
@@ -17,45 +17,26 @@ class UserService:
         self._password_hash_service = password_hash_service
 
     # pylint: disable=too-many-arguments
-    async def create(
-        self,
-        username: str,
-        email: str,
-        first_name: str,
-        last_name: str,
-        password1: str,
-        password2: str,
-    ) -> User:
-        if password1 != password2:
-            raise PasswordDoesNotMatch()
-
-        if await self._check_username_exists(username):
+    async def create(self, request_dto: UserCreateDTO) -> User:
+        if await self._check_username_exists(request_dto.username):
             raise ObjectAlreadyExists()
 
-        if await self._check_email_exists(email):
+        if await self._check_email_exists(request_dto.email):
             raise ObjectAlreadyExists()
 
-        user = User(
-            username=username,
-            email=email,
-            first_name=first_name,
-            last_name=last_name,
-            password=self._password_hash_service.hash(password1),
-        )
+        password_hash = self._password_hash_service.hash(request_dto.password)
+        user = User(**request_dto.model_dump() | {"password": password_hash})
 
         return await self._repository.save(user)
 
-    async def update(
-        self, user_id: int, username: str, first_name: str, last_name: str
-    ) -> User:
+    async def update(self, user_id: int, request_dto: UserUpdateDTO) -> User:
         user = await self.get_by_id(user_id)
 
-        if await self._check_username_exists(username, user_id):
+        if await self._check_username_exists(request_dto.username, user_id):
             raise ObjectAlreadyExists()
 
-        user.username = username
-        user.first_name = first_name
-        user.last_name = last_name
+        for key, value in request_dto.model_dump().items():
+            setattr(user, key, value)
 
         return await self._repository.update(user)
 

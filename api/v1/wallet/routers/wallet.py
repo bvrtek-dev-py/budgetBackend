@@ -17,6 +17,7 @@ from backend.modules.wallet.dependencies import (
     get_wallet_service,
     wallet_owner_permission,
 )
+from backend.modules.wallet.schemas import WalletPayloadDTO
 from backend.modules.wallet.services import WalletService
 
 router = APIRouter(prefix="/api/v1/wallets", tags=["APIv1 Wallet"])
@@ -47,7 +48,7 @@ async def create_wallet(
     wallet_service: Annotated[WalletService, Depends(get_wallet_service)],
 ):
     return await wallet_service.create(
-        current_user.id, request.name, request.description
+        current_user.id, WalletPayloadDTO(**request.model_dump())
     )
 
 
@@ -63,7 +64,9 @@ async def update_wallet(
     request: WalletUpdateRequest,
     wallet_service: Annotated[WalletService, Depends(get_wallet_service)],
 ):
-    return await wallet_service.update(wallet_id, request.name, request.description)
+    return await wallet_service.update(
+        wallet_id, WalletPayloadDTO(**request.model_dump())
+    )
 
 
 @router.delete(

@@ -2,6 +2,7 @@ from typing import Sequence, Optional
 
 from backend.modules.category.interfaces import CategoryRepositoryInterface
 from backend.modules.category.models import Category
+from backend.modules.category.schemas import CategoryCreateDTO, CategoryUpdateDTO
 from backend.modules.common.exceptions import ObjectDoesNotExist, ObjectAlreadyExists
 from backend.modules.transaction.enums import TransactionType
 
@@ -10,32 +11,27 @@ class CategoryService:
     def __init__(self, repository: CategoryRepositoryInterface):
         self._repository = repository
 
-    async def create(
-        self,
-        user_id: int,
-        name: str,
-        transaction_type: TransactionType,
-    ) -> Category:
-        if await self._check_category_with_name_and_user_id_exists(name, user_id):
-            raise ObjectAlreadyExists()
-
-        category = Category(
-            name=name,
-            transaction_type=transaction_type,
-            user_id=user_id,
-        )
-
-        return await self._repository.save(category)
-
-    async def update(self, category_id: int, name: str) -> Category:
-        category = await self.get_by_id(category_id)
-
+    async def create(self, user_id: int, request_dto: CategoryCreateDTO) -> Category:
         if await self._check_category_with_name_and_user_id_exists(
-            name, category.user_id, category.id
+            request_dto.name, user_id
         ):
             raise ObjectAlreadyExists()
 
-        category.name = name
+        category = Category(**request_dto.model_dump(), user_id=user_id)
+
+        return await self._repository.save(category)
+
+    async def update(
+        self, category_id: int, request_dto: CategoryUpdateDTO
+    ) -> Category:
+        category = await self.get_by_id(category_id)
+
+        if await self._check_category_with_name_and_user_id_exists(
+            request_dto.name, category.user_id, category.id
+        ):
+            raise ObjectAlreadyExists()
+
+        category.name = request_dto.name
 
         return await self._repository.update(category)
 
