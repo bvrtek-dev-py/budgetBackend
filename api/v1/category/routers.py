@@ -15,6 +15,7 @@ from backend.modules.category.dependencies import (
     get_category_service,
     category_owner_permission,
 )
+from backend.modules.category.schemas import CategoryCreateDTO, CategoryUpdateDTO
 from backend.modules.category.services import CategoryService
 
 router = APIRouter(prefix="/api/v1/categories", tags=["APIv1 Category"])
@@ -36,9 +37,7 @@ async def create_category(
     category_service: Annotated[CategoryService, Depends(get_category_service)],
 ):
     return await category_service.create(
-        current_user.id,
-        request.name,
-        request.transaction_type,
+        current_user.id, CategoryCreateDTO(**request.model_dump())
     )
 
 
@@ -60,7 +59,9 @@ async def update_category(
     request: CategoryUpdateRequest,
     category_service: Annotated[CategoryService, Depends(get_category_service)],
 ):
-    return await category_service.update(category_id, request.name)
+    return await category_service.update(
+        category_id, CategoryUpdateDTO(**request.model_dump())
+    )
 
 
 @router.get(

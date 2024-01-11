@@ -9,8 +9,8 @@ async def test_create_user(async_client: AsyncClient):
     data = {
         "username": "Kamil",
         "email": "pandagmail.pl",
-        "password1": "string11",
-        "password2": "string11",
+        "password": "string11",
+        "password_confirmation": "string11",
         "first_name": "Kamil",
         "last_name": "Panda",
     }
@@ -37,15 +37,15 @@ async def test_create_user_password_mismatch(async_client: AsyncClient):
         "last_name": "last",
         "username": "username",
         "email": "email@email.pl",
-        "password1": "1234111111",
-        "password2": "12345111111",
+        "password": "1234111111",
+        "password_confirmation": "12345111111",
     }
 
     # When
     response = await async_client.post("/api/v1/users", json=data)
 
     # Then
-    assert response.status_code == 422
+    assert response.status_code == 409
 
 
 @pytest.mark.asyncio
@@ -56,8 +56,8 @@ async def test_create_user_with_duplicated_email(async_client: AsyncClient):
         "last_name": "last",
         "username": "usernameaaa",
         "email": "email@email.pl",
-        "password1": "12341111111",
-        "password2": "12341111111",
+        "password": "12341111111",
+        "password_confirmation": "12341111111",
     }
 
     # When
@@ -75,8 +75,8 @@ async def test_create_user_with_duplicated_username(async_client: AsyncClient):
         "last_name": "last",
         "username": "username",
         "email": "email1@email.pl",
-        "password1": "123411111",
-        "password2": "123411111",
+        "password": "123411111",
+        "password_confirmation": "123411111",
     }
 
     # When

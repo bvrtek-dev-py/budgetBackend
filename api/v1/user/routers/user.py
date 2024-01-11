@@ -7,6 +7,7 @@ from backend.api.v1.common.responses import ErrorResponse
 from backend.api.v1.user.requests import UserCreateRequest, UserUpdateRequest
 from backend.api.v1.user.responses import UserBaseResponse
 from backend.modules.user.dependencies import get_user_service
+from backend.modules.user.schemas import UserCreateDTO, UserUpdateDTO
 from backend.modules.user.services import UserService
 
 router = APIRouter(prefix="/api/v1/users", tags=["APIv1 User"])
@@ -26,14 +27,7 @@ async def create_user(
     request: UserCreateRequest,
     user_service: Annotated[UserService, Depends(get_user_service)],
 ):
-    return await user_service.create(
-        request.username,
-        request.email,
-        request.first_name,
-        request.last_name,
-        request.password1,
-        request.password2,
-    )
+    return await user_service.create(UserCreateDTO(**request.model_dump()))
 
 
 @router.put(
@@ -52,9 +46,7 @@ async def update_user(
     request: UserUpdateRequest,
     user_service: Annotated[UserService, Depends(get_user_service)],
 ):
-    return await user_service.update(
-        user_id, request.username, request.first_name, request.last_name
-    )
+    return await user_service.update(user_id, UserUpdateDTO(**request.model_dump()))
 
 
 @router.get(

@@ -3,29 +3,32 @@ from typing import Sequence, Optional
 from backend.modules.common.exceptions import ObjectDoesNotExist, ObjectAlreadyExists
 from backend.modules.subject.interfaces import SubjectRepositoryInterface
 from backend.modules.subject.models import Subject
+from backend.modules.subject.schemas import SubjectPayloadDTO
 
 
 class SubjectService:
     def __init__(self, repository: SubjectRepositoryInterface):
         self._repository = repository
 
-    async def create(self, name: str, user_id: int) -> Subject:
-        if await self._check_subject_with_name_and_user_id_exists(name, user_id):
-            raise ObjectAlreadyExists()
-
-        subject = Subject(name=name, user_id=user_id)
-
-        return await self._repository.save(subject)
-
-    async def update(self, subject_id: int, name: str) -> Subject:
-        subject = await self.get_by_id(subject_id)
-
+    async def create(self, request_dto: SubjectPayloadDTO, user_id: int) -> Subject:
         if await self._check_subject_with_name_and_user_id_exists(
-            name, subject.user_id, subject_id
+            request_dto.name, user_id
         ):
             raise ObjectAlreadyExists()
 
-        subject.name = name
+        subject = Subject(name=request_dto.name, user_id=user_id)
+
+        return await self._repository.save(subject)
+
+    async def update(self, subject_id: int, request_dto: SubjectPayloadDTO) -> Subject:
+        subject = await self.get_by_id(subject_id)
+
+        if await self._check_subject_with_name_and_user_id_exists(
+            request_dto.name, subject.user_id, subject_id
+        ):
+            raise ObjectAlreadyExists()
+
+        subject.name = request_dto.name
 
         return await self._repository.update(subject)
 

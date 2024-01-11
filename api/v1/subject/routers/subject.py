@@ -14,6 +14,7 @@ from backend.modules.subject.dependencies import (
     get_subject_service,
     subject_owner_permission,
 )
+from backend.modules.subject.schemas import SubjectPayloadDTO
 from backend.modules.subject.services import SubjectService
 
 router = APIRouter(prefix="/api/v1/subjects", tags=["APIv1 Subject"])
@@ -34,7 +35,9 @@ async def create_subject(
     current_user: Annotated[CurrentUserData, Depends(get_current_user)],
     subject_service: Annotated[SubjectService, Depends(get_subject_service)],
 ):
-    return await subject_service.create(request.name, current_user.id)
+    return await subject_service.create(
+        SubjectPayloadDTO(**request.model_dump()), current_user.id
+    )
 
 
 @router.put(
@@ -55,7 +58,9 @@ async def update_subject(
     request: SubjectRequest,
     subject_service: Annotated[SubjectService, Depends(get_subject_service)],
 ):
-    return await subject_service.update(subject_id, request.name)
+    return await subject_service.update(
+        subject_id, SubjectPayloadDTO(**request.model_dump())
+    )
 
 
 @router.get(

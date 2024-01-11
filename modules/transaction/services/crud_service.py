@@ -1,65 +1,45 @@
 from datetime import date
-from decimal import Decimal
 from typing import Sequence, Optional
 
 from backend.modules.common.exceptions import ObjectDoesNotExist, ObjectAlreadyExists
-from backend.modules.transaction.enums import TransactionType
 from backend.modules.transaction.models import Transaction
 from backend.modules.transaction.repositories import TransactionRepository
+from backend.modules.transaction.schemas import (
+    TransactionCreateDTO,
+    TransactionUpdateDTO,
+)
 
 
 class TransactionService:
     def __init__(self, repository: TransactionRepository):
         self._repository = repository
 
-    async def create(  # pylint: disable=too-many-arguments
-        self,
-        name: str,
-        value: Decimal,
-        transaction_type: TransactionType,
-        description: str,
-        transaction_date: date,
-        user_id: int,
-        wallet_id: int,
-        subject_id: int,
+    async def create(
+        self, wallet_id: int, user_id: int, request_dto: TransactionCreateDTO
     ) -> Transaction:
-        if await self._check_constraint_blockade(name, transaction_date, wallet_id):
+        if await self._check_constraint_blockade(
+            request_dto.name, request_dto.date, wallet_id
+        ):
             raise ObjectAlreadyExists()
 
         transaction = Transaction(
-            name=name,
-            value=value,
-            type=transaction_type,
-            description=description,
-            date=transaction_date,
-            user_id=user_id,
-            wallet_id=wallet_id,
-            subject_id=subject_id,
+            **request_dto.model_dump(), wallet_id=wallet_id, user_id=user_id
         )
 
         return await self._repository.save(transaction)
 
-    async def update(  # pylint: disable=too-many-arguments
-        self,
-        transaction_id: int,
-        name: str,
-        value: Decimal,
-        description: str,
-        transaction_date: date,
-        subject_id: int,
+    async def update(
+        self, transaction_id: int, request_dto: TransactionUpdateDTO
     ) -> Transaction:
         transaction = await self.get_by_id(transaction_id)
 
         if await self._check_constraint_blockade(
-            name, transaction_date, transaction.wallet_id, transaction_id
+            request_dto.name, request_dto.date, transaction.wallet_id, transaction_id
         ):
             raise ObjectAlreadyExists()
 
-        transaction.name = name
-        transaction.value = value
-        transaction.description = description
-        transaction.date = transaction_date
-        transaction.subject_id = subject_id
+        for key, value in request_dto.model_dump().items():
+            setattr(transaction, key, value)
 
         return await self._repository.update(transaction)
 

@@ -1,32 +1,33 @@
-from typing import Sequence, Optional
+from typing import Optional
 
 from backend.modules.common.exceptions import ObjectDoesNotExist, ObjectAlreadyExists
 from backend.modules.wallet.interfaces import WalletRepositoryInterface
 from backend.modules.wallet.models import Wallet
+from backend.modules.wallet.schemas import WalletPayloadDTO
 
 
 class WalletService:
     def __init__(self, repository: WalletRepositoryInterface):
         self._repository = repository
 
-    async def create(self, user_id: int, name: str, description: str) -> Wallet:
-        if await self._wallet_with_user_id_and_name_exists(user_id, name):
+    async def create(self, user_id: int, request_dto: WalletPayloadDTO) -> Wallet:
+        if await self._wallet_with_user_id_and_name_exists(user_id, request_dto.name):
             raise ObjectAlreadyExists()
 
-        wallet = Wallet(name=name, description=description, user_id=user_id)
+        wallet = Wallet(**request_dto.model_dump(), user_id=user_id)
 
         return await self._repository.save(wallet)
 
-    async def update(self, wallet_id: int, name: str, description: str) -> Wallet:
+    async def update(self, wallet_id: int, request_dto: WalletPayloadDTO) -> Wallet:
         wallet = await self.get_by_id(wallet_id)
 
         if await self._wallet_with_user_id_and_name_exists(
-            wallet.user_id, name, wallet.id
+            wallet.user_id, request_dto.name, wallet.id
         ):
             raise ObjectAlreadyExists()
 
-        wallet.name = name
-        wallet.description = description
+        for key, value in request_dto.model_dump().items():
+            setattr(wallet, key, value)
 
         return await self._repository.update(wallet)
 
@@ -56,6 +57,3 @@ class WalletService:
             return False
 
         return True
-
-    async def get_by_user_id(self, user_id: int) -> Sequence[Wallet]:
-        return await self._repository.get_by_user_id(user_id)
