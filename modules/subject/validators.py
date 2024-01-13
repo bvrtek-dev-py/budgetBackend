@@ -1,3 +1,4 @@
+from backend.modules.common.exceptions import PermissionDenied
 from backend.modules.subject.services import SubjectService
 
 
@@ -9,6 +10,8 @@ class SubjectValidator:
         self,
         user_id: int,
         subject_id: int,
-    ) -> bool:
+    ) -> None:
         subject = await self._subject_service.get_by_id(subject_id)
-        return user_id == subject.user_id
+
+        if user_id != subject.user_id:
+            raise PermissionDenied()
