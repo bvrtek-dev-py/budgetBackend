@@ -7,6 +7,7 @@ from backend.database.setup import get_session
 from backend.modules.auth.dependencies import get_current_user
 from backend.modules.auth.schemas import CurrentUserData
 from backend.modules.common.exceptions import PermissionDenied
+from backend.modules.transaction.interfaces import TransactionRepositoryInterface
 from backend.modules.transaction.repositories import TransactionRepository
 from backend.modules.transaction.services.crud_service import TransactionService
 from backend.modules.transaction.services.query_service import TransactionQueryService
@@ -17,7 +18,7 @@ from backend.modules.transaction.services.statistics_service import (
 
 def get_transaction_repository(
     session: Annotated[AsyncSession, Depends(get_session)]
-) -> TransactionRepository:
+) -> TransactionRepositoryInterface:
     return TransactionRepository(session)
 
 

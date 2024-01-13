@@ -7,15 +7,13 @@ from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from backend.modules.subject.models import Subject
 from backend.modules.transaction.enums import TransactionType
 from backend.modules.transaction.filters import filter_query_by_date_range
+from backend.modules.transaction.interfaces import TransactionRepositoryInterface
 from backend.modules.transaction.models import Transaction
-from backend.modules.user.models import User
-from backend.modules.wallet.models import Wallet
 
 
-class TransactionRepository:
+class TransactionRepository(TransactionRepositoryInterface):
     def __init__(self, session: AsyncSession):
         self._session = session
 
@@ -78,13 +76,13 @@ class TransactionRepository:
 
         return result.scalars().first()
 
-    async def get_user_transactions(
+    async def get_by_user_id(
         self,
-        user: User,
+        user_id: int,
         start_date: Optional[date] = None,
         end_date: Optional[date] = None,
     ) -> Sequence[Transaction]:
-        query = select(Transaction).where(Transaction.user_id == user.id)
+        query = select(Transaction).where(Transaction.user_id == user_id)
 
         query = filter_query_by_date_range(query, start_date, end_date)
 
@@ -98,10 +96,10 @@ class TransactionRepository:
 
         return result.scalars().all()
 
-    async def get_wallet_transactions(
-        self, wallet: Wallet, start_date: Optional[date], end_date: Optional[date]
+    async def get_by_wallet_id(
+        self, wallet_id: int, start_date: Optional[date], end_date: Optional[date]
     ) -> Sequence[Transaction]:
-        query = select(Transaction).where(Transaction.wallet_id == wallet.id)
+        query = select(Transaction).where(Transaction.wallet_id == wallet_id)
 
         query = filter_query_by_date_range(query, start_date, end_date)
 
@@ -115,10 +113,10 @@ class TransactionRepository:
 
         return result.scalars().all()
 
-    async def get_subject_transactions(
-        self, subject: Subject, start_date: Optional[date], end_date: Optional[date]
+    async def get_by_subject_id(
+        self, subject_id: int, start_date: Optional[date], end_date: Optional[date]
     ) -> Sequence[Transaction]:
-        query = select(Transaction).where(Transaction.subject_id == subject.id)
+        query = select(Transaction).where(Transaction.subject_id == subject_id)
 
         query = filter_query_by_date_range(query, start_date, end_date)
 
@@ -134,7 +132,7 @@ class TransactionRepository:
 
     async def get_sum_value_by_type_and_user_id(
         self,
-        user_id,
+        user_id: int,
         transaction_type: TransactionType,
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,

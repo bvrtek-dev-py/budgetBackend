@@ -18,7 +18,7 @@ class TransactionQueryService:
         start_date: Optional[date] = None,
         end_date: Optional[date] = None,
     ) -> Sequence[Transaction]:
-        return await self._repository.get_user_transactions(user, start_date, end_date)
+        return await self._repository.get_by_user_id(user.id, start_date, end_date)
 
     async def get_wallet_transactions(
         self,
@@ -26,9 +26,7 @@ class TransactionQueryService:
         start_date: Optional[date] = None,
         end_date: Optional[date] = None,
     ) -> Sequence[Transaction]:
-        return await self._repository.get_wallet_transactions(
-            wallet, start_date, end_date
-        )
+        return await self._repository.get_by_wallet_id(wallet.id, start_date, end_date)
 
     async def get_subject_transactions(
         self,
@@ -36,6 +34,6 @@ class TransactionQueryService:
         start_date: Optional[date] = None,
         end_date: Optional[date] = None,
     ) -> Sequence[Transaction]:
-        return await self._repository.get_subject_transactions(
-            subject, start_date, end_date
+        return await self._repository.get_by_subject_id(
+            subject.id, start_date, end_date
         )
