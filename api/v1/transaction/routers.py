@@ -8,11 +8,9 @@ from backend.api.v1.transaction.requests import (
     TransactionUpdateRequest,
 )
 from backend.api.v1.transaction.responses.transaction import TransactionBaseResponse
-from backend.modules.auth.dependencies import get_current_user
-from backend.modules.auth.schemas import CurrentUserData
-from backend.modules.common.exceptions import PermissionDenied
-from backend.modules.subject.dependencies import get_subject_validator
-from backend.modules.subject.validators import SubjectValidator
+from backend.modules.subject.dependencies import (
+    subject_owner_permission,
+)
 from backend.modules.transaction.dependencies import (
     get_transaction_service,
     transaction_owner_permission,
@@ -36,25 +34,18 @@ router = APIRouter(prefix="/api/v1/transactions", tags=["APIv1 Transaction"])
     },
     response_model=TransactionBaseResponse,
     status_code=status.HTTP_200_OK,
-    dependencies=[Depends(transaction_owner_permission)],
+    dependencies=[
+        Depends(transaction_owner_permission),
+        Depends(subject_owner_permission),
+    ],
 )
 async def update_transaction(
     transaction_id: Annotated[int, Path(gt=0)],
-    current_user: Annotated[CurrentUserData, Depends(get_current_user)],
     request: TransactionUpdateRequest,
     transaction_service: Annotated[
         TransactionService, Depends(get_transaction_service)
     ],
-    subject_validator: Annotated[SubjectValidator, Depends(get_subject_validator)],
 ):
-    if (
-        await subject_validator.user_is_subject_owner(
-            current_user.id, request.subject_id
-        )
-        is False
-    ):
-        raise PermissionDenied()
-
     return await transaction_service.update(
         transaction_id, TransactionUpdateDTO(**request.model_dump())
     )

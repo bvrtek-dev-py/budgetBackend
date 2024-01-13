@@ -15,10 +15,11 @@ from backend.api.v1.transaction.responses.transaction_statistics import (
 )
 from backend.modules.auth.dependencies import get_current_user
 from backend.modules.auth.schemas import CurrentUserData
-from backend.modules.common.exceptions import PermissionDenied
+from backend.modules.category.dependencies import category_owner_permission
 from backend.modules.common.utils import get_first_day_of_month
-from backend.modules.subject.dependencies import get_subject_validator
-from backend.modules.subject.validators import SubjectValidator
+from backend.modules.subject.dependencies import (
+    subject_owner_permission,
+)
 from backend.modules.transaction.dependencies import (
     get_transaction_service,
     get_transaction_query_service,
@@ -50,7 +51,11 @@ router = APIRouter(
         403: {"model": ErrorResponse},
     },
     status_code=status.HTTP_201_CREATED,
-    dependencies=[Depends(wallet_owner_permission)],
+    dependencies=[
+        Depends(wallet_owner_permission),
+        Depends(subject_owner_permission),
+        Depends(category_owner_permission),
+    ],
 )
 async def create_wallet_transaction(
     wallet_id: Annotated[int, Path(gt=0)],
@@ -59,16 +64,7 @@ async def create_wallet_transaction(
     transaction_service: Annotated[
         TransactionService, Depends(get_transaction_service)
     ],
-    subject_validator: Annotated[SubjectValidator, Depends(get_subject_validator)],
 ):
-    if (
-        await subject_validator.user_is_subject_owner(
-            current_user.id, request.subject_id
-        )
-        is False
-    ):
-        raise PermissionDenied()
-
     return await transaction_service.create(
         wallet_id, current_user.id, TransactionCreateDTO(**request.model_dump())
     )

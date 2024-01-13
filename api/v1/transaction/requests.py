@@ -6,18 +6,18 @@ from pydantic import BaseModel
 from backend.modules.transaction.enums import TransactionType
 
 
-class TransactionCreateRequest(BaseModel):
+class TransactionBaseRequest(BaseModel):
     name: str
     value: Decimal
+    description: str
+    date: date
+    subject_id: int
+    category_id: int
+
+
+class TransactionCreateRequest(TransactionBaseRequest):
     type: TransactionType
-    description: str
-    date: date
-    subject_id: int
 
 
-class TransactionUpdateRequest(BaseModel):
-    name: str
-    value: Decimal
-    description: str
-    date: date
-    subject_id: int
+class TransactionUpdateRequest(TransactionBaseRequest):
+    pass

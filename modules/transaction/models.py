@@ -43,7 +43,9 @@ class Transaction(BaseModel):
     user_id: MappedColumn[int] = mapped_column(Integer, ForeignKey("users.id"))
     wallet_id: MappedColumn[int] = mapped_column(Integer, ForeignKey("wallets.id"))
     subject_id: MappedColumn[int] = mapped_column(Integer, ForeignKey("subjects.id"))
+    category_id: MappedColumn[int] = mapped_column(Integer, ForeignKey("categories.id"))
 
     user: MappedColumn["User"] = relationship(back_populates="transactions")  # type: ignore
     wallet: MappedColumn["Wallet"] = relationship(back_populates="transactions")  # type: ignore
     subject: MappedColumn["Subject"] = relationship(back_populates="transactions")  # type: ignore
+    category: MappedColumn["Category"] = relationship(back_populates="transactions")  # type: ignore

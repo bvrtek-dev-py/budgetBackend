@@ -1,3 +1,5 @@
+from typing import List
+
 from sqlalchemy import String, Enum, Integer, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import MappedColumn, mapped_column, relationship
 
@@ -18,4 +20,8 @@ class Category(BaseModel):
         )
     )
     user_id: MappedColumn[int] = mapped_column(Integer, ForeignKey("users.id"))
+
     user: MappedColumn["User"] = relationship(back_populates="categories")  # type: ignore
+    transactions: MappedColumn[List["Transaction"]] = relationship(  # type: ignore
+        back_populates="category"
+    )
