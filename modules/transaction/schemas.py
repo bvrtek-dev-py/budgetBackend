@@ -13,6 +13,7 @@ class TransactionCreateDTO(BaseModel):
     description: str
     date: date
     subject_id: int
+    category_id: int
 
 
 class TransactionUpdateDTO(BaseModel):
@@ -21,3 +22,4 @@ class TransactionUpdateDTO(BaseModel):
     description: str
     date: date
     subject_id: int
+    category_id: int
