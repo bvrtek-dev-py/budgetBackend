@@ -9,7 +9,8 @@ from backend.api.v1.common.validators import validate_date_range
 from backend.api.v1.transaction.responses.transaction import TransactionBaseResponse
 from backend.api.v1.transaction.responses.transaction_statistics import (
     TransactionStatisticResponse,
-    TransactionStatisticsResponse,
+    WalletTransactionStatisticsResponse,
+    UserTransactionStatisticsResponse,
 )
 from backend.modules.auth.dependencies import get_current_user
 from backend.modules.auth.schemas import CurrentUserData
@@ -78,10 +79,10 @@ async def get_user_balance(
 @router.get(
     "/statistics",
     responses={
-        200: {"model": TransactionStatisticsResponse},
+        200: {"model": UserTransactionStatisticsResponse},
         401: {"model": ErrorResponse},
     },
-    response_model=TransactionStatisticsResponse,
+    response_model=UserTransactionStatisticsResponse,
     status_code=status.HTTP_200_OK,
 )
 async def get_user_statistics(

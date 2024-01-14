@@ -6,15 +6,32 @@ from pydantic import BaseModel
 
 class TransactionStatisticResponse(BaseModel):
     balance: Decimal
-    income: Decimal
-    expense: Decimal
+    incomes: Decimal
+    expenses: Decimal
 
     class ConfigDict:
         frozen = True
         orm_mode = True
 
 
-class TransactionStatisticsResponse(BaseModel):
+class WalletTransactionStatisticResponse(TransactionStatisticResponse):
+    transfers: Decimal
+
+    class ConfigDict:
+        frozen = True
+        orm_mode = True
+
+
+class WalletTransactionStatisticsResponse(BaseModel):
+    total: WalletTransactionStatisticResponse
+    monthly: Dict[str, WalletTransactionStatisticResponse]
+
+    class ConfigDict:
+        frozen = True
+        orm_mode = True
+
+
+class UserTransactionStatisticsResponse(BaseModel):
     total: TransactionStatisticResponse
     monthly: Dict[str, TransactionStatisticResponse]
 

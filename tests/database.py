@@ -70,7 +70,7 @@ BASE_WALLET_DATA: Dict[str, Any] = {
 def get_wallet_data() -> List[Wallet]:
     return [
         Wallet(
-            id=BASE_WALLET_ID,
+            id=1,
             name=BASE_WALLET_DATA["name"],
             description=BASE_WALLET_DATA["description"],
             user_id=BASE_WALLET_DATA["user_id"],

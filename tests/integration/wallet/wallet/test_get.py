@@ -3,20 +3,18 @@ from typing import Coroutine, Any
 import pytest
 from httpx import AsyncClient
 
-from backend.tests.database import BASE_USER_ID
-
 
 @pytest.mark.asyncio
 async def test_get_wallet_owned_wallet_by_id(
     async_client: AsyncClient, access_token: Coroutine[Any, Any, str]
 ):
     # Given
-    user_id = BASE_USER_ID
-    data = {"name": "Konto", "description": "description", "user_id": user_id}
+    wallet_id = 1
+    data = {"name": "Konto", "description": "description", "user_id": 1}
 
     # When
     response = await async_client.get(
-        f"/api/v1/wallets/{user_id}",
+        f"/api/v1/wallets/{wallet_id}",
         headers={"Authorization": f"Bearer {await access_token}"},
     )
 

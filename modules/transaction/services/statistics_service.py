@@ -1,61 +1,58 @@
 from datetime import datetime
 from decimal import Decimal
-from typing import Dict
+from typing import Dict, Optional
 
 from dateutil.relativedelta import relativedelta
 
 from backend.modules.common.utils import get_last_day_of_month
-from backend.modules.transaction.enums import TransactionType
 from backend.modules.transaction.repositories import TransactionRepository
 from backend.modules.transaction.types import StatisticsType, MonthlyType, TotalType
-from backend.modules.wallet.models import Wallet
 
 
 class TransactionStatisticsService:
     def __init__(self, repository: TransactionRepository):
         self._repository = repository
 
-    async def get_wallet_balance(self, wallet: Wallet) -> Dict[str, Decimal]:
-        incomes = await self._repository.get_sum_value_by_wallet_id_and_type(
-            wallet.id, TransactionType.INCOME
-        )
-        expenses = await self._repository.get_sum_value_by_wallet_id_and_type(
-            wallet.id, TransactionType.EXPENSE
-        )
+    async def get_wallet_balance(self, wallet_id: int) -> Dict[str, Decimal]:
+        results = await self._repository.get_sum_values_by_wallet_id(wallet_id)
+        transfer_balance = results["transfer_incomes"] - results["transfer_expenses"]
 
-        return {"income": incomes, "expense": expenses, "balance": incomes - expenses}
+        return {
+            "incomes": results["incomes"],
+            "expenses": results["expenses"],
+            "balance": results["incomes"] - results["expenses"] + transfer_balance,
+            "transfers": transfer_balance,
+        }
 
     async def get_user_balance(self, user_id: int) -> Dict[str, Decimal]:
-        incomes = await self._repository.get_sum_value_by_type_and_user_id(
-            user_id, TransactionType.INCOME
-        )
-        expenses = await self._repository.get_sum_value_by_type_and_user_id(
-            user_id, TransactionType.EXPENSE
-        )
+        results = await self._repository.get_sum_values_by_user_id(user_id)
 
-        return {"income": incomes, "expense": expenses, "balance": incomes - expenses}
+        return {
+            "incomes": results["incomes"],
+            "expenses": results["expenses"],
+            "balance": results["incomes"] - results["expenses"],
+        }
 
     async def get_statistics_for_user(
         self, user_id: int, start_date: datetime
     ) -> StatisticsType:
-        statistics = self._initialize_statistics()
+        statistics = self._initialize_statistics(False)
 
         while start_date <= datetime.now():
             end_date = get_last_day_of_month(start_date)
-
-            income = await self._repository.get_sum_value_by_type_and_user_id(
-                user_id, TransactionType.INCOME, start_date, end_date
-            )
-            expense = await self._repository.get_sum_value_by_type_and_user_id(
-                user_id, TransactionType.EXPENSE, start_date, end_date
+            results = await self._repository.get_sum_values_by_user_id(
+                user_id, start_date, end_date
             )
 
-            month_key = f"{start_date.year}-{start_date.month}"
             self._update_statistics(
-                statistics["monthly"], month_key, income, expense  # type: ignore
+                statistics["monthly"],
+                start_date,
+                results["incomes"],
+                results["expenses"],
             )
-            self._update_total(statistics["total"], income, expense)  # type: ignore
-            # Types are generally correct, ignored because mypy doesn't support selecting from union
+            self._update_total(
+                statistics["total"], results["incomes"], results["expenses"]
+            )
 
             start_date += relativedelta(months=1)
 
@@ -64,57 +61,77 @@ class TransactionStatisticsService:
     async def get_statistics_for_wallet(
         self, wallet_id: int, start_date: datetime
     ) -> StatisticsType:
-        statistics = self._initialize_statistics()
+        statistics = self._initialize_statistics(True)
 
         while start_date <= datetime.now():
             end_date = get_last_day_of_month(start_date)
-
-            income = await self._repository.get_sum_value_by_wallet_id_and_type(
-                wallet_id, TransactionType.INCOME, start_date, end_date
-            )
-            expense = await self._repository.get_sum_value_by_wallet_id_and_type(
-                wallet_id, TransactionType.EXPENSE, start_date, end_date
+            results = await self._repository.get_sum_values_by_wallet_id(
+                wallet_id, start_date, end_date
             )
 
-            month_key = f"{start_date.year}-{start_date.month}"
             self._update_statistics(
-                statistics["monthly"], month_key, income, expense  # type: ignore
+                statistics["monthly"],
+                start_date,
+                results["incomes"],
+                results["expenses"],
+                transfer=results["transfer_incomes"] - results["transfer_expenses"],
             )
-            self._update_total(statistics["total"], income, expense)  # type: ignore
-            # Types are generally correct, ignored because mypy doesn't support selecting from union
+            self._update_total(
+                statistics["total"],
+                results["incomes"],
+                results["expenses"],
+                results["transfer_incomes"] - results["transfer_expenses"],
+            )
 
             start_date += relativedelta(months=1)
 
         return statistics
 
-    def _initialize_statistics(
-        self,
-    ) -> StatisticsType:
-        return {
+    def _initialize_statistics(self, with_transfer: bool) -> StatisticsType:
+        initial_values = {
             "total": {
                 "balance": Decimal(0),
-                "income": Decimal(0),
-                "expense": Decimal(0),
+                "incomes": Decimal(0),
+                "expenses": Decimal(0),
             },
             "monthly": {},
         }
 
+        if with_transfer:
+            initial_values["total"]["transfers"] = Decimal(0)
+
+        return initial_values
+
     def _update_statistics(
         self,
         monthly: MonthlyType,
-        month_key: str,
-        income: Decimal,
-        expense: Decimal,
+        start_date: datetime,
+        incomes: Decimal,
+        expenses: Decimal,
+        transfer: Optional[Decimal] = None,
     ) -> None:
-        monthly[month_key] = {
-            "balance": income - expense,
-            "income": income,
-            "expense": expense,
+        month_key = start_date.strftime("%Y-%m")
+        month_data = {
+            "balance": incomes - expenses + (transfer or Decimal(0)),
+            "incomes": incomes,
+            "expenses": expenses,
         }
 
+        if transfer is not None:
+            month_data["transfers"] = transfer
+
+        monthly[month_key] = month_data
+
     def _update_total(
-        self, total: TotalType, income: Decimal, expense: Decimal
+        self,
+        total: TotalType,
+        incomes: Decimal,
+        expenses: Decimal,
+        transfer: Optional[Decimal] = None,
     ) -> None:
-        total["balance"] += income - expense
-        total["expense"] += expense
-        total["income"] += income
+        total["incomes"] += incomes
+        total["expenses"] += expenses
+        total["balance"] += incomes - expenses + (transfer or Decimal(0))
+
+        if transfer is not None:
+            total["transfers"] += transfer

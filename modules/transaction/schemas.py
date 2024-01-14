@@ -23,3 +23,10 @@ class TransactionUpdateDTO(BaseModel):
     date: date
     subject_id: int
     category_id: int
+
+
+class TransactionTransferDTO(BaseModel):
+    name: str
+    value: Decimal
+    description: str
+    date: date

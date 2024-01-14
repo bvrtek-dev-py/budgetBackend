@@ -14,6 +14,9 @@ from backend.modules.transaction.services.query_service import TransactionQueryS
 from backend.modules.transaction.services.statistics_service import (
     TransactionStatisticsService,
 )
+from backend.modules.transaction.services.transfer_service import (
+    TransactionTransferService,
+)
 
 
 def get_transaction_repository(
@@ -44,6 +47,14 @@ def get_transaction_statistics_service(
     ]
 ) -> TransactionStatisticsService:
     return TransactionStatisticsService(transaction_repository)
+
+
+def get_transaction_transfer_service(
+    transaction_repository: Annotated[
+        TransactionRepository, Depends(get_transaction_repository)
+    ]
+) -> TransactionTransferService:
+    return TransactionTransferService(transaction_repository)
 
 
 def _get_transaction_id(transaction_id: int = Path(...)) -> int:

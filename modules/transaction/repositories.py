@@ -1,9 +1,10 @@
 # pylint: disable=E1102
+import asyncio
 from datetime import date, datetime
 from decimal import Decimal
-from typing import Sequence, Optional
+from typing import Sequence, Optional, Dict
 
-from sqlalchemy import select, func
+from sqlalchemy import select, func, Select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -130,37 +131,105 @@ class TransactionRepository(TransactionRepositoryInterface):
 
         return result.scalars().all()
 
-    async def get_sum_value_by_type_and_user_id(
+    async def get_sum_values_by_user_id(
         self,
         user_id: int,
-        transaction_type: TransactionType,
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,
-    ) -> Decimal:
-        query = select(func.sum(Transaction.value)).filter(
-            (Transaction.type == transaction_type) & (Transaction.user_id == user_id)
+    ) -> Dict[str, Decimal]:
+        async with self._session.begin():
+            income_query = self._build_sum_query_with_user_id(
+                user_id, TransactionType.INCOME, False, start_date, end_date
+            )
+            expense_query = self._build_sum_query_with_user_id(
+                user_id, TransactionType.EXPENSE, False, start_date, end_date
+            )
+
+            incomes, expenses = await asyncio.gather(
+                self._execute_sum_query(income_query),
+                self._execute_sum_query(expense_query),
+            )
+
+            return {
+                "incomes": incomes,
+                "expenses": expenses,
+            }
+
+    async def get_sum_values_by_wallet_id(
+        self,
+        wallet_id: int,
+        start_date: Optional[datetime] = None,
+        end_date: Optional[datetime] = None,
+    ) -> Dict[str, Decimal]:
+        income_query = self._build_sum_query_with_wallet_id(
+            wallet_id, TransactionType.INCOME, False, start_date, end_date
+        )
+        expense_query = self._build_sum_query_with_wallet_id(
+            wallet_id, TransactionType.EXPENSE, False, start_date, end_date
+        )
+        transfer_income_query = self._build_sum_query_with_wallet_id(
+            wallet_id, TransactionType.INCOME, True, start_date, end_date
+        )
+        transfer_expense_query = self._build_sum_query_with_wallet_id(
+            wallet_id, TransactionType.EXPENSE, True, start_date, end_date
         )
 
-        query = filter_query_by_date_range(query, start_date, end_date)
+        incomes, expenses, transfer_income, transfer_expense = await asyncio.gather(
+            self._execute_sum_query(income_query),
+            self._execute_sum_query(expense_query),
+            self._execute_sum_query(transfer_income_query),
+            self._execute_sum_query(transfer_expense_query),
+        )
 
+        return {
+            "incomes": incomes,
+            "expenses": expenses,
+            "transfer_incomes": transfer_income,
+            "transfer_expenses": transfer_expense,
+        }
+
+    async def _execute_sum_query(self, query) -> Decimal:
         result = await self._session.execute(query)
+        return result.scalar() or Decimal("0.0")
 
-        return result.scalar() or Decimal(0)
-
-    async def get_sum_value_by_wallet_id_and_type(
+    def _build_sum_query_with_wallet_id(
         self,
         wallet_id: int,
         transaction_type: TransactionType,
+        is_transfer: bool,
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,
-    ) -> Decimal:
-        query = select(func.sum(Transaction.value)).where(
-            (Transaction.wallet_id == wallet_id)
-            & (Transaction.type == transaction_type)
-        )
-
+    ) -> select:
+        query = self._build_sum_base_query(transaction_type, is_transfer)
+        query = self._apply_wallet_id_filter(query, wallet_id)
         query = filter_query_by_date_range(query, start_date, end_date)
 
-        result = await self._session.execute(query)
+        return query
 
-        return result.scalar() or Decimal("0.0")
+    def _build_sum_query_with_user_id(
+        self,
+        user_id: int,
+        transaction_type: TransactionType,
+        is_transfer: bool,
+        start_date: Optional[datetime] = None,
+        end_date: Optional[datetime] = None,
+    ) -> select:
+        query = self._build_sum_base_query(transaction_type, is_transfer)
+        query = self._apply_user_id_filter(query, user_id)
+        query = filter_query_by_date_range(query, start_date, end_date)
+
+        return query
+
+    def _build_sum_base_query(
+        self, transaction_type: TransactionType, is_transfer: bool
+    ) -> Select:
+        return select(func.sum(Transaction.value)).filter(
+            (Transaction.type == transaction_type)
+            & (Transaction.is_transfer == is_transfer)
+        )
+
+    def _apply_wallet_id_filter(self, query: select, wallet_id: int) -> Select:
+        return query.filter(Transaction.wallet_id == wallet_id)
+
+    def _apply_user_id_filter(self, query: Select, user_id: int) -> Select:
+        return query.filter(Transaction.user_id == user_id)

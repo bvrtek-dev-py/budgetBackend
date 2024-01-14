@@ -17,6 +17,7 @@ from backend.api.v1.wallet.routers.wallet import router as wallet_router
 from backend.api.v1.wallet.routers.wallet_transactions import (
     router as wallet_transactions_router,
 )
+from backend.api.v1.wallet.routers.wallet_transfer import router as wallet_transfer
 from backend.exception_handlers import http_exception_handler
 from backend.modules.common.exceptions import BaseHttpException
 
@@ -27,6 +28,7 @@ app.include_router(user_me_router)
 app.include_router(user_me_transactions_router)
 app.include_router(wallet_router)
 app.include_router(wallet_transactions_router)
+app.include_router(wallet_transfer)
 app.include_router(category_router)
 app.include_router(transaction_router)
 app.include_router(subject_router)

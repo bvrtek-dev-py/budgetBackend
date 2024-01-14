@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, Path
 from fastapi import status
 
 from backend.api.v1.common.responses import ErrorResponse
-from backend.api.v1.transaction.requests import (
+from backend.api.v1.transaction.requests.transaction import (
     TransactionUpdateRequest,
 )
 from backend.api.v1.transaction.responses.transaction import TransactionBaseResponse

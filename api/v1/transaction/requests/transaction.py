@@ -14,10 +14,19 @@ class TransactionBaseRequest(BaseModel):
     subject_id: int
     category_id: int
 
+    class ConfigDict:
+        frozen = True
+
 
 class TransactionCreateRequest(TransactionBaseRequest):
     type: TransactionType
 
+    class ConfigDict:
+        frozen = True
+
 
 class TransactionUpdateRequest(TransactionBaseRequest):
     pass
+
+    class ConfigDict:
+        frozen = True
