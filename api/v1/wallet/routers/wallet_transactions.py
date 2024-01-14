@@ -71,7 +71,7 @@ async def create_wallet_transaction(
 
 
 @router.get(
-    "/transactions",
+    "/",
     responses={
         200: {"model": List[TransactionBaseResponse]},
         401: {"model": ErrorResponse},

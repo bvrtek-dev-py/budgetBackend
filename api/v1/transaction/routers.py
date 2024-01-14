@@ -8,6 +8,7 @@ from backend.api.v1.transaction.requests import (
     TransactionUpdateRequest,
 )
 from backend.api.v1.transaction.responses.transaction import TransactionBaseResponse
+from backend.modules.category.dependencies import category_owner_permission
 from backend.modules.subject.dependencies import (
     subject_owner_permission,
 )
@@ -37,6 +38,7 @@ router = APIRouter(prefix="/api/v1/transactions", tags=["APIv1 Transaction"])
     dependencies=[
         Depends(transaction_owner_permission),
         Depends(subject_owner_permission),
+        Depends(category_owner_permission),
     ],
 )
 async def update_transaction(

@@ -11,6 +11,7 @@ class TransactionBaseResponse(BaseModel):
     name: str
     value: Decimal
     type: TransactionType
+    description: str
     date: date_type
     created_at: datetime
     updated_at: datetime
