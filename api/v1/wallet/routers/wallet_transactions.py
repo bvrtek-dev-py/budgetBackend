@@ -11,7 +11,12 @@ from backend.api.v1.transaction.requests.transaction import TransactionCreateReq
 from backend.api.v1.transaction.responses.transaction import TransactionBaseResponse
 from backend.api.v1.transaction.responses.transaction_statistics import (
     WalletTransactionStatisticsResponse,
-    TransactionStatisticResponse,
+    WalletTransactionStatisticResponse,
+)
+from backend.dependencies.transaction.creators import (
+    get_transaction_service,
+    get_transaction_query_service,
+    get_transaction_statistics_service,
 )
 from backend.modules.auth.dependencies import get_current_user
 from backend.modules.auth.schemas import CurrentUserData
@@ -20,12 +25,7 @@ from backend.modules.common.utils import get_first_day_of_month
 from backend.modules.subject.dependencies import (
     subject_owner_permission,
 )
-from backend.modules.transaction.dependencies import (
-    get_transaction_service,
-    get_transaction_query_service,
-    get_transaction_statistics_service,
-)
-from backend.modules.transaction.schemas import TransactionCreateDTO
+from backend.modules.transaction.schemas.transaction import TransactionCreateDTO
 from backend.modules.transaction.services.crud_service import TransactionService
 from backend.modules.transaction.services.query_service import TransactionQueryService
 from backend.modules.transaction.services.statistics_service import (
@@ -126,12 +126,12 @@ async def get_wallet_statistics(
 @router.get(
     "/balance",
     responses={
-        200: {"model": TransactionStatisticResponse},
+        200: {"model": WalletTransactionStatisticResponse},
         401: {"model": ErrorResponse},
         403: {"model": ErrorResponse},
         404: {"model": ErrorResponse},
     },
-    response_model=TransactionStatisticResponse,
+    response_model=WalletTransactionStatisticResponse,
     dependencies=[Depends(WalletOwnerPermission("wallet_id"))],
 )
 async def get_wallet_balance(

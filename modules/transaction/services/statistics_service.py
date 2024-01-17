@@ -1,57 +1,58 @@
 from datetime import datetime
 from decimal import Decimal
-from typing import Dict, Optional
+from typing import Dict
 
 from dateutil.relativedelta import relativedelta
 
 from backend.modules.common.utils import get_last_day_of_month
 from backend.modules.transaction.repositories import TransactionRepository
-from backend.modules.transaction.types import StatisticsType, MonthlyType, TotalType
+from backend.modules.transaction.schemas.statistics import (
+    TransactionStatisticsDTO,
+    TransactionStatisticDTO,
+)
+from backend.modules.transaction.schemas.transaction import TransactionValueSumDTO
 
 
 class TransactionStatisticsService:
     def __init__(self, repository: TransactionRepository):
         self._repository = repository
 
-    async def get_wallet_balance(self, wallet_id: int) -> Dict[str, Decimal]:
-        results = await self._repository.get_sum_values_by_wallet_id(wallet_id)
-        transfer_balance = results["transfer_incomes"] - results["transfer_expenses"]
+    async def get_wallet_balance(self, wallet_id: int) -> TransactionStatisticDTO:
+        result = await self._repository.get_sum_values_by_wallet_id(wallet_id)
 
-        return {
-            "incomes": results["incomes"],
-            "expenses": results["expenses"],
-            "balance": results["incomes"] - results["expenses"] + transfer_balance,
-            "transfers": transfer_balance,
-        }
+        return self._update_transaction_statistic_dto(
+            statistic_dto=TransactionStatisticDTO(transfers=Decimal("0.0")),
+            update_data=result,
+        )
 
-    async def get_user_balance(self, user_id: int) -> Dict[str, Decimal]:
-        results = await self._repository.get_sum_values_by_user_id(user_id)
+    async def get_user_balance(self, user_id: int) -> TransactionStatisticDTO:
+        result = await self._repository.get_sum_values_by_user_id(user_id)
 
-        return {
-            "incomes": results["incomes"],
-            "expenses": results["expenses"],
-            "balance": results["incomes"] - results["expenses"],
-        }
+        return self._update_transaction_statistic_dto(
+            statistic_dto=TransactionStatisticDTO(), update_data=result
+        )
 
     async def get_statistics_for_user(
         self, user_id: int, start_date: datetime
-    ) -> StatisticsType:
-        statistics = self._initialize_statistics(False)
+    ) -> TransactionStatisticsDTO:
+        statistics = TransactionStatisticsDTO(
+            total=TransactionStatisticDTO(),
+            monthly={},
+        )
 
         while start_date <= datetime.now():
             end_date = get_last_day_of_month(start_date)
-            results = await self._repository.get_sum_values_by_user_id(
+            result = await self._repository.get_sum_values_by_user_id(
                 user_id, start_date, end_date
             )
 
-            self._update_statistics(
-                statistics["monthly"],
-                start_date,
-                results["incomes"],
-                results["expenses"],
+            statistics.monthly[
+                start_date.strftime("%Y-%m")
+            ] = self._update_transaction_statistic_dto(
+                statistic_dto=TransactionStatisticDTO(), update_data=result
             )
-            self._update_total(
-                statistics["total"], results["incomes"], results["expenses"]
+            self._update_transaction_statistic_dto(
+                statistic_dto=statistics.total, update_data=result
             )
 
             start_date += relativedelta(months=1)
@@ -60,78 +61,62 @@ class TransactionStatisticsService:
 
     async def get_statistics_for_wallet(
         self, wallet_id: int, start_date: datetime
-    ) -> StatisticsType:
-        statistics = self._initialize_statistics(True)
+    ) -> TransactionStatisticsDTO:
+        statistics = TransactionStatisticsDTO(
+            total=TransactionStatisticDTO(transfers=Decimal("0.0")),
+            monthly={},
+        )
 
         while start_date <= datetime.now():
             end_date = get_last_day_of_month(start_date)
-            results = await self._repository.get_sum_values_by_wallet_id(
+            result = await self._repository.get_sum_values_by_wallet_id(
                 wallet_id, start_date, end_date
             )
 
-            self._update_statistics(
-                statistics["monthly"],
-                start_date,
-                results["incomes"],
-                results["expenses"],
-                transfer=results["transfer_incomes"] - results["transfer_expenses"],
+            statistics.monthly[
+                start_date.strftime("%Y-%m")
+            ] = self._update_transaction_statistic_dto(
+                statistic_dto=TransactionStatisticDTO(transfers=Decimal("0.0")),
+                update_data=result,
             )
-            self._update_total(
-                statistics["total"],
-                results["incomes"],
-                results["expenses"],
-                results["transfer_incomes"] - results["transfer_expenses"],
-            )
+            self._update_transaction_statistic_dto(statistics.total, result)
 
             start_date += relativedelta(months=1)
 
         return statistics
 
-    def _initialize_statistics(self, with_transfer: bool) -> StatisticsType:
-        initial_values = {
-            "total": {
-                "balance": Decimal(0),
-                "incomes": Decimal(0),
-                "expenses": Decimal(0),
-            },
-            "monthly": {},
-        }
+    def _update_monthly_statistics(
+        self,
+        monthly: Dict[str, TransactionStatisticDTO],
+        start_date: datetime,
+        update_data: TransactionValueSumDTO,
+        with_transfer: bool,
+    ) -> None:
+        month_stats_dto = TransactionStatisticDTO()
 
         if with_transfer:
-            initial_values["total"]["transfers"] = Decimal(0)
+            month_stats_dto.transfers = Decimal("0.0")
 
-        return initial_values
-
-    def _update_statistics(
-        self,
-        monthly: MonthlyType,
-        start_date: datetime,
-        incomes: Decimal,
-        expenses: Decimal,
-        transfer: Optional[Decimal] = None,
-    ) -> None:
         month_key = start_date.strftime("%Y-%m")
-        month_data = {
-            "balance": incomes - expenses + (transfer or Decimal(0)),
-            "incomes": incomes,
-            "expenses": expenses,
-        }
+        monthly[month_key] = self._update_transaction_statistic_dto(
+            month_stats_dto, update_data
+        )
 
-        if transfer is not None:
-            month_data["transfers"] = transfer
-
-        monthly[month_key] = month_data
-
-    def _update_total(
+    def _update_transaction_statistic_dto(
         self,
-        total: TotalType,
-        incomes: Decimal,
-        expenses: Decimal,
-        transfer: Optional[Decimal] = None,
-    ) -> None:
-        total["incomes"] += incomes
-        total["expenses"] += expenses
-        total["balance"] += incomes - expenses + (transfer or Decimal(0))
+        statistic_dto: TransactionStatisticDTO,
+        update_data: TransactionValueSumDTO,
+    ) -> TransactionStatisticDTO:
+        statistic_dto.balance += update_data.incomes - update_data.expenses
+        statistic_dto.incomes += update_data.incomes
+        statistic_dto.expenses += update_data.expenses
 
-        if transfer is not None:
-            total["transfers"] += transfer
+        if statistic_dto.transfers is not None:
+            statistic_dto.balance += (
+                update_data.transfer_incomes - update_data.transfer_expenses  # type: ignore
+            )
+            statistic_dto.transfers += (
+                update_data.transfer_incomes - update_data.transfer_expenses  # type: ignore
+            )
+
+        return statistic_dto

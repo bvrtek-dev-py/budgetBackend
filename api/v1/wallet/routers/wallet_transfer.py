@@ -12,8 +12,8 @@ from backend.api.v1.transaction.responses.transaction_transfer import (
 )
 from backend.modules.auth.dependencies import get_current_user
 from backend.modules.auth.schemas import CurrentUserData
-from backend.modules.transaction.dependencies import get_transaction_transfer_service
-from backend.modules.transaction.schemas import TransactionTransferDTO
+from backend.dependencies.transaction.creators import get_transaction_transfer_service
+from backend.modules.transaction.schemas.transaction import TransactionTransferDTO
 from backend.modules.transaction.services.transfer_service import (
     TransactionTransferService,
 )

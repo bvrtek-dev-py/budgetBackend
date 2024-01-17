@@ -23,7 +23,7 @@ def async_engine_factory() -> AsyncEngine:
 @asynccontextmanager
 async def _get_session_context(
     async_engine: Annotated[AsyncEngine, Depends(async_engine_factory)]
-) -> AsyncIterator[AsyncSession]:
+) -> AsyncIterator[async_scoped_session[AsyncSession]]:
     session_local = async_sessionmaker(
         autocommit=False, autoflush=False, bind=async_engine, expire_on_commit=False
     )

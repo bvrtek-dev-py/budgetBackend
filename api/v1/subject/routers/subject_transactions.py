@@ -11,7 +11,7 @@ from backend.modules.subject.dependencies import (
     get_subject_service,
 )
 from backend.modules.subject.services import SubjectService
-from backend.modules.transaction.dependencies import get_transaction_query_service
+from backend.dependencies.transaction.creators import get_transaction_query_service
 from backend.modules.transaction.services.query_service import TransactionQueryService
 
 router = APIRouter(

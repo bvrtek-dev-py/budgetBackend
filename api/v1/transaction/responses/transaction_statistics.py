@@ -17,10 +17,6 @@ class TransactionStatisticResponse(BaseModel):
 class WalletTransactionStatisticResponse(TransactionStatisticResponse):
     transfers: Decimal
 
-    class ConfigDict:
-        frozen = True
-        orm_mode = True
-
 
 class WalletTransactionStatisticsResponse(BaseModel):
     total: WalletTransactionStatisticResponse

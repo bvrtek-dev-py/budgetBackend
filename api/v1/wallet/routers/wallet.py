@@ -25,7 +25,12 @@ router = APIRouter(prefix="/api/v1/wallets", tags=["APIv1 Wallet"])
 
 @router.get(
     "/{wallet_id}",
-    responses={200: {"model": WalletGetResponse}, 404: {"model": ErrorResponse}},
+    responses={
+        200: {"model": WalletGetResponse},
+        401: {"model": ErrorResponse},
+        403: {"model": ErrorResponse},
+        404: {"model": ErrorResponse},
+    },
     response_model=WalletGetResponse,
     dependencies=[Depends(WalletOwnerPermission("wallet_id"))],
 )
@@ -38,7 +43,11 @@ async def get_wallet(
 
 @router.post(
     "/",
-    responses={201: {"model": WalletBaseResponse}},
+    responses={
+        201: {"model": WalletBaseResponse},
+        401: {"model": ErrorResponse},
+        409: {"model": ErrorResponse},
+    },
     response_model=WalletBaseResponse,
     status_code=status.HTTP_201_CREATED,
 )
@@ -54,7 +63,13 @@ async def create_wallet(
 
 @router.put(
     "/{wallet_id}",
-    responses={200: {"model": WalletBaseResponse}, 404: {"model": ErrorResponse}},
+    responses={
+        200: {"model": WalletBaseResponse},
+        401: {"model": ErrorResponse},
+        403: {"model": ErrorResponse},
+        404: {"model": ErrorResponse},
+        409: {"model": ErrorResponse},
+    },
     status_code=status.HTTP_200_OK,
     response_model=WalletBaseResponse,
     dependencies=[Depends(WalletOwnerPermission("wallet_id"))],
@@ -71,7 +86,12 @@ async def update_wallet(
 
 @router.delete(
     "/{wallet_id}",
-    responses={204: {}, 404: {"model": ErrorResponse}},
+    responses={
+        204: {},
+        401: {"model": ErrorResponse},
+        403: {"model": ErrorResponse},
+        404: {"model": ErrorResponse},
+    },
     status_code=status.HTTP_204_NO_CONTENT,
     dependencies=[Depends(WalletOwnerPermission("wallet_id"))],
 )

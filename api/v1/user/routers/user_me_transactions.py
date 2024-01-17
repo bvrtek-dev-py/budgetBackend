@@ -9,13 +9,12 @@ from backend.api.v1.common.validators import validate_date_range
 from backend.api.v1.transaction.responses.transaction import TransactionBaseResponse
 from backend.api.v1.transaction.responses.transaction_statistics import (
     TransactionStatisticResponse,
-    WalletTransactionStatisticsResponse,
     UserTransactionStatisticsResponse,
 )
 from backend.modules.auth.dependencies import get_current_user
 from backend.modules.auth.schemas import CurrentUserData
 from backend.modules.common.utils import get_first_day_of_month
-from backend.modules.transaction.dependencies import (
+from backend.dependencies.transaction.creators import (
     get_transaction_query_service,
     get_transaction_statistics_service,
 )

@@ -1,10 +1,11 @@
 from datetime import date, datetime
 from decimal import Decimal
-from typing import List, Sequence, Optional, Dict
+from typing import List, Sequence, Optional
 
 from backend.modules.transaction.enums import TransactionType
 from backend.modules.transaction.interfaces import TransactionRepositoryInterface
 from backend.modules.transaction.models import Transaction
+from backend.modules.transaction.schemas.transaction import TransactionValueSumDTO
 from backend.tests.database import get_transaction_data
 
 
@@ -26,22 +27,22 @@ class InMemoryTransactionRepository(TransactionRepositoryInterface):
         return self.transactions
 
     async def get_by_id(self, transaction_id: int) -> Transaction | None:
-        for t in self.transactions:
-            if t.id == transaction_id:
-                return t
+        for transaction in self.transactions:
+            if transaction.id == transaction_id:
+                return transaction
 
         return None
 
     async def get_by_name_and_wallet_and_type(
         self, name: str, wallet_id: int, transaction_date: date
     ) -> Transaction | None:
-        for t in self.transactions:
+        for transaction in self.transactions:
             if (
-                t.name == name
-                and t.wallet_id == wallet_id
-                and t.date == transaction_date
+                transaction.name == name
+                and transaction.wallet_id == wallet_id
+                and transaction.date == transaction_date
             ):
-                return t
+                return transaction
 
         return None
 
@@ -53,14 +54,14 @@ class InMemoryTransactionRepository(TransactionRepositoryInterface):
     ) -> Sequence[Transaction]:
         filtered_transactions = []
 
-        for t in self.transactions:
-            is_matching_user = t.user_id == user_id
-            is_within_date_range = (start_date is None or t.date >= start_date) and (
-                end_date is None or t.date <= end_date
-            )
+        for transaction in self.transactions:
+            is_matching_user = transaction.user_id == user_id
+            is_within_date_range = (
+                start_date is None or transaction.date >= start_date
+            ) and (end_date is None or transaction.date <= end_date)
 
             if is_matching_user and is_within_date_range:
-                filtered_transactions.append(t)
+                filtered_transactions.append(transaction)
 
         return filtered_transactions
 
@@ -69,14 +70,14 @@ class InMemoryTransactionRepository(TransactionRepositoryInterface):
     ) -> Sequence[Transaction]:
         filtered_transactions = []
 
-        for t in self.transactions:
-            is_matching_wallet = t.wallet_id == wallet_id
-            is_within_date_range = (start_date is None or t.date >= start_date) and (
-                end_date is None or t.date <= end_date
-            )
+        for transaction in self.transactions:
+            is_matching_wallet = transaction.wallet_id == wallet_id
+            is_within_date_range = (
+                start_date is None or transaction.date >= start_date
+            ) and (end_date is None or transaction.date <= end_date)
 
             if is_matching_wallet and is_within_date_range:
-                filtered_transactions.append(t)
+                filtered_transactions.append(transaction)
 
         return filtered_transactions
 
@@ -85,14 +86,14 @@ class InMemoryTransactionRepository(TransactionRepositoryInterface):
     ) -> Sequence[Transaction]:
         filtered_transactions = []
 
-        for t in self.transactions:
-            is_matching_subject = t.subject_id == subject_id
-            is_within_date_range = (start_date is None or t.date >= start_date) and (
-                end_date is None or t.date <= end_date
-            )
+        for transaction in self.transactions:
+            is_matching_subject = transaction.subject_id == subject_id
+            is_within_date_range = (
+                start_date is None or transaction.date >= start_date
+            ) and (end_date is None or transaction.date <= end_date)
 
             if is_matching_subject and is_within_date_range:
-                filtered_transactions.append(t)
+                filtered_transactions.append(transaction)
 
         return filtered_transactions
 
@@ -101,86 +102,86 @@ class InMemoryTransactionRepository(TransactionRepositoryInterface):
         user_id: int,
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,
-    ) -> Dict[str, Decimal]:
+    ) -> TransactionValueSumDTO:
         incomes = Decimal(
             sum(
-                Decimal(t.value)
-                for t in self.transactions
-                if t.user_id == user_id
-                and t.type == TransactionType.INCOME
-                and (start_date is None or t.date >= start_date)
-                and (end_date is None or t.date <= end_date)
+                Decimal(transaction.value)
+                for transaction in self.transactions
+                if transaction.user_id == user_id
+                and transaction.type == TransactionType.INCOME
+                and (start_date is None or transaction.date >= start_date)
+                and (end_date is None or transaction.date <= end_date)
             )
         )
 
         expenses = Decimal(
             sum(
-                Decimal(t.value)
-                for t in self.transactions
-                if t.user_id == user_id
-                and t.type == TransactionType.EXPENSE
-                and (start_date is None or t.date >= start_date)
-                and (end_date is None or t.date <= end_date)
+                Decimal(transaction.value)
+                for transaction in self.transactions
+                if transaction.user_id == user_id
+                and transaction.type == TransactionType.EXPENSE
+                and (start_date is None or transaction.date >= start_date)
+                and (end_date is None or transaction.date <= end_date)
             )
         )
 
-        return {"incomes": incomes, "expenses": expenses}
+        return TransactionValueSumDTO(incomes=incomes, expenses=expenses)
 
     async def get_sum_values_by_wallet_id(
         self,
         wallet_id: int,
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,
-    ) -> Dict[str, Decimal]:
+    ) -> TransactionValueSumDTO:
         incomes = Decimal(
             sum(
-                Decimal(t.value)
-                for t in self.transactions
-                if t.wallet_id == wallet_id
-                and t.type == TransactionType.INCOME
-                and (start_date is None or t.date >= start_date)
-                and (end_date is None or t.date <= end_date)
+                Decimal(transaction.value)
+                for transaction in self.transactions
+                if transaction.wallet_id == wallet_id
+                and transaction.type == TransactionType.INCOME
+                and (start_date is None or transaction.date >= start_date)
+                and (end_date is None or transaction.date <= end_date)
             )
         )
 
         expenses = Decimal(
             sum(
-                Decimal(t.value)
-                for t in self.transactions
-                if t.wallet_id == wallet_id
-                and t.type == TransactionType.EXPENSE
-                and (start_date is None or t.date >= start_date)
-                and (end_date is None or t.date <= end_date)
+                Decimal(transaction.value)
+                for transaction in self.transactions
+                if transaction.wallet_id == wallet_id
+                and transaction.type == TransactionType.EXPENSE
+                and (start_date is None or transaction.date >= start_date)
+                and (end_date is None or transaction.date <= end_date)
             )
         )
 
         transfer_incomes = Decimal(
             sum(
-                Decimal(t.value)
-                for t in self.transactions
-                if t.wallet_id == wallet_id
-                and t.type == TransactionType.INCOME
-                and t.is_transfer
-                and (start_date is None or t.date >= start_date)
-                and (end_date is None or t.date <= end_date)
+                Decimal(transaction.value)
+                for transaction in self.transactions
+                if transaction.wallet_id == wallet_id
+                and transaction.type == TransactionType.INCOME
+                and transaction.is_transfer
+                and (start_date is None or transaction.date >= start_date)
+                and (end_date is None or transaction.date <= end_date)
             )
         )
 
         transfer_expenses = Decimal(
             sum(
-                Decimal(t.value)
-                for t in self.transactions
-                if t.wallet_id == wallet_id
-                and t.type == TransactionType.EXPENSE
-                and t.is_transfer
-                and (start_date is None or t.date >= start_date)
-                and (end_date is None or t.date <= end_date)
+                Decimal(transaction.value)
+                for transaction in self.transactions
+                if transaction.wallet_id == wallet_id
+                and transaction.type == TransactionType.EXPENSE
+                and transaction.is_transfer
+                and (start_date is None or transaction.date >= start_date)
+                and (end_date is None or transaction.date <= end_date)
             )
         )
 
-        return {
-            "incomes": incomes,
-            "expenses": expenses,
-            "transfer_incomes": transfer_incomes,
-            "transfer_expenses": transfer_expenses,
-        }
+        return TransactionValueSumDTO(
+            incomes=incomes,
+            expenses=expenses,
+            transfer_expenses=transfer_expenses,
+            transfer_incomes=transfer_incomes,
+        )

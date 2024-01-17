@@ -1,10 +1,9 @@
 from abc import abstractmethod, ABC
 from datetime import datetime, date
-from decimal import Decimal
-from typing import Optional, Sequence, Dict
+from typing import Optional, Sequence
 
-from backend.modules.transaction.enums import TransactionType
 from backend.modules.transaction.models import Transaction
+from backend.modules.transaction.schemas.transaction import TransactionValueSumDTO
 
 
 class TransactionRepositoryInterface(ABC):
@@ -61,7 +60,7 @@ class TransactionRepositoryInterface(ABC):
         user_id: int,
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,
-    ) -> Dict[str, Decimal]:
+    ) -> TransactionValueSumDTO:
         pass
 
     @abstractmethod
@@ -70,5 +69,5 @@ class TransactionRepositoryInterface(ABC):
         wallet_id: int,
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,
-    ) -> Dict[str, Decimal]:
+    ) -> TransactionValueSumDTO:
         pass

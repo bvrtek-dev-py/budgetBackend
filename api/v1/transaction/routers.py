@@ -8,17 +8,15 @@ from backend.api.v1.transaction.requests.transaction import (
     TransactionUpdateRequest,
 )
 from backend.api.v1.transaction.responses.transaction import TransactionBaseResponse
+from backend.dependencies.transaction.creators import (
+    get_transaction_service,
+)
+from backend.dependencies.transaction.permissions import transaction_owner_permission
 from backend.modules.category.dependencies import category_owner_permission
 from backend.modules.subject.dependencies import (
     subject_owner_permission,
 )
-from backend.modules.transaction.dependencies import (
-    get_transaction_service,
-    transaction_owner_permission,
-)
-from backend.modules.transaction.schemas import (
-    TransactionUpdateDTO,
-)
+from backend.modules.transaction.schemas.transaction import TransactionUpdateDTO
 from backend.modules.transaction.services.crud_service import TransactionService
 
 router = APIRouter(prefix="/api/v1/transactions", tags=["APIv1 Transaction"])

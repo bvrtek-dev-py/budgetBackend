@@ -1,7 +1,7 @@
 from backend.modules.transaction.enums import TransactionType
 from backend.modules.transaction.interfaces import TransactionRepositoryInterface
 from backend.modules.transaction.models import Transaction
-from backend.modules.transaction.schemas import TransactionTransferDTO
+from backend.modules.transaction.schemas.transaction import TransactionTransferDTO
 
 
 class TransactionTransferService:

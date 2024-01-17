@@ -1,18 +1,18 @@
 from datetime import date
 from decimal import Decimal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, condecimal
 
 from backend.modules.transaction.enums import TransactionType
 
 
 class TransactionBaseRequest(BaseModel):
-    name: str
-    value: Decimal
-    description: str
+    name: str = Field(min_length=2, max_length=50)
+    value: Decimal = condecimal(max_digits=12, decimal_places=2)  # type: ignore
+    description: str = Field(min_length=2, max_length=2000)
     date: date
-    subject_id: int
-    category_id: int
+    subject_id: int = Field(gt=0)
+    category_id: int = Field(gt=0)
 
     class ConfigDict:
         frozen = True
@@ -21,12 +21,6 @@ class TransactionBaseRequest(BaseModel):
 class TransactionCreateRequest(TransactionBaseRequest):
     type: TransactionType
 
-    class ConfigDict:
-        frozen = True
-
 
 class TransactionUpdateRequest(TransactionBaseRequest):
     pass
-
-    class ConfigDict:
-        frozen = True

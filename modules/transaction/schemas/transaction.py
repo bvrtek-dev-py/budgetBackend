@@ -1,5 +1,6 @@
 from datetime import date
 from decimal import Decimal
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -30,3 +31,10 @@ class TransactionTransferDTO(BaseModel):
     value: Decimal
     description: str
     date: date
+
+
+class TransactionValueSumDTO(BaseModel):
+    incomes: Decimal
+    expenses: Decimal
+    transfer_incomes: Optional[Decimal] = None
+    transfer_expenses: Optional[Decimal] = None
