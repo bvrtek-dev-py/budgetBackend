@@ -10,7 +10,6 @@ class InMemoryWalletRepository(WalletRepositoryInterface):
         self._wallets: List[Wallet] = get_wallet_data()
 
     async def save(self, wallet: Wallet) -> Wallet:
-        # Simulate auto-incrementing ID
         wallet_id = len(self._wallets) + 1
         wallet.id = wallet_id
 

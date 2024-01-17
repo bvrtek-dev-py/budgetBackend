@@ -4,7 +4,7 @@ from typing import Sequence, Optional
 from backend.modules.common.exceptions import ObjectDoesNotExist, ObjectAlreadyExists
 from backend.modules.transaction.models import Transaction
 from backend.modules.transaction.repositories import TransactionRepository
-from backend.modules.transaction.schemas import (
+from backend.modules.transaction.schemas.transaction import (
     TransactionCreateDTO,
     TransactionUpdateDTO,
 )

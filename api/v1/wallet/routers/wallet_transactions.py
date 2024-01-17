@@ -7,11 +7,16 @@ from starlette import status
 
 from backend.api.v1.common.responses import ErrorResponse
 from backend.api.v1.common.validators import validate_date_range
-from backend.api.v1.transaction.requests import TransactionCreateRequest
+from backend.api.v1.transaction.requests.transaction import TransactionCreateRequest
 from backend.api.v1.transaction.responses.transaction import TransactionBaseResponse
 from backend.api.v1.transaction.responses.transaction_statistics import (
-    TransactionStatisticsResponse,
-    TransactionStatisticResponse,
+    WalletTransactionStatisticsResponse,
+    WalletTransactionStatisticResponse,
+)
+from backend.dependencies.transaction.creators import (
+    get_transaction_service,
+    get_transaction_query_service,
+    get_transaction_statistics_service,
 )
 from backend.modules.auth.dependencies import get_current_user
 from backend.modules.auth.schemas import CurrentUserData
@@ -20,20 +25,15 @@ from backend.modules.common.utils import get_first_day_of_month
 from backend.modules.subject.dependencies import (
     subject_owner_permission,
 )
-from backend.modules.transaction.dependencies import (
-    get_transaction_service,
-    get_transaction_query_service,
-    get_transaction_statistics_service,
-)
-from backend.modules.transaction.schemas import TransactionCreateDTO
+from backend.modules.transaction.schemas.transaction import TransactionCreateDTO
 from backend.modules.transaction.services.crud_service import TransactionService
 from backend.modules.transaction.services.query_service import TransactionQueryService
 from backend.modules.transaction.services.statistics_service import (
     TransactionStatisticsService,
 )
 from backend.modules.wallet.dependencies import (
-    wallet_owner_permission,
     get_wallet_service,
+    WalletOwnerPermission,
 )
 from backend.modules.wallet.services import WalletService
 
@@ -52,7 +52,7 @@ router = APIRouter(
     },
     status_code=status.HTTP_201_CREATED,
     dependencies=[
-        Depends(wallet_owner_permission),
+        Depends(WalletOwnerPermission("wallet_id")),
         Depends(subject_owner_permission),
         Depends(category_owner_permission),
     ],
@@ -79,7 +79,7 @@ async def create_wallet_transaction(
     },
     response_model=List[TransactionBaseResponse],
     status_code=status.HTTP_200_OK,
-    dependencies=[Depends(wallet_owner_permission)],
+    dependencies=[Depends(WalletOwnerPermission("wallet_id"))],
 )
 async def get_wallet_transactions(
     wallet_id: Annotated[int, Path(gt=0)],
@@ -103,14 +103,14 @@ async def get_wallet_transactions(
 @router.get(
     "/statistics",
     responses={
-        200: {"model": TransactionStatisticsResponse},
+        200: {"model": WalletTransactionStatisticsResponse},
         401: {"model": ErrorResponse},
         403: {"model": ErrorResponse},
         404: {"model": ErrorResponse},
     },
-    response_model=TransactionStatisticsResponse,
+    response_model=WalletTransactionStatisticsResponse,
     status_code=status.HTTP_200_OK,
-    dependencies=[Depends(wallet_owner_permission)],
+    dependencies=[Depends(WalletOwnerPermission("wallet_id"))],
 )
 async def get_wallet_statistics(
     wallet_id: Annotated[int, Path(gt=0)],
@@ -126,13 +126,13 @@ async def get_wallet_statistics(
 @router.get(
     "/balance",
     responses={
-        200: {"model": TransactionStatisticResponse},
+        200: {"model": WalletTransactionStatisticResponse},
         401: {"model": ErrorResponse},
         403: {"model": ErrorResponse},
         404: {"model": ErrorResponse},
     },
-    response_model=TransactionStatisticResponse,
-    dependencies=[Depends(wallet_owner_permission)],
+    response_model=WalletTransactionStatisticResponse,
+    dependencies=[Depends(WalletOwnerPermission("wallet_id"))],
 )
 async def get_wallet_balance(
     wallet_id: Annotated[int, Path(gt=0)],
@@ -142,4 +142,4 @@ async def get_wallet_balance(
     ],
 ):
     wallet = await wallet_service.get_by_id(wallet_id)
-    return await transaction_statistics_service.get_wallet_balance(wallet)
+    return await transaction_statistics_service.get_wallet_balance(wallet.id)

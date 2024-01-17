@@ -15,7 +15,7 @@ from backend.modules.auth.dependencies import get_current_user
 from backend.modules.auth.schemas import CurrentUserData
 from backend.modules.wallet.dependencies import (
     get_wallet_service,
-    wallet_owner_permission,
+    WalletOwnerPermission,
 )
 from backend.modules.wallet.schemas import WalletPayloadDTO
 from backend.modules.wallet.services import WalletService
@@ -25,9 +25,14 @@ router = APIRouter(prefix="/api/v1/wallets", tags=["APIv1 Wallet"])
 
 @router.get(
     "/{wallet_id}",
-    responses={200: {"model": WalletGetResponse}, 404: {"model": ErrorResponse}},
+    responses={
+        200: {"model": WalletGetResponse},
+        401: {"model": ErrorResponse},
+        403: {"model": ErrorResponse},
+        404: {"model": ErrorResponse},
+    },
     response_model=WalletGetResponse,
-    dependencies=[Depends(wallet_owner_permission)],
+    dependencies=[Depends(WalletOwnerPermission("wallet_id"))],
 )
 async def get_wallet(
     wallet_id: Annotated[int, Path(gt=0)],
@@ -38,7 +43,11 @@ async def get_wallet(
 
 @router.post(
     "/",
-    responses={201: {"model": WalletBaseResponse}},
+    responses={
+        201: {"model": WalletBaseResponse},
+        401: {"model": ErrorResponse},
+        409: {"model": ErrorResponse},
+    },
     response_model=WalletBaseResponse,
     status_code=status.HTTP_201_CREATED,
 )
@@ -54,10 +63,16 @@ async def create_wallet(
 
 @router.put(
     "/{wallet_id}",
-    responses={200: {"model": WalletBaseResponse}, 404: {"model": ErrorResponse}},
+    responses={
+        200: {"model": WalletBaseResponse},
+        401: {"model": ErrorResponse},
+        403: {"model": ErrorResponse},
+        404: {"model": ErrorResponse},
+        409: {"model": ErrorResponse},
+    },
     status_code=status.HTTP_200_OK,
     response_model=WalletBaseResponse,
-    dependencies=[Depends(wallet_owner_permission)],
+    dependencies=[Depends(WalletOwnerPermission("wallet_id"))],
 )
 async def update_wallet(
     wallet_id: Annotated[int, Path(gt=0)],
@@ -71,9 +86,14 @@ async def update_wallet(
 
 @router.delete(
     "/{wallet_id}",
-    responses={204: {}, 404: {"model": ErrorResponse}},
+    responses={
+        204: {},
+        401: {"model": ErrorResponse},
+        403: {"model": ErrorResponse},
+        404: {"model": ErrorResponse},
+    },
     status_code=status.HTTP_204_NO_CONTENT,
-    dependencies=[Depends(wallet_owner_permission)],
+    dependencies=[Depends(WalletOwnerPermission("wallet_id"))],
 )
 async def delete_wallet(
     wallet_id: Annotated[int, Path(gt=0)],

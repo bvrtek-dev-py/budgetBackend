@@ -10,6 +10,7 @@ from sqlalchemy import (
     ForeignKey,
     Integer,
     UniqueConstraint,
+    Boolean,
 )
 from sqlalchemy.orm import MappedColumn, mapped_column, relationship
 
@@ -39,11 +40,16 @@ class Transaction(BaseModel):
             validate_strings=True,
         )
     )
+    is_transfer: MappedColumn[bool] = mapped_column(Boolean, default=False)
 
     user_id: MappedColumn[int] = mapped_column(Integer, ForeignKey("users.id"))
     wallet_id: MappedColumn[int] = mapped_column(Integer, ForeignKey("wallets.id"))
-    subject_id: MappedColumn[int] = mapped_column(Integer, ForeignKey("subjects.id"))
-    category_id: MappedColumn[int] = mapped_column(Integer, ForeignKey("categories.id"))
+    subject_id: MappedColumn[int] = mapped_column(
+        Integer, ForeignKey("subjects.id"), nullable=True
+    )
+    category_id: MappedColumn[int] = mapped_column(
+        Integer, ForeignKey("categories.id"), nullable=True
+    )
 
     user: MappedColumn["User"] = relationship(back_populates="transactions")  # type: ignore
     wallet: MappedColumn["Wallet"] = relationship(back_populates="transactions")  # type: ignore

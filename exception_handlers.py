@@ -40,3 +40,8 @@ async def http_exception_handler(request: Request, exception: BaseHttpException)
         return JSONResponse(
             status_code=status.HTTP_403_FORBIDDEN, content={"detail": exception.detail}
         )
+
+    return JSONResponse(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        content={"detail": "Unknown error"},
+    )
