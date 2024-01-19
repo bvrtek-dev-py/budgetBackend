@@ -6,12 +6,12 @@ from fastapi import APIRouter, status, Depends, Path
 from backend.api.v1.common.responses import ErrorResponse
 from backend.api.v1.common.validators import validate_date_range
 from backend.api.v1.transaction.responses.transaction import TransactionBaseResponse
-from backend.modules.subject.dependencies import (
-    subject_owner_permission,
+from backend.dependencies.subject.dependencies import (
     get_subject_service,
 )
-from backend.modules.subject.services import SubjectService
+from backend.dependencies.subject.permissions import SubjectOwnerPermission
 from backend.dependencies.transaction.creators import get_transaction_query_service
+from backend.modules.subject.services import SubjectService
 from backend.modules.transaction.services.query_service import TransactionQueryService
 
 router = APIRouter(
@@ -28,7 +28,7 @@ router = APIRouter(
     },
     response_model=List[TransactionBaseResponse],
     status_code=status.HTTP_200_OK,
-    dependencies=[Depends(subject_owner_permission)],
+    dependencies=[Depends(SubjectOwnerPermission())],
 )
 async def get_subject_transactions(
     subject_id: Annotated[int, Path(gt=0)],

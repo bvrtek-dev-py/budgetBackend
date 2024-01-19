@@ -6,7 +6,7 @@ from fastapi import status
 from backend.api.v1.common.responses import ErrorResponse
 from backend.api.v1.user.requests import UserCreateRequest, UserUpdateRequest
 from backend.api.v1.user.responses import UserBaseResponse
-from backend.modules.user.dependencies import get_user_service
+from backend.dependencies.user.creators import get_user_service
 from backend.modules.user.schemas import UserCreateDTO, UserUpdateDTO
 from backend.modules.user.services import UserService
 

@@ -6,12 +6,12 @@ from backend.api.v1.category.responses import CategoryGetResponse
 from backend.api.v1.common.responses import ErrorResponse
 from backend.api.v1.subject.responses import SubjectBaseResponse
 from backend.api.v1.wallet.responses import WalletGetResponse
-from backend.modules.auth.dependencies import get_current_user
+from backend.dependencies.auth.permissions import get_current_user
+from backend.dependencies.category.creators import get_category_service
+from backend.dependencies.user.creators import get_user_service
 from backend.modules.auth.schemas import CurrentUserData
-from backend.modules.category.dependencies import get_category_service
 from backend.modules.category.services import CategoryService
 from backend.modules.transaction.enums import TransactionType
-from backend.modules.user.dependencies import get_user_service
 from backend.modules.user.services import UserService
 
 router = APIRouter(prefix="/api/v1/users/me", tags=["APIv1 User Me"])

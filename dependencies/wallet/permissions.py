@@ -1,20 +1,20 @@
 from typing import Annotated
 
-from fastapi import Depends, Request
+from fastapi import Request, Depends
 
 from backend.dependencies.auth.permissions import get_current_user
 from backend.dependencies.common.enums import IdentifierSource
 from backend.dependencies.common.getters import get_object_id
-from backend.dependencies.transaction.creators import get_transaction_validator
+from backend.dependencies.wallet.creators import get_wallet_validator
 from backend.modules.auth.schemas import CurrentUserData
-from backend.modules.transaction.validators import TransactionValidator
+from backend.modules.wallet.validators import WalletValidator
 
 
-class TransactionOwnerPermission:
+class WalletOwnerPermission:
     def __init__(
         self,
         source: IdentifierSource = IdentifierSource.PATH_PARAMETER,
-        name: str = "transaction_id",
+        name: str = "wallet_id",
     ):
         """
         :param source - The source identifier of identifier (request or path parameter):
@@ -27,14 +27,10 @@ class TransactionOwnerPermission:
         self,
         request: Request,
         current_user: Annotated[CurrentUserData, Depends(get_current_user)],
-        transaction_validator: Annotated[
-            TransactionValidator, Depends(get_transaction_validator)
-        ],
+        wallet_validator: Annotated[WalletValidator, Depends(get_wallet_validator)],
     ) -> None:
         wallet_id = await get_object_id(
             scope=self._source, request=request, name=self._name
         )
 
-        await transaction_validator.user_is_transaction_owner(
-            current_user.id, wallet_id
-        )
+        await wallet_validator.user_is_wallet_owner(current_user.id, wallet_id)

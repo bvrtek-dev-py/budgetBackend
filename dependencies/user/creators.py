@@ -4,7 +4,7 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.database.setup import get_session
-from backend.modules.auth.dependencies import get_password_hash_service
+from backend.dependencies.auth.creators import get_password_hash_service
 from backend.modules.auth.services import PasswordHashService
 from backend.modules.user.interfaces import UserRepositoryInterface
 from backend.modules.user.repositories import UserRepository
