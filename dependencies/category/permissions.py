@@ -13,7 +13,7 @@ from backend.modules.category.validators import CategoryValidator
 class CategoryOwnerPermission:
     def __init__(
         self,
-        source: IdentifierSource,
+        source: IdentifierSource = IdentifierSource.PATH_PARAMETER,
         name: str = "category_id",
     ):
         """
