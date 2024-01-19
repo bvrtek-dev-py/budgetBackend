@@ -7,6 +7,7 @@ from backend.api.v1.common.responses import ErrorResponse
 from backend.api.v1.user.requests import UserCreateRequest, UserUpdateRequest
 from backend.api.v1.user.responses import UserBaseResponse
 from backend.dependencies.user.creators import get_user_service
+from backend.dependencies.user.permissions import admin_permission
 from backend.modules.user.schemas import UserCreateDTO, UserUpdateDTO
 from backend.modules.user.services import UserService
 
@@ -35,11 +36,13 @@ async def create_user(
     responses={
         200: {"model": UserBaseResponse},
         401: {"model": ErrorResponse},
+        403: {"model": ErrorResponse},
         404: {"model": ErrorResponse},
         409: {"model": ErrorResponse},
     },
     response_model=UserBaseResponse,
     status_code=status.HTTP_200_OK,
+    dependencies=[Depends(admin_permission)],
 )
 async def update_user(
     user_id: Annotated[int, Path(gt=0)],
@@ -58,6 +61,7 @@ async def update_user(
     },
     response_model=UserBaseResponse,
     status_code=status.HTTP_200_OK,
+    dependencies=[Depends(admin_permission)],
 )
 async def get_user(
     user_id: Annotated[int, Path(gt=0)],
@@ -66,7 +70,17 @@ async def get_user(
     return await user_service.get_by_id(user_id)
 
 
-@router.get("/", response_model=List[UserBaseResponse], status_code=status.HTTP_200_OK)
+@router.get(
+    "/",
+    responses={
+        200: {"model": UserBaseResponse},
+        401: {"model": ErrorResponse},
+        403: {"model": ErrorResponse},
+    },
+    response_model=List[UserBaseResponse],
+    status_code=status.HTTP_200_OK,
+    dependencies=[Depends(admin_permission)],
+)
 async def get_users(user_service: Annotated[UserService, Depends(get_user_service)]):
     return await user_service.get_all()
 
@@ -76,9 +90,11 @@ async def get_users(user_service: Annotated[UserService, Depends(get_user_servic
     responses={
         204: {},
         401: {"model": ErrorResponse},
+        403: {"model": ErrorResponse},
         404: {"model": ErrorResponse},
     },
     status_code=status.HTTP_204_NO_CONTENT,
+    dependencies=[Depends(admin_permission)],
 )
 async def delete_user(
     user_id: Annotated[int, Path(gt=0)],

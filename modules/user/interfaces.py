@@ -1,4 +1,3 @@
-# pylint: disable=R0801
 from abc import ABC, abstractmethod
 from typing import Sequence
 
