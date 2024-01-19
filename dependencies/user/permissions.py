@@ -16,4 +16,4 @@ async def admin_permission(
     user = await user_service.get_by_id(current_user.id)
 
     if not user.is_admin:
-        raise PermissionDenied
+        raise PermissionDenied()

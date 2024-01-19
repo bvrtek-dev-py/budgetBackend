@@ -36,6 +36,7 @@ def get_user_db() -> List[User]:
             username=BASE_USER_DATA["username"],
             email=BASE_USER_DATA["email"],
             password=hash_password("1234"),
+            is_admin=True,
             created_at=datetime.now(),
             updated_at=datetime.now(),
             wallets=[get_wallet_data()[0]],
