@@ -3,9 +3,7 @@ from datetime import datetime, date
 from decimal import Decimal
 from typing import List, Dict, Any
 
-from backend.modules.auth.dependencies import (
-    _get_crypt_context,
-)
+from backend.dependencies.auth.creators import get_crypt_context
 from backend.modules.auth.services import PasswordHashService
 from backend.modules.category.models import Category
 from backend.modules.subject.models import Subject
@@ -25,7 +23,7 @@ BASE_USER_DATA: Dict[str, str] = {
 
 @functools.cache
 def hash_password(password: str) -> str:
-    hash_service = PasswordHashService(_get_crypt_context())
+    hash_service = PasswordHashService(get_crypt_context())
     return hash_service.hash(password)
 
 

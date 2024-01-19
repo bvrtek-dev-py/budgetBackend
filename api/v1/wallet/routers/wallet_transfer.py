@@ -10,14 +10,14 @@ from backend.api.v1.transaction.requests.transaction_transfer import (
 from backend.api.v1.transaction.responses.transaction_transfer import (
     TransactionTransferResponse,
 )
-from backend.modules.auth.dependencies import get_current_user
-from backend.modules.auth.schemas import CurrentUserData
+from backend.dependencies.auth.permissions import get_current_user
 from backend.dependencies.transaction.creators import get_transaction_transfer_service
+from backend.dependencies.wallet.permissions import WalletOwnerPermission
+from backend.modules.auth.schemas import CurrentUserData
 from backend.modules.transaction.schemas.transaction import TransactionTransferDTO
 from backend.modules.transaction.services.transfer_service import (
     TransactionTransferService,
 )
-from backend.modules.wallet.dependencies import WalletOwnerPermission
 
 router = APIRouter(
     prefix="/api/v1/wallets/{sender_id}/wallets/{receiver_id}/transfer",
@@ -34,8 +34,8 @@ router = APIRouter(
     },
     status_code=status.HTTP_201_CREATED,
     dependencies=[
-        Depends(WalletOwnerPermission("sender_id")),
-        Depends(WalletOwnerPermission("receiver_id")),
+        Depends(WalletOwnerPermission(name="sender_id")),
+        Depends(WalletOwnerPermission(name="receiver_id")),
     ],
 )
 async def transfer_transaction(

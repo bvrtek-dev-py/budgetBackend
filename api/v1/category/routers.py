@@ -9,12 +9,12 @@ from backend.api.v1.category.requests import (
 )
 from backend.api.v1.category.responses import CategoryBaseResponse, CategoryGetResponse
 from backend.api.v1.common.responses import ErrorResponse
-from backend.modules.auth.dependencies import get_current_user
-from backend.modules.auth.schemas import CurrentUserData
-from backend.modules.category.dependencies import (
+from backend.dependencies.auth.permissions import get_current_user
+from backend.dependencies.category.creators import (
     get_category_service,
-    category_owner_permission,
 )
+from backend.dependencies.category.permissions import CategoryOwnerPermission
+from backend.modules.auth.schemas import CurrentUserData
 from backend.modules.category.schemas import CategoryCreateDTO, CategoryUpdateDTO
 from backend.modules.category.services import CategoryService
 
@@ -52,7 +52,7 @@ async def create_category(
     },
     status_code=status.HTTP_200_OK,
     response_model=CategoryBaseResponse,
-    dependencies=[Depends(category_owner_permission)],
+    dependencies=[Depends(CategoryOwnerPermission())],
 )
 async def update_category(
     category_id: Annotated[int, Path(gt=0)],
@@ -74,7 +74,7 @@ async def update_category(
     },
     status_code=status.HTTP_200_OK,
     response_model=CategoryGetResponse,
-    dependencies=[Depends(category_owner_permission)],
+    dependencies=[Depends(CategoryOwnerPermission())],
 )
 async def get_category(
     category_id: Annotated[int, Path(gt=0)],
@@ -92,7 +92,7 @@ async def get_category(
         404: {"model": ErrorResponse},
     },
     status_code=status.HTTP_204_NO_CONTENT,
-    dependencies=[Depends(category_owner_permission)],
+    dependencies=[Depends(CategoryOwnerPermission())],
 )
 async def delete_category(
     category_id: Annotated[int, Path(gt=0)],

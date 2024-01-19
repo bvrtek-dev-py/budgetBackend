@@ -6,17 +6,17 @@ from fastapi.security import OAuth2PasswordRequestForm
 from backend.api.v1.auth.repsonses import TokenResponse
 from backend.api.v1.common.responses import ErrorResponse
 from backend.config.oauth2 import oauth2_scheme
-from backend.modules.auth.dependencies import (
-    get_password_verify_service,
+from backend.dependencies.auth.creators import get_password_verify_service
+from backend.dependencies.auth.permissions import (
     get_token_service,
 )
+from backend.dependencies.user.creators import get_user_service
 from backend.modules.auth.exceptions import InvalidCredentials
 from backend.modules.auth.schemas import TokenData
 from backend.modules.auth.services import (
     PasswordVerifyService,
     TokenService,
 )
-from backend.modules.user.dependencies import get_user_service
 from backend.modules.user.services import UserService
 
 router = APIRouter(prefix="/api/v1/auth", tags=["APIv1 Auth"])

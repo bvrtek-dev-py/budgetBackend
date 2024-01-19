@@ -11,18 +11,18 @@ from backend.api.v1.transaction.responses.transaction_statistics import (
     TransactionStatisticResponse,
     UserTransactionStatisticsResponse,
 )
-from backend.modules.auth.dependencies import get_current_user
-from backend.modules.auth.schemas import CurrentUserData
-from backend.modules.common.utils import get_first_day_of_month
+from backend.dependencies.auth.permissions import get_current_user
 from backend.dependencies.transaction.creators import (
     get_transaction_query_service,
     get_transaction_statistics_service,
 )
+from backend.dependencies.user.creators import get_user_service
+from backend.modules.auth.schemas import CurrentUserData
+from backend.modules.common.utils import get_first_day_of_month
 from backend.modules.transaction.services.query_service import TransactionQueryService
 from backend.modules.transaction.services.statistics_service import (
     TransactionStatisticsService,
 )
-from backend.modules.user.dependencies import get_user_service
 from backend.modules.user.services import UserService
 
 router = APIRouter(

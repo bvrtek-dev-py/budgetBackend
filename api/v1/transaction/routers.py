@@ -8,13 +8,14 @@ from backend.api.v1.transaction.requests.transaction import (
     TransactionUpdateRequest,
 )
 from backend.api.v1.transaction.responses.transaction import TransactionBaseResponse
+from backend.dependencies.category.permissions import CategoryOwnerPermission
+from backend.dependencies.common.enums import IdentifierSource
+from backend.dependencies.subject.permissions import SubjectOwnerPermission
 from backend.dependencies.transaction.creators import (
     get_transaction_service,
 )
-from backend.dependencies.transaction.permissions import transaction_owner_permission
-from backend.modules.category.dependencies import category_owner_permission
-from backend.modules.subject.dependencies import (
-    subject_owner_permission,
+from backend.dependencies.transaction.permissions import (
+    TransactionOwnerPermission,
 )
 from backend.modules.transaction.schemas.transaction import TransactionUpdateDTO
 from backend.modules.transaction.services.crud_service import TransactionService
@@ -34,9 +35,9 @@ router = APIRouter(prefix="/api/v1/transactions", tags=["APIv1 Transaction"])
     response_model=TransactionBaseResponse,
     status_code=status.HTTP_200_OK,
     dependencies=[
-        Depends(transaction_owner_permission),
-        Depends(subject_owner_permission),
-        Depends(category_owner_permission),
+        Depends(TransactionOwnerPermission()),
+        Depends(SubjectOwnerPermission(source=IdentifierSource.REQUEST_BODY)),
+        Depends(CategoryOwnerPermission(source=IdentifierSource.REQUEST_BODY)),
     ],
 )
 async def update_transaction(
@@ -61,7 +62,7 @@ async def update_transaction(
     },
     response_model=TransactionBaseResponse,
     status_code=status.HTTP_200_OK,
-    dependencies=[Depends(transaction_owner_permission)],
+    dependencies=[Depends(TransactionOwnerPermission())],
 )
 async def get_transaction(
     transaction_id: Annotated[int, Path(gt=0)],
@@ -81,7 +82,7 @@ async def get_transaction(
         404: {"model": ErrorResponse},
     },
     status_code=status.HTTP_204_NO_CONTENT,
-    dependencies=[Depends(transaction_owner_permission)],
+    dependencies=[Depends(TransactionOwnerPermission())],
 )
 async def delete_transaction(
     transaction_id: Annotated[int, Path(gt=0)],

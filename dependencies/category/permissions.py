@@ -1,20 +1,20 @@
 from typing import Annotated
 
-from fastapi import Depends, Request
+from fastapi import Request, Depends
 
 from backend.dependencies.auth.permissions import get_current_user
+from backend.dependencies.category.creators import get_category_validator
 from backend.dependencies.common.enums import IdentifierSource
 from backend.dependencies.common.getters import get_object_id
-from backend.dependencies.transaction.creators import get_transaction_validator
 from backend.modules.auth.schemas import CurrentUserData
-from backend.modules.transaction.validators import TransactionValidator
+from backend.modules.category.validators import CategoryValidator
 
 
-class TransactionOwnerPermission:
+class CategoryOwnerPermission:
     def __init__(
         self,
         source: IdentifierSource = IdentifierSource.PATH_PARAMETER,
-        name: str = "transaction_id",
+        name: str = "category_id",
     ):
         """
         :param source - The source identifier of identifier (request or path parameter):
@@ -27,14 +27,12 @@ class TransactionOwnerPermission:
         self,
         request: Request,
         current_user: Annotated[CurrentUserData, Depends(get_current_user)],
-        transaction_validator: Annotated[
-            TransactionValidator, Depends(get_transaction_validator)
+        category_validator: Annotated[
+            CategoryValidator, Depends(get_category_validator)
         ],
     ) -> None:
-        wallet_id = await get_object_id(
+        category_id = await get_object_id(
             scope=self._source, request=request, name=self._name
         )
 
-        await transaction_validator.user_is_transaction_owner(
-            current_user.id, wallet_id
-        )
+        await category_validator.user_is_category_owner(current_user.id, category_id)

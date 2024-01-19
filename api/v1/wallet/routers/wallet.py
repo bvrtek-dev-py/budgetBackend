@@ -11,12 +11,12 @@ from backend.api.v1.wallet.responses import (
     WalletBaseResponse,
     WalletGetResponse,
 )
-from backend.modules.auth.dependencies import get_current_user
-from backend.modules.auth.schemas import CurrentUserData
-from backend.modules.wallet.dependencies import (
+from backend.dependencies.auth.permissions import get_current_user
+from backend.dependencies.wallet.creators import (
     get_wallet_service,
-    WalletOwnerPermission,
 )
+from backend.dependencies.wallet.permissions import WalletOwnerPermission
+from backend.modules.auth.schemas import CurrentUserData
 from backend.modules.wallet.schemas import WalletPayloadDTO
 from backend.modules.wallet.services import WalletService
 
@@ -32,7 +32,7 @@ router = APIRouter(prefix="/api/v1/wallets", tags=["APIv1 Wallet"])
         404: {"model": ErrorResponse},
     },
     response_model=WalletGetResponse,
-    dependencies=[Depends(WalletOwnerPermission("wallet_id"))],
+    dependencies=[Depends(WalletOwnerPermission())],
 )
 async def get_wallet(
     wallet_id: Annotated[int, Path(gt=0)],
@@ -72,7 +72,7 @@ async def create_wallet(
     },
     status_code=status.HTTP_200_OK,
     response_model=WalletBaseResponse,
-    dependencies=[Depends(WalletOwnerPermission("wallet_id"))],
+    dependencies=[Depends(WalletOwnerPermission())],
 )
 async def update_wallet(
     wallet_id: Annotated[int, Path(gt=0)],
@@ -93,7 +93,7 @@ async def update_wallet(
         404: {"model": ErrorResponse},
     },
     status_code=status.HTTP_204_NO_CONTENT,
-    dependencies=[Depends(WalletOwnerPermission("wallet_id"))],
+    dependencies=[Depends(WalletOwnerPermission())],
 )
 async def delete_wallet(
     wallet_id: Annotated[int, Path(gt=0)],

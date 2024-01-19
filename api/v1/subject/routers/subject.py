@@ -8,12 +8,12 @@ from backend.api.v1.subject.requests import (
     SubjectRequest,
 )
 from backend.api.v1.subject.responses import SubjectBaseResponse, SubjectGetResponse
-from backend.modules.auth.dependencies import get_current_user
-from backend.modules.auth.schemas import CurrentUserData
-from backend.modules.subject.dependencies import (
+from backend.dependencies.auth.permissions import get_current_user
+from backend.dependencies.subject.dependencies import (
     get_subject_service,
-    subject_owner_permission,
 )
+from backend.dependencies.subject.permissions import SubjectOwnerPermission
+from backend.modules.auth.schemas import CurrentUserData
 from backend.modules.subject.schemas import SubjectPayloadDTO
 from backend.modules.subject.services import SubjectService
 
@@ -51,7 +51,7 @@ async def create_subject(
     },
     response_model=SubjectBaseResponse,
     status_code=status.HTTP_200_OK,
-    dependencies=[Depends(subject_owner_permission)],
+    dependencies=[Depends(SubjectOwnerPermission())],
 )
 async def update_subject(
     subject_id: Annotated[int, Path(gt=0)],
@@ -73,7 +73,7 @@ async def update_subject(
     },
     response_model=SubjectGetResponse,
     status_code=status.HTTP_200_OK,
-    dependencies=[Depends(subject_owner_permission)],
+    dependencies=[Depends(SubjectOwnerPermission())],
 )
 async def get_subject(
     subject_id: Annotated[int, Path(gt=0)],
@@ -91,7 +91,7 @@ async def get_subject(
         404: {"model": ErrorResponse},
     },
     status_code=status.HTTP_204_NO_CONTENT,
-    dependencies=[Depends(subject_owner_permission)],
+    dependencies=[Depends(SubjectOwnerPermission())],
 )
 async def delete_subject(
     subject_id: Annotated[int, Path(gt=0)],
