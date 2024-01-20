@@ -25,7 +25,9 @@ from backend.src.core.modules.auth.services.password_services import (
     PasswordChangeService,
     PasswordVerifyService,
 )
-from backend.src.dependencies.auth.password_changer import get_password_change_service
+from backend.src.dependencies.auth.password_changer_creator import (
+    get_password_change_service,
+)
 from backend.src.core.modules.auth.services.token_service import TokenService
 
 router = APIRouter(prefix="/api/v1/auth", tags=["APIv1 Auth"])

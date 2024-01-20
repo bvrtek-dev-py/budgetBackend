@@ -45,7 +45,7 @@ async def test_create_user_password_mismatch(async_client: AsyncClient):
     response = await async_client.post("/api/v1/users", json=data)
 
     # Then
-    assert response.status_code == 409
+    assert response.status_code == 422
 
 
 @pytest.mark.asyncio
