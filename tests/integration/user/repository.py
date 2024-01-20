@@ -1,7 +1,7 @@
 from typing import List
 
-from backend.modules.user.interfaces import UserRepositoryInterface
-from backend.modules.user.models import User
+from backend.src.core.modules.user.interfaces import UserRepositoryInterface
+from backend.src.core.modules.user.models import User
 from backend.tests.database import get_user_db
 
 

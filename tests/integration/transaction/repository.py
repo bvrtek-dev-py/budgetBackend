@@ -2,10 +2,14 @@ from datetime import date, datetime
 from decimal import Decimal
 from typing import List, Sequence, Optional
 
-from backend.modules.transaction.enums import TransactionType
-from backend.modules.transaction.interfaces import TransactionRepositoryInterface
-from backend.modules.transaction.models import Transaction
-from backend.modules.transaction.schemas.transaction import TransactionValueSumDTO
+from backend.src.core.modules.transaction.enums import TransactionType
+from backend.src.core.modules.transaction.interfaces import (
+    TransactionRepositoryInterface,
+)
+from backend.src.core.modules.transaction.models import Transaction
+from backend.src.core.modules.transaction.schemas.transaction import (
+    TransactionValueSumDTO,
+)
 from backend.tests.database import get_transaction_data
 
 
