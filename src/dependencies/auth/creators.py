@@ -14,6 +14,9 @@ from backend.src.core.modules.auth.services.password_services import (
     PasswordVerifyService,
 )
 from backend.src.core.modules.auth.services.token_service import TokenService
+from backend.src.core.modules.auth.services.refresh_token_service import (
+    RefreshTokenService,
+)
 
 
 def get_crypt_context() -> CryptContext:
@@ -39,3 +42,9 @@ def get_token_service() -> TokenService:
         refresh_token_secret_key=REFRESH_TOKEN_SECRET_KEY,
         token_expire_minutes=ACCESS_TOKEN_EXPIRE_MINUTES,
     )
+
+
+def get_refresh_token_service(
+    token_service: Annotated[TokenService, Depends(get_token_service)]
+) -> RefreshTokenService:
+    return RefreshTokenService(token_service)
