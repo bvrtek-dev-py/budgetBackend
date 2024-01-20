@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from jose import jwt, JWTError
 
 from backend.src.core.modules.auth.exceptions import InvalidCredentials
-from backend.src.core.modules.auth.schemas import TokenData, CurrentUserData
+from backend.src.core.modules.auth.schemas import AuthenticatedUserDTO, CurrentUserData
 
 
 class TokenService:
@@ -19,7 +19,7 @@ class TokenService:
         self.secret_key = secret_key
         self.token_expire_minutes = token_expire_minutes
 
-    def create_access_token(self, data: TokenData) -> str:
+    def create_access_token(self, data: AuthenticatedUserDTO) -> str:
         to_encode = data.model_copy().model_dump()
         to_encode.update({"exp": self.get_expire_token_datetime()})
 
@@ -27,7 +27,7 @@ class TokenService:
             claims=to_encode, key=self.secret_key, algorithm=self.algorithm
         )
 
-    def create_refresh_token(self, data: TokenData) -> str:
+    def create_refresh_token(self, data: AuthenticatedUserDTO) -> str:
         to_encode = data.model_copy().model_dump()
         to_encode.update({"exp": self.get_expire_token_datetime()})
 
@@ -43,7 +43,7 @@ class TokenService:
                 token=token, key=self.secret_key, algorithms=[self.algorithm]
             )
             email = payload.get("sub")
-            user_id = payload.get("user_id")
+            user_id = payload.get("id")
 
             if email is None or user_id is None:
                 raise InvalidCredentials()
