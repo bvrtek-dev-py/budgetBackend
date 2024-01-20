@@ -9,11 +9,11 @@ from backend.src.config.auth import (
     SECRET_KEY,
     REFRESH_TOKEN_SECRET_KEY,
 )
-from backend.src.core.modules.auth.services import (
+from backend.src.core.modules.auth.services.password_services import (
     PasswordHashService,
-    TokenService,
     PasswordVerifyService,
 )
+from backend.src.core.modules.auth.services.token_service import TokenService
 
 
 def get_crypt_context() -> CryptContext:

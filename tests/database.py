@@ -4,7 +4,7 @@ from decimal import Decimal
 from typing import List, Dict, Any
 
 from backend.src.dependencies.auth.creators import get_crypt_context
-from backend.src.core.modules.auth.services import PasswordHashService
+from backend.src.core.modules.auth.services.password_services import PasswordHashService
 from backend.src.core.modules.category.models import Category
 from backend.src.core.modules.subject.models import Subject
 from backend.src.core.modules.transaction.enums import TransactionType

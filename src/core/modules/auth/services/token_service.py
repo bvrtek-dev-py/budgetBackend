@@ -1,26 +1,9 @@
 from datetime import datetime, timedelta
 
 from jose import jwt, JWTError
-from passlib.context import CryptContext
 
 from backend.src.core.modules.auth.exceptions import InvalidCredentials
 from backend.src.core.modules.auth.schemas import TokenData, CurrentUserData
-
-
-class PasswordHashService:
-    def __init__(self, crypt: CryptContext):
-        self._crypt = crypt
-
-    def hash(self, password: str) -> str:
-        return self._crypt.hash(password)  # type: ignore
-
-
-class PasswordVerifyService:
-    def __init__(self, crypt: CryptContext):
-        self._crypt = crypt
-
-    def verify(self, password: str, password_hash: str) -> bool:
-        return self._crypt.verify(password, password_hash)  # type: ignore
 
 
 class TokenService:
