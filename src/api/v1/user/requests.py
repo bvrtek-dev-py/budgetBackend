@@ -1,4 +1,6 @@
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import BaseModel, Field, model_validator
+
+from backend.src.core.modules.user.exceptions import PasswordDoesNotMatch
 
 
 class UserCreateRequest(BaseModel):
@@ -9,17 +11,18 @@ class UserCreateRequest(BaseModel):
     password: str = Field(min_length=8, max_length=50)
     password_confirmation: str = Field(min_length=8, max_length=50)
 
+    @model_validator(mode="after")
+    def check_passwords_match(self) -> "UserCreateRequest":
+        password1 = self.password
+        password2 = self.password_confirmation
+
+        if password1 is not None and password2 is not None and password1 != password2:
+            raise PasswordDoesNotMatch()
+
+        return self
+
     class ConfigDict:
         frozen = True
-
-    @classmethod
-    def validate_passwords_match(cls, values):
-        if (
-            "password" in values
-            and "password_confirmation" in values
-            and values["password"] != values["password_confirmation"]
-        ):
-            raise ValidationError("Passwords do not match")
 
 
 class UserUpdateRequest(BaseModel):

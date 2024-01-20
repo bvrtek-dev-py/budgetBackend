@@ -1,6 +1,6 @@
 from typing import Sequence, Optional
 
-from backend.src.core.modules.auth.services import PasswordHashService
+from backend.src.core.modules.auth.services.password_services import PasswordHashService
 from backend.src.core.modules.common.exceptions import (
     ObjectDoesNotExist,
     ObjectAlreadyExists,
@@ -8,15 +8,18 @@ from backend.src.core.modules.common.exceptions import (
 from backend.src.core.modules.user.interfaces import UserRepositoryInterface
 from backend.src.core.modules.user.models import User
 from backend.src.core.modules.user.schemas import UserCreateDTO, UserUpdateDTO
+from backend.src.core.modules.user.use_cases import UserRetrievalUseCase
 
 
 class UserService:
     def __init__(
         self,
         repository: UserRepositoryInterface,
+        retrieval_use_case: UserRetrievalUseCase,
         password_hash_service: PasswordHashService,
     ):
         self._repository = repository
+        self._retrieval_use_case = retrieval_use_case
         self._password_hash_service = password_hash_service
 
     # pylint: disable=too-many-arguments
@@ -48,13 +51,11 @@ class UserService:
 
         return await self._repository.delete(user)
 
+    async def get_all(self) -> Sequence[User]:
+        return await self._repository.get_all()
+
     async def get_by_id(self, user_id: int) -> User:
-        user = await self._repository.get_by_id(user_id)
-
-        if user is None:
-            raise ObjectDoesNotExist()
-
-        return user
+        return await self._retrieval_use_case.get_by_id(user_id)
 
     async def get_by_email(self, email: str) -> User:
         user = await self._repository.get_by_email(email)
@@ -100,6 +101,3 @@ class UserService:
             return False
 
         return True
-
-    async def get_all(self) -> Sequence[User]:
-        return await self._repository.get_all()

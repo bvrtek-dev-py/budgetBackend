@@ -15,3 +15,9 @@ class CurrentUserData(BaseModel):
 
     class ConfigDict:
         frozen = True
+
+
+class ChangePasswordDTO(BaseModel):
+    current_password: str
+    password: str
+    password_confirmation: str

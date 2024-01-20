@@ -1,8 +1,10 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from fastapi.security import OAuth2PasswordRequestForm
 
+from backend.src.api.v1.auth.requests import PasswordChangeRequest
+from backend.src.api.v1.user.responses import UserBaseResponse
 from backend.src.api.v1.auth.repsonses import TokenResponse
 from backend.src.api.v1.common.responses import ErrorResponse
 from backend.src.config.oauth2 import oauth2_scheme
@@ -12,12 +14,21 @@ from backend.src.dependencies.auth.creators import (
 )
 from backend.src.dependencies.user.creators import get_user_service
 from backend.src.core.modules.auth.exceptions import InvalidCredentials
-from backend.src.core.modules.auth.schemas import TokenData
-from backend.src.core.modules.auth.services import (
-    PasswordVerifyService,
-    TokenService,
+from backend.src.core.modules.auth.schemas import (
+    TokenData,
+    CurrentUserData,
+    ChangePasswordDTO,
 )
 from backend.src.core.modules.user.services import UserService
+from backend.src.dependencies.auth.permissions import get_current_user
+from backend.src.core.modules.auth.services.password_services import (
+    PasswordChangeService,
+    PasswordVerifyService,
+)
+from backend.src.dependencies.auth.password_changer_creator import (
+    get_password_change_service,
+)
+from backend.src.core.modules.auth.services.token_service import TokenService
 
 router = APIRouter(prefix="/api/v1/auth", tags=["APIv1 Auth"])
 
@@ -78,7 +89,23 @@ async def refresh_token(
     }
 
 
-@router.post("/logout")
-async def logout():
-    # TODO logout endpoint # pylint: disable=fixme
-    ...
+@router.post(
+    "/change-password",
+    responses={
+        200: {"model": UserBaseResponse},
+        401: {"model": ErrorResponse},
+        409: {"model": ErrorResponse},
+    },
+    response_model=UserBaseResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def change_password(
+    request: PasswordChangeRequest,
+    current_user: Annotated[CurrentUserData, Depends(get_current_user)],
+    password_change_service: Annotated[
+        PasswordChangeService, Depends(get_password_change_service)
+    ],
+):
+    return await password_change_service.change_password(
+        current_user.id, ChangePasswordDTO(**request.model_dump())
+    )
