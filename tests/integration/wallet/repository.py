@@ -1,7 +1,7 @@
 from typing import List, Optional
 
-from backend.modules.wallet.interfaces import WalletRepositoryInterface
-from backend.modules.wallet.models import Wallet
+from backend.src.core.modules.wallet.interfaces import WalletRepositoryInterface
+from backend.src.core.modules.wallet.models import Wallet
 from backend.tests.database import get_wallet_data
 
 

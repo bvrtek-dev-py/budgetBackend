@@ -4,12 +4,12 @@ from typing import Dict, Any
 import pytest
 from httpx import AsyncClient
 
-from backend.dependencies.category.creators import get_category_repository
-from backend.dependencies.subject.dependencies import get_subject_repository
-from backend.dependencies.transaction.creators import get_transaction_repository
-from backend.dependencies.user.creators import get_user_repository
-from backend.dependencies.wallet.creators import get_wallet_repository
-from backend.main import app
+from backend.src.dependencies.category.creators import get_category_repository
+from backend.src.dependencies.subject.dependencies import get_subject_repository
+from backend.src.dependencies.transaction.creators import get_transaction_repository
+from backend.src.dependencies.user.creators import get_user_repository
+from backend.src.dependencies.wallet.creators import get_wallet_repository
+from backend.src.main import app
 from backend.tests.database import get_user_db
 from backend.tests.integration.category.repository import InMemoryCategoryRepository
 from backend.tests.integration.subject.repository import InMemorySubjectRepository

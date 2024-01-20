@@ -38,7 +38,7 @@ jobs:
 
       - name: Copy .env test variables
         run:
-          poetry run python3 tools/copy_env.py
+          poetry run python3 src/tools/copy_env.py
 
       - name: Integration tests
         run:

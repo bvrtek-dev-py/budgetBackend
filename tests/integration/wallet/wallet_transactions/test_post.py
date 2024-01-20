@@ -5,7 +5,7 @@ from typing import Coroutine, Any
 import pytest
 from httpx import AsyncClient
 
-from backend.modules.transaction.enums import TransactionType
+from backend.src.core.modules.transaction.enums import TransactionType
 
 
 @pytest.mark.asyncio

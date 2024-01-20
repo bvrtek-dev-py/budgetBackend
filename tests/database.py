@@ -3,14 +3,14 @@ from datetime import datetime, date
 from decimal import Decimal
 from typing import List, Dict, Any
 
-from backend.dependencies.auth.creators import get_crypt_context
-from backend.modules.auth.services import PasswordHashService
-from backend.modules.category.models import Category
-from backend.modules.subject.models import Subject
-from backend.modules.transaction.enums import TransactionType
-from backend.modules.transaction.models import Transaction
-from backend.modules.user.models import User
-from backend.modules.wallet.models import Wallet
+from backend.src.dependencies.auth.creators import get_crypt_context
+from backend.src.core.modules.auth.services import PasswordHashService
+from backend.src.core.modules.category.models import Category
+from backend.src.core.modules.subject.models import Subject
+from backend.src.core.modules.transaction.enums import TransactionType
+from backend.src.core.modules.transaction.models import Transaction
+from backend.src.core.modules.user.models import User
+from backend.src.core.modules.wallet.models import Wallet
 
 BASE_USER_ID: int = 1
 BASE_USER_DATA: Dict[str, str] = {

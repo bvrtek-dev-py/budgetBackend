@@ -1,9 +1,9 @@
 from datetime import datetime
 from typing import List
 
-from backend.modules.category.interfaces import CategoryRepositoryInterface
-from backend.modules.category.models import Category
-from backend.modules.transaction.enums import TransactionType
+from backend.src.core.modules.category.interfaces import CategoryRepositoryInterface
+from backend.src.core.modules.category.models import Category
+from backend.src.core.modules.transaction.enums import TransactionType
 from backend.tests.database import get_category_data
 
 
