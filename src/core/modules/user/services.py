@@ -2,7 +2,6 @@ from typing import Sequence, Optional
 
 from backend.src.core.modules.auth.services.password_services import PasswordHashService
 from backend.src.core.modules.common.exceptions import (
-    ObjectDoesNotExist,
     ObjectAlreadyExists,
 )
 from backend.src.core.modules.user.interfaces import UserRepositoryInterface
@@ -22,12 +21,11 @@ class UserService:
         self._retrieval_use_case = retrieval_use_case
         self._password_hash_service = password_hash_service
 
-    # pylint: disable=too-many-arguments
     async def create(self, request_dto: UserCreateDTO) -> User:
-        if await self._check_username_exists(request_dto.username):
+        if await self._check_user_with_username_exists(request_dto.username):
             raise ObjectAlreadyExists()
 
-        if await self._check_email_exists(request_dto.email):
+        if await self._check_user_with_email_exists(request_dto.email):
             raise ObjectAlreadyExists()
 
         password_hash = self._password_hash_service.hash(request_dto.password)
@@ -38,7 +36,7 @@ class UserService:
     async def update(self, user_id: int, request_dto: UserUpdateDTO) -> User:
         user = await self.get_by_id(user_id)
 
-        if await self._check_username_exists(request_dto.username, user_id):
+        if await self._check_user_with_username_exists(request_dto.username, user_id):
             raise ObjectAlreadyExists()
 
         for key, value in request_dto.model_dump().items():
@@ -57,26 +55,7 @@ class UserService:
     async def get_by_id(self, user_id: int) -> User:
         return await self._retrieval_use_case.get_by_id(user_id)
 
-    async def get_by_email(self, email: str) -> User:
-        user = await self._repository.get_by_email(email)
-
-        if user is None:
-            raise ObjectDoesNotExist()
-
-        return user
-
-    async def get_by_username_or_email(self, field: str) -> User:
-        user = await self._repository.get_by_email(field)
-        if user is not None:
-            return user
-
-        user = await self._repository.get_by_username(field)
-        if user is not None:
-            return user
-
-        raise ObjectDoesNotExist()
-
-    async def _check_username_exists(
+    async def _check_user_with_username_exists(
         self, username: str, excluded_id: Optional[int] = None
     ) -> bool:
         user = await self._repository.get_by_username(username)
@@ -89,7 +68,7 @@ class UserService:
 
         return True
 
-    async def _check_email_exists(
+    async def _check_user_with_email_exists(
         self, email: str, excluded_id: Optional[int] = None
     ) -> bool:
         user = await self._repository.get_by_email(email)
