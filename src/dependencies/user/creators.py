@@ -6,10 +6,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from backend.src.database.setup import get_session
 from backend.src.dependencies.auth.creators import get_password_hash_service
 from backend.src.core.modules.auth.services.password_services import PasswordHashService
-from backend.src.core.modules.user.interfaces import UserRepositoryInterface
-from backend.src.core.modules.user.repositories import UserRepository
-from backend.src.core.modules.user.services import UserService
-from backend.src.core.modules.user.use_cases import UserRetrievalUseCase
+from backend.src.core.modules.user.repository_interface import UserRepositoryInterface
+from backend.src.core.modules.user.repository import UserRepository
+from backend.src.core.modules.user.service import UserService
+from backend.src.core.modules.user.use_case import UserRetrievalUseCase
 
 
 def get_user_repository(

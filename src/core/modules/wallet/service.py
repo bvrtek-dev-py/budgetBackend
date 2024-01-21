@@ -4,8 +4,10 @@ from backend.src.core.modules.common.exceptions import (
     ObjectDoesNotExist,
     ObjectAlreadyExists,
 )
-from backend.src.core.modules.wallet.interfaces import WalletRepositoryInterface
-from backend.src.core.modules.wallet.models import Wallet
+from backend.src.core.modules.wallet.repository_interface import (
+    WalletRepositoryInterface,
+)
+from backend.src.core.modules.wallet.model import Wallet
 from backend.src.core.modules.wallet.schemas import WalletPayloadDTO
 
 

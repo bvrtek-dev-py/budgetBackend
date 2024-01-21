@@ -10,9 +10,9 @@ from backend.src.api.v1.wallet.responses import (
     WalletBaseResponse,
     WalletGetResponse,
 )
-from backend.src.core.modules.auth.schemas import CurrentUserData
+from backend.src.core.modules.auth.schemas import CurrentUserDTO
 from backend.src.core.modules.wallet.schemas import WalletPayloadDTO
-from backend.src.core.modules.wallet.services import WalletService
+from backend.src.core.modules.wallet.service import WalletService
 from backend.src.dependencies.auth.permissions import get_current_user
 from backend.src.dependencies.wallet.creators import (
     get_wallet_service,
@@ -52,7 +52,7 @@ async def get_wallet(
 )
 async def create_wallet(
     request: WalletBaseRequest,
-    current_user: Annotated[CurrentUserData, Depends(get_current_user)],
+    current_user: Annotated[CurrentUserDTO, Depends(get_current_user)],
     wallet_service: Annotated[WalletService, Depends(get_wallet_service)],
 ):
     return await wallet_service.create(

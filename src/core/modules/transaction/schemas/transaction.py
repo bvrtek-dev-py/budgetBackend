@@ -4,7 +4,7 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from backend.src.core.modules.transaction.enums import TransactionType
+from backend.src.core.modules.transaction.enum import TransactionType
 
 
 class TransactionBaseDTO(BaseModel):

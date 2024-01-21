@@ -3,7 +3,7 @@ from sqlalchemy import select
 from backend.src.core.modules.transaction.builders.base import (
     TransactionBaseQueryBuilder,
 )
-from backend.src.core.modules.transaction.models import Transaction
+from backend.src.core.modules.transaction.model import Transaction
 
 
 class TransactionFetchQueryBuilder(TransactionBaseQueryBuilder):

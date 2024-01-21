@@ -5,8 +5,8 @@ from backend.src.core.modules.common.exceptions import (
     ObjectDoesNotExist,
     ObjectAlreadyExists,
 )
-from backend.src.core.modules.transaction.models import Transaction
-from backend.src.core.modules.transaction.repositories import TransactionRepository
+from backend.src.core.modules.transaction.model import Transaction
+from backend.src.core.modules.transaction.repository import TransactionRepository
 from backend.src.core.modules.transaction.schemas.transaction import (
     TransactionCreateDTO,
     TransactionUpdateDTO,

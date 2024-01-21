@@ -11,7 +11,7 @@ from backend.src.api.v1.transaction.responses.transaction_statistics import (
     TransactionStatisticResponse,
     UserTransactionStatisticsResponse,
 )
-from backend.src.core.modules.auth.schemas import CurrentUserData
+from backend.src.core.modules.auth.schemas import CurrentUserDTO
 from backend.src.core.modules.common.utils import get_first_day_of_month
 from backend.src.core.modules.transaction.services.query_service import (
     TransactionQueryService,
@@ -40,7 +40,7 @@ router = APIRouter(
     status_code=status.HTTP_200_OK,
 )
 async def get_user_transactions(
-    current_user: Annotated[CurrentUserData, Depends(get_current_user)],
+    current_user: Annotated[CurrentUserDTO, Depends(get_current_user)],
     transaction_query_service: Annotated[
         TransactionQueryService, Depends(get_transaction_query_service)
     ],
@@ -61,7 +61,7 @@ async def get_user_transactions(
     status_code=status.HTTP_200_OK,
 )
 async def get_user_balance(
-    current_user: Annotated[CurrentUserData, Depends(get_current_user)],
+    current_user: Annotated[CurrentUserDTO, Depends(get_current_user)],
     transaction_statistics_service: Annotated[
         TransactionStatisticsService, Depends(get_transaction_statistics_service)
     ],
@@ -79,7 +79,7 @@ async def get_user_balance(
     status_code=status.HTTP_200_OK,
 )
 async def get_user_statistics(
-    current_user: Annotated[CurrentUserData, Depends(get_current_user)],
+    current_user: Annotated[CurrentUserDTO, Depends(get_current_user)],
     transaction_statistics_service: Annotated[
         TransactionStatisticsService, Depends(get_transaction_statistics_service)
     ],

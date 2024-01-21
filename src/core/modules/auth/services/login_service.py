@@ -7,7 +7,7 @@ from backend.src.core.modules.auth.services.password_services import (
     PasswordVerifyService,
 )
 from backend.src.core.modules.auth.services.token_service import TokenService
-from backend.src.core.modules.user.use_cases import UserRetrievalUseCase
+from backend.src.core.modules.user.use_case import UserRetrievalUseCase
 
 
 class LoginService:

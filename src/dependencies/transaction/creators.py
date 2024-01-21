@@ -4,10 +4,10 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.src.database.setup import get_session
-from backend.src.core.modules.transaction.interfaces import (
+from backend.src.core.modules.transaction.repository_interface import (
     TransactionRepositoryInterface,
 )
-from backend.src.core.modules.transaction.repositories import TransactionRepository
+from backend.src.core.modules.transaction.repository import TransactionRepository
 from backend.src.core.modules.transaction.services.crud_service import (
     TransactionService,
 )
@@ -20,7 +20,7 @@ from backend.src.core.modules.transaction.services.statistics_service import (
 from backend.src.core.modules.transaction.services.transfer_service import (
     TransactionTransferService,
 )
-from backend.src.core.modules.transaction.validators import TransactionValidator
+from backend.src.core.modules.transaction.validator import TransactionValidator
 
 
 def get_transaction_repository(

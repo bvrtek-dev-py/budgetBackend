@@ -4,8 +4,10 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from backend.src.core.modules.wallet.interfaces import WalletRepositoryInterface
-from backend.src.core.modules.wallet.models import Wallet
+from backend.src.core.modules.wallet.repository_interface import (
+    WalletRepositoryInterface,
+)
+from backend.src.core.modules.wallet.model import Wallet
 
 
 class WalletRepository(WalletRepositoryInterface):

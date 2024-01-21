@@ -4,8 +4,8 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from backend.src.core.modules.user.interfaces import UserRepositoryInterface
-from backend.src.core.modules.user.models import User
+from backend.src.core.modules.user.repository_interface import UserRepositoryInterface
+from backend.src.core.modules.user.model import User
 
 
 class UserRepository(UserRepositoryInterface):

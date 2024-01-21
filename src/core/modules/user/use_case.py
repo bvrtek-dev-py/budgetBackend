@@ -1,6 +1,6 @@
 from backend.src.core.modules.common.exceptions import ObjectDoesNotExist
-from backend.src.core.modules.user.interfaces import UserRepositoryInterface
-from backend.src.core.modules.user.models import User
+from backend.src.core.modules.user.repository_interface import UserRepositoryInterface
+from backend.src.core.modules.user.model import User
 
 
 class UserRetrievalUseCase:

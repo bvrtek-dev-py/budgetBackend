@@ -4,10 +4,12 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.src.database.setup import get_session
-from backend.src.core.modules.wallet.interfaces import WalletRepositoryInterface
-from backend.src.core.modules.wallet.repositories import WalletRepository
-from backend.src.core.modules.wallet.services import WalletService
-from backend.src.core.modules.wallet.validators import WalletValidator
+from backend.src.core.modules.wallet.repository_interface import (
+    WalletRepositoryInterface,
+)
+from backend.src.core.modules.wallet.repository import WalletRepository
+from backend.src.core.modules.wallet.service import WalletService
+from backend.src.core.modules.wallet.validator import WalletValidator
 
 
 def get_wallet_repository(

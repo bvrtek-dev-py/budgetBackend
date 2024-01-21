@@ -13,7 +13,7 @@ from backend.src.api.v1.transaction.responses.transaction_statistics import (
     WalletTransactionStatisticsResponse,
     WalletTransactionStatisticResponse,
 )
-from backend.src.core.modules.auth.schemas import CurrentUserData
+from backend.src.core.modules.auth.schemas import CurrentUserDTO
 from backend.src.core.modules.common.utils import get_first_day_of_month
 from backend.src.core.modules.transaction.schemas.transaction import (
     TransactionCreateDTO,
@@ -61,7 +61,7 @@ router = APIRouter(
 async def create_wallet_transaction(
     wallet_id: Annotated[int, Path(gt=0)],
     request: TransactionCreateRequest,
-    current_user: Annotated[CurrentUserData, Depends(get_current_user)],
+    current_user: Annotated[CurrentUserDTO, Depends(get_current_user)],
     transaction_service: Annotated[
         TransactionService, Depends(get_transaction_service)
     ],

@@ -2,7 +2,7 @@
 from abc import ABC, abstractmethod
 from typing import Sequence
 
-from backend.src.core.modules.wallet.models import Wallet
+from backend.src.core.modules.wallet.model import Wallet
 
 
 class WalletRepositoryInterface(ABC):

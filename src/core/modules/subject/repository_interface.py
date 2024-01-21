@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Sequence
 
-from backend.src.core.modules.subject.models import Subject
+from backend.src.core.modules.subject.model import Subject
 
 
 class SubjectRepositoryInterface(ABC):

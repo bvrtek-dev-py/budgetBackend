@@ -9,7 +9,7 @@ from backend.src.api.v1.user.responses import UserBaseResponse
 from backend.src.dependencies.user.creators import get_user_service
 from backend.src.dependencies.user.permissions import admin_permission
 from backend.src.core.modules.user.schemas import UserCreateDTO, UserUpdateDTO
-from backend.src.core.modules.user.services import UserService
+from backend.src.core.modules.user.service import UserService
 
 router = APIRouter(prefix="/api/v1/users", tags=["APIv1 User"])
 

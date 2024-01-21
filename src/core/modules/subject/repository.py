@@ -4,8 +4,10 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from backend.src.core.modules.subject.interfaces import SubjectRepositoryInterface
-from backend.src.core.modules.subject.models import Subject
+from backend.src.core.modules.subject.repository_interface import (
+    SubjectRepositoryInterface,
+)
+from backend.src.core.modules.subject.model import Subject
 
 
 class SubjectRepository(SubjectRepositoryInterface):

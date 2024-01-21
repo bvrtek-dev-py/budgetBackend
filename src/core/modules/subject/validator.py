@@ -1,5 +1,5 @@
 from backend.src.core.modules.common.exceptions import PermissionDenied
-from backend.src.core.modules.subject.services import SubjectService
+from backend.src.core.modules.subject.service import SubjectService
 
 
 class SubjectValidator:

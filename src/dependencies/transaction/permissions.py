@@ -4,10 +4,10 @@ from fastapi import Depends, Request
 
 from backend.src.dependencies.auth.permissions import get_current_user
 from backend.src.dependencies.common.enums import IdentifierSource
-from backend.src.dependencies.common.getters import get_object_id
+from backend.src.dependencies.common.helpers import get_object_id
 from backend.src.dependencies.transaction.creators import get_transaction_validator
-from backend.src.core.modules.auth.schemas import CurrentUserData
-from backend.src.core.modules.transaction.validators import TransactionValidator
+from backend.src.core.modules.auth.schemas import CurrentUserDTO
+from backend.src.core.modules.transaction.validator import TransactionValidator
 
 
 class TransactionOwnerPermission:
@@ -26,7 +26,7 @@ class TransactionOwnerPermission:
     async def __call__(
         self,
         request: Request,
-        current_user: Annotated[CurrentUserData, Depends(get_current_user)],
+        current_user: Annotated[CurrentUserDTO, Depends(get_current_user)],
         transaction_validator: Annotated[
             TransactionValidator, Depends(get_transaction_validator)
         ],

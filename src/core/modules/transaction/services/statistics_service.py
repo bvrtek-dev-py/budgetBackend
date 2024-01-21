@@ -4,8 +4,8 @@ from decimal import Decimal
 from dateutil.relativedelta import relativedelta
 
 from backend.src.core.modules.common.utils import get_last_day_of_month
-from backend.src.core.modules.transaction.repositories import TransactionRepository
-from backend.src.core.modules.transaction.schemas.statistics import (
+from backend.src.core.modules.transaction.repository import TransactionRepository
+from backend.src.core.modules.transaction.schemas.statistic import (
     TransactionStatisticsDTO,
     TransactionStatisticDTO,
 )

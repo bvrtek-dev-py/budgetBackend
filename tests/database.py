@@ -5,12 +5,12 @@ from typing import List, Dict, Any
 
 from backend.src.dependencies.auth.creators import get_crypt_context
 from backend.src.core.modules.auth.services.password_services import PasswordHashService
-from backend.src.core.modules.category.models import Category
-from backend.src.core.modules.subject.models import Subject
-from backend.src.core.modules.transaction.enums import TransactionType
-from backend.src.core.modules.transaction.models import Transaction
-from backend.src.core.modules.user.models import User
-from backend.src.core.modules.wallet.models import Wallet
+from backend.src.core.modules.category.model import Category
+from backend.src.core.modules.subject.model import Subject
+from backend.src.core.modules.transaction.enum import TransactionType
+from backend.src.core.modules.transaction.model import Transaction
+from backend.src.core.modules.user.model import User
+from backend.src.core.modules.wallet.model import Wallet
 
 BASE_USER_ID: int = 1
 BASE_USER_DATA: Dict[str, str] = {
