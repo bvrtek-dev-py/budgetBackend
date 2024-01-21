@@ -15,7 +15,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import MappedColumn, mapped_column, relationship
 
 from backend.src.database.base import BaseModel
-from backend.src.core.modules.transaction.enums import TransactionType
+from backend.src.core.modules.transaction.enum import TransactionType
 
 
 class Transaction(BaseModel):

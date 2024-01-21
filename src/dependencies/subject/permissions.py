@@ -4,10 +4,10 @@ from fastapi import Depends, Request
 
 from backend.src.dependencies.auth.permissions import get_current_user
 from backend.src.dependencies.common.enums import IdentifierSource
-from backend.src.dependencies.common.getters import get_object_id
-from backend.src.dependencies.subject.dependencies import get_subject_validator
-from backend.src.core.modules.auth.schemas import CurrentUserData
-from backend.src.core.modules.subject.validators import SubjectValidator
+from backend.src.dependencies.common.helpers import get_object_id
+from backend.src.dependencies.subject.creators import get_subject_validator
+from backend.src.core.modules.auth.schemas import CurrentUserDTO
+from backend.src.core.modules.subject.validator import SubjectValidator
 
 
 class SubjectOwnerPermission:
@@ -22,7 +22,7 @@ class SubjectOwnerPermission:
     async def __call__(
         self,
         request: Request,
-        current_user: Annotated[CurrentUserData, Depends(get_current_user)],
+        current_user: Annotated[CurrentUserDTO, Depends(get_current_user)],
         subject_validator: Annotated[SubjectValidator, Depends(get_subject_validator)],
     ):
         subject_id = await get_object_id(

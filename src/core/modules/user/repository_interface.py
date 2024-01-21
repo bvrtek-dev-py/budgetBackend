@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Sequence
 
-from backend.src.core.modules.user.models import User
+from backend.src.core.modules.user.model import User
 
 
 class UserRepositoryInterface(ABC):

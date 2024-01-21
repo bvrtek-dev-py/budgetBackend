@@ -4,8 +4,10 @@ from backend.src.core.modules.common.exceptions import (
     ObjectDoesNotExist,
     ObjectAlreadyExists,
 )
-from backend.src.core.modules.subject.interfaces import SubjectRepositoryInterface
-from backend.src.core.modules.subject.models import Subject
+from backend.src.core.modules.subject.repository_interface import (
+    SubjectRepositoryInterface,
+)
+from backend.src.core.modules.subject.model import Subject
 from backend.src.core.modules.subject.schemas import SubjectPayloadDTO
 
 

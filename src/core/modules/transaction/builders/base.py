@@ -3,8 +3,8 @@ from typing import Optional
 
 from sqlalchemy import Select, ColumnElement
 
-from backend.src.core.modules.transaction.enums import TransactionType
-from backend.src.core.modules.transaction.models import Transaction
+from backend.src.core.modules.transaction.enum import TransactionType
+from backend.src.core.modules.transaction.model import Transaction
 
 
 class TransactionBaseQueryBuilder:

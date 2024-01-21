@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from jose import jwt, JWTError
 
 from backend.src.core.modules.auth.exceptions import InvalidCredentials
-from backend.src.core.modules.auth.schemas import AuthenticatedUserDTO, CurrentUserData
+from backend.src.core.modules.auth.schemas import AuthenticatedUserDTO, CurrentUserDTO
 
 
 class TokenService:
@@ -37,7 +37,7 @@ class TokenService:
             algorithm=self.algorithm,
         )
 
-    def decode(self, token: str) -> CurrentUserData:
+    def decode(self, token: str) -> CurrentUserDTO:
         try:
             payload = jwt.decode(
                 token=token, key=self.secret_key, algorithms=[self.algorithm]
@@ -48,7 +48,7 @@ class TokenService:
             if email is None or user_id is None:
                 raise InvalidCredentials()
 
-            return CurrentUserData(id=user_id, email=email)
+            return CurrentUserDTO(id=user_id, email=email)
         except JWTError as exc:
             raise InvalidCredentials() from exc
 

@@ -4,10 +4,12 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.src.database.setup import get_session
-from backend.src.core.modules.subject.interfaces import SubjectRepositoryInterface
-from backend.src.core.modules.subject.repositories import SubjectRepository
-from backend.src.core.modules.subject.services import SubjectService
-from backend.src.core.modules.subject.validators import SubjectValidator
+from backend.src.core.modules.subject.repository_interface import (
+    SubjectRepositoryInterface,
+)
+from backend.src.core.modules.subject.repository import SubjectRepository
+from backend.src.core.modules.subject.service import SubjectService
+from backend.src.core.modules.subject.validator import SubjectValidator
 
 
 def get_subject_repository(

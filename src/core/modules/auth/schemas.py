@@ -11,7 +11,7 @@ class AuthenticatedUserDTO(BaseModel):
         frozen = True
 
 
-class CurrentUserData(BaseModel):
+class CurrentUserDTO(BaseModel):
     id: int
     email: str
 

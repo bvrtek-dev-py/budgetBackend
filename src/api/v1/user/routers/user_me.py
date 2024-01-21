@@ -9,10 +9,10 @@ from backend.src.api.v1.wallet.responses import WalletGetResponse
 from backend.src.dependencies.auth.permissions import get_current_user
 from backend.src.dependencies.category.creators import get_category_service
 from backend.src.dependencies.user.creators import get_user_service
-from backend.src.core.modules.auth.schemas import CurrentUserData
-from backend.src.core.modules.category.services import CategoryService
-from backend.src.core.modules.transaction.enums import TransactionType
-from backend.src.core.modules.user.services import UserService
+from backend.src.core.modules.auth.schemas import CurrentUserDTO
+from backend.src.core.modules.category.service import CategoryService
+from backend.src.core.modules.transaction.enum import TransactionType
+from backend.src.core.modules.user.service import UserService
 
 router = APIRouter(prefix="/api/v1/users/me", tags=["APIv1 User Me"])
 
@@ -27,7 +27,7 @@ router = APIRouter(prefix="/api/v1/users/me", tags=["APIv1 User Me"])
     response_model=List[CategoryGetResponse],
 )
 async def get_user_categories(
-    current_user: Annotated[CurrentUserData, Depends(get_current_user)],
+    current_user: Annotated[CurrentUserDTO, Depends(get_current_user)],
     category_service: Annotated[CategoryService, Depends(get_category_service)],
     transaction_type: Optional[TransactionType] = None,
 ):
@@ -44,7 +44,7 @@ async def get_user_categories(
     status_code=status.HTTP_200_OK,
 )
 async def get_user_subjects(
-    current_user: Annotated[CurrentUserData, Depends(get_current_user)],
+    current_user: Annotated[CurrentUserDTO, Depends(get_current_user)],
     user_service: Annotated[UserService, Depends(get_user_service)],
 ):
     user = await user_service.get_by_id(current_user.id)
@@ -60,7 +60,7 @@ async def get_user_subjects(
     response_model=List[WalletGetResponse],
 )
 async def get_user_wallets(
-    current_user: Annotated[CurrentUserData, Depends(get_current_user)],
+    current_user: Annotated[CurrentUserDTO, Depends(get_current_user)],
     user_service: Annotated[UserService, Depends(get_user_service)],
 ):
     user = await user_service.get_by_id(current_user.id)

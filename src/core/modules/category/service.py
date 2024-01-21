@@ -1,7 +1,9 @@
 from typing import Sequence, Optional
 
-from backend.src.core.modules.category.interfaces import CategoryRepositoryInterface
-from backend.src.core.modules.category.models import Category
+from backend.src.core.modules.category.repository_interface import (
+    CategoryRepositoryInterface,
+)
+from backend.src.core.modules.category.model import Category
 from backend.src.core.modules.category.schemas import (
     CategoryCreateDTO,
     CategoryUpdateDTO,
@@ -10,7 +12,7 @@ from backend.src.core.modules.common.exceptions import (
     ObjectDoesNotExist,
     ObjectAlreadyExists,
 )
-from backend.src.core.modules.transaction.enums import TransactionType
+from backend.src.core.modules.transaction.enum import TransactionType
 
 
 class CategoryService:

@@ -1,10 +1,10 @@
 from passlib.context import CryptContext
 
-from backend.src.core.modules.user.use_cases import UserRetrievalUseCase
+from backend.src.core.modules.user.use_case import UserRetrievalUseCase
 from backend.src.core.modules.auth.exceptions import InvalidCredentials
 from backend.src.core.modules.auth.schemas import ChangePasswordDTO
-from backend.src.core.modules.user.interfaces import UserRepositoryInterface
-from backend.src.core.modules.user.models import User
+from backend.src.core.modules.user.repository_interface import UserRepositoryInterface
+from backend.src.core.modules.user.model import User
 
 
 class PasswordHashService:

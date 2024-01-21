@@ -4,10 +4,12 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.src.database.setup import get_session
-from backend.src.core.modules.category.interfaces import CategoryRepositoryInterface
-from backend.src.core.modules.category.repositories import CategoryRepository
-from backend.src.core.modules.category.services import CategoryService
-from backend.src.core.modules.category.validators import CategoryValidator
+from backend.src.core.modules.category.repository_interface import (
+    CategoryRepositoryInterface,
+)
+from backend.src.core.modules.category.repository import CategoryRepository
+from backend.src.core.modules.category.service import CategoryService
+from backend.src.core.modules.category.validator import CategoryValidator
 
 
 def get_category_repository(

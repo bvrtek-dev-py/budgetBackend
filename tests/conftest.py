@@ -5,7 +5,7 @@ import pytest
 from httpx import AsyncClient
 
 from backend.src.dependencies.category.creators import get_category_repository
-from backend.src.dependencies.subject.dependencies import get_subject_repository
+from backend.src.dependencies.subject.creators import get_subject_repository
 from backend.src.dependencies.transaction.creators import get_transaction_repository
 from backend.src.dependencies.user.creators import get_user_repository
 from backend.src.dependencies.wallet.creators import get_wallet_repository

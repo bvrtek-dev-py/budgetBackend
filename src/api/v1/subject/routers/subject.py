@@ -9,13 +9,13 @@ from backend.src.api.v1.subject.requests import (
 )
 from backend.src.api.v1.subject.responses import SubjectBaseResponse, SubjectGetResponse
 from backend.src.dependencies.auth.permissions import get_current_user
-from backend.src.dependencies.subject.dependencies import (
+from backend.src.dependencies.subject.creators import (
     get_subject_service,
 )
 from backend.src.dependencies.subject.permissions import SubjectOwnerPermission
-from backend.src.core.modules.auth.schemas import CurrentUserData
+from backend.src.core.modules.auth.schemas import CurrentUserDTO
 from backend.src.core.modules.subject.schemas import SubjectPayloadDTO
-from backend.src.core.modules.subject.services import SubjectService
+from backend.src.core.modules.subject.service import SubjectService
 
 router = APIRouter(prefix="/api/v1/subjects", tags=["APIv1 Subject"])
 
@@ -32,7 +32,7 @@ router = APIRouter(prefix="/api/v1/subjects", tags=["APIv1 Subject"])
 )
 async def create_subject(
     request: SubjectRequest,
-    current_user: Annotated[CurrentUserData, Depends(get_current_user)],
+    current_user: Annotated[CurrentUserDTO, Depends(get_current_user)],
     subject_service: Annotated[SubjectService, Depends(get_subject_service)],
 ):
     return await subject_service.create(

@@ -4,10 +4,10 @@ from fastapi import Request, Depends
 
 from backend.src.dependencies.auth.permissions import get_current_user
 from backend.src.dependencies.common.enums import IdentifierSource
-from backend.src.dependencies.common.getters import get_object_id
+from backend.src.dependencies.common.helpers import get_object_id
 from backend.src.dependencies.wallet.creators import get_wallet_validator
-from backend.src.core.modules.auth.schemas import CurrentUserData
-from backend.src.core.modules.wallet.validators import WalletValidator
+from backend.src.core.modules.auth.schemas import CurrentUserDTO
+from backend.src.core.modules.wallet.validator import WalletValidator
 
 
 class WalletOwnerPermission:
@@ -26,7 +26,7 @@ class WalletOwnerPermission:
     async def __call__(
         self,
         request: Request,
-        current_user: Annotated[CurrentUserData, Depends(get_current_user)],
+        current_user: Annotated[CurrentUserDTO, Depends(get_current_user)],
         wallet_validator: Annotated[WalletValidator, Depends(get_wallet_validator)],
     ) -> None:
         wallet_id = await get_object_id(

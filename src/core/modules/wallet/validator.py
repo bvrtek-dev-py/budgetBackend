@@ -1,5 +1,5 @@
 from backend.src.core.modules.common.exceptions import PermissionDenied
-from backend.src.core.modules.wallet.services import WalletService
+from backend.src.core.modules.wallet.service import WalletService
 
 
 class WalletValidator:

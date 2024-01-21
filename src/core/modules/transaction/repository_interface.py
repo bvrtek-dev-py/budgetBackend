@@ -2,7 +2,7 @@ from abc import abstractmethod, ABC
 from datetime import datetime, date
 from typing import Optional, Sequence
 
-from backend.src.core.modules.transaction.models import Transaction
+from backend.src.core.modules.transaction.model import Transaction
 from backend.src.core.modules.transaction.schemas.transaction import (
     TransactionValueSumDTO,
 )

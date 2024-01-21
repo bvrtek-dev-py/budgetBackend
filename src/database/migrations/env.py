@@ -31,11 +31,11 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 from backend.src.database.base import BaseModel
-from backend.src.core.modules.user.models import User
-from backend.src.core.modules.wallet.models import Wallet
-from backend.src.core.modules.transaction.models import Transaction
-from backend.src.core.modules.category.models import Category
-from backend.src.core.modules.subject.models import Subject
+from backend.src.core.modules.user.model import User
+from backend.src.core.modules.wallet.model import Wallet
+from backend.src.core.modules.transaction.model import Transaction
+from backend.src.core.modules.category.model import Category
+from backend.src.core.modules.subject.model import Subject
 
 target_metadata = BaseModel.metadata
 

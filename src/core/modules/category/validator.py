@@ -1,4 +1,4 @@
-from backend.src.core.modules.category.services import CategoryService
+from backend.src.core.modules.category.service import CategoryService
 from backend.src.core.modules.common.exceptions import PermissionDenied
 
 

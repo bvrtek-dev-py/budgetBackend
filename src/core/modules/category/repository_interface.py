@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Sequence
 
-from backend.src.core.modules.category.models import Category
-from backend.src.core.modules.transaction.enums import TransactionType
+from backend.src.core.modules.category.model import Category
+from backend.src.core.modules.transaction.enum import TransactionType
 
 
 class CategoryRepositoryInterface(ABC):

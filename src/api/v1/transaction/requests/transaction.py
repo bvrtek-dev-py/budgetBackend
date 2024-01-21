@@ -3,7 +3,7 @@ from decimal import Decimal
 
 from pydantic import BaseModel, Field, condecimal
 
-from backend.src.core.modules.transaction.enums import TransactionType
+from backend.src.core.modules.transaction.enum import TransactionType
 
 
 class TransactionBaseRequest(BaseModel):

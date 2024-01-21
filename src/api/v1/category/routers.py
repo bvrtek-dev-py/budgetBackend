@@ -12,12 +12,12 @@ from backend.src.api.v1.category.responses import (
     CategoryGetResponse,
 )
 from backend.src.api.v1.common.responses import ErrorResponse
-from backend.src.core.modules.auth.schemas import CurrentUserData
+from backend.src.core.modules.auth.schemas import CurrentUserDTO
 from backend.src.core.modules.category.schemas import (
     CategoryCreateDTO,
     CategoryUpdateDTO,
 )
-from backend.src.core.modules.category.services import CategoryService
+from backend.src.core.modules.category.service import CategoryService
 from backend.src.dependencies.auth.permissions import get_current_user
 from backend.src.dependencies.category.creators import (
     get_category_service,
@@ -39,7 +39,7 @@ router = APIRouter(prefix="/api/v1/categories", tags=["APIv1 Category"])
 )
 async def create_category(
     request: CategoryCreateRequest,
-    current_user: Annotated[CurrentUserData, Depends(get_current_user)],
+    current_user: Annotated[CurrentUserDTO, Depends(get_current_user)],
     category_service: Annotated[CategoryService, Depends(get_category_service)],
 ):
     return await category_service.create(

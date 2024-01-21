@@ -9,7 +9,7 @@ from backend.src.api.v1.transaction.requests.transaction_transfer import (
 from backend.src.api.v1.transaction.responses.transaction_transfer import (
     TransactionTransferResponse,
 )
-from backend.src.core.modules.auth.schemas import CurrentUserData
+from backend.src.core.modules.auth.schemas import CurrentUserDTO
 from backend.src.core.modules.transaction.schemas.transaction import (
     TransactionTransferDTO,
 )
@@ -45,7 +45,7 @@ async def transfer_transaction(
     sender_id: Annotated[int, Path(gt=0)],
     receiver_id: Annotated[int, Path(gt=0)],
     request: TransactionTransferRequest,
-    current_user: Annotated[CurrentUserData, Depends(get_current_user)],
+    current_user: Annotated[CurrentUserDTO, Depends(get_current_user)],
     transfer_service: Annotated[
         TransactionTransferService, Depends(get_transaction_transfer_service)
     ],

@@ -9,7 +9,7 @@ from backend.src.api.v1.common.responses import ErrorResponse
 from backend.src.api.v1.user.responses import UserBaseResponse
 from backend.src.config.oauth2 import oauth2_scheme
 from backend.src.core.modules.auth.schemas import (
-    CurrentUserData,
+    CurrentUserDTO,
     ChangePasswordDTO,
 )
 from backend.src.core.modules.auth.services.login_service import LoginService
@@ -79,7 +79,7 @@ async def refresh_token(
 )
 async def change_password(
     request: PasswordChangeRequest,
-    current_user: Annotated[CurrentUserData, Depends(get_current_user)],
+    current_user: Annotated[CurrentUserDTO, Depends(get_current_user)],
     password_change_service: Annotated[
         PasswordChangeService, Depends(get_password_change_service)
     ],

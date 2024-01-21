@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
-from backend.src.core.modules.transaction.enums import TransactionType
+from backend.src.core.modules.transaction.enum import TransactionType
 
 
 class CategoryBaseRequest(BaseModel):
