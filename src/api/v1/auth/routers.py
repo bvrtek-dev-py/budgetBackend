@@ -16,6 +16,9 @@ from backend.src.core.modules.auth.services.login_service import LoginService
 from backend.src.core.modules.auth.services.password_services import (
     PasswordChangeService,
 )
+from backend.src.core.modules.auth.services.refresh_token_service import (
+    RefreshTokenService,
+)
 from backend.src.dependencies.auth.creators import (
     get_refresh_token_service,
 )
@@ -23,9 +26,6 @@ from backend.src.dependencies.auth.permissions import get_current_user
 from backend.src.dependencies.auth.providers import (
     get_password_change_service,
     get_login_service,
-)
-from backend.src.core.modules.auth.services.refresh_token_service import (
-    RefreshTokenService,
 )
 
 router = APIRouter(prefix="/api/v1/auth", tags=["APIv1 Auth"])
@@ -39,7 +39,7 @@ router = APIRouter(prefix="/api/v1/auth", tags=["APIv1 Auth"])
         409: {"model": ErrorResponse},
     },
     response_model=LoginSuccessResponse,
-    status_code=200,
+    status_code=status.HTTP_200_OK,
 )
 async def login(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
@@ -56,7 +56,7 @@ async def login(
         404: {"model": ErrorResponse},
     },
     response_model=LoginSuccessResponse,
-    status_code=200,
+    status_code=status.HTTP_200_OK,
 )
 async def refresh_token(
     token: Annotated[str, Depends(oauth2_scheme)],

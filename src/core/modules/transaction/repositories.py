@@ -65,9 +65,9 @@ class TransactionRepository(TransactionRepositoryInterface):
     ) -> Transaction | None:
         query = (
             TransactionFetchQueryBuilder()
-            .apply_name(name)
+            .apply_name_filter(name)
             .apply_wallet_id_filter(wallet_id)
-            .apply_date(transaction_date)
+            .apply_date_filter(transaction_date)
             .build()
         )
 

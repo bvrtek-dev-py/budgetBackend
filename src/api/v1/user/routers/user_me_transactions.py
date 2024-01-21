@@ -1,22 +1,16 @@
-from datetime import date, datetime
-from typing import List, Annotated, Optional
+from datetime import datetime
+from typing import List, Annotated
 
 from dateutil.relativedelta import relativedelta
 from fastapi import APIRouter, status, Depends
 
+from backend.src.api.v1.common.query_parameters import DateRangeParameters
 from backend.src.api.v1.common.responses import ErrorResponse
-from backend.src.api.v1.common.validators import validate_date_range
 from backend.src.api.v1.transaction.responses.transaction import TransactionBaseResponse
 from backend.src.api.v1.transaction.responses.transaction_statistics import (
     TransactionStatisticResponse,
     UserTransactionStatisticsResponse,
 )
-from backend.src.dependencies.auth.permissions import get_current_user
-from backend.src.dependencies.transaction.creators import (
-    get_transaction_query_service,
-    get_transaction_statistics_service,
-)
-from backend.src.dependencies.user.creators import get_user_service
 from backend.src.core.modules.auth.schemas import CurrentUserData
 from backend.src.core.modules.common.utils import get_first_day_of_month
 from backend.src.core.modules.transaction.services.query_service import (
@@ -25,7 +19,11 @@ from backend.src.core.modules.transaction.services.query_service import (
 from backend.src.core.modules.transaction.services.statistics_service import (
     TransactionStatisticsService,
 )
-from backend.src.core.modules.user.services import UserService
+from backend.src.dependencies.auth.permissions import get_current_user
+from backend.src.dependencies.transaction.creators import (
+    get_transaction_query_service,
+    get_transaction_statistics_service,
+)
 
 router = APIRouter(
     prefix="/api/v1/users/me/transactions", tags=["APIv1 User Me Transactions"]
@@ -43,19 +41,13 @@ router = APIRouter(
 )
 async def get_user_transactions(
     current_user: Annotated[CurrentUserData, Depends(get_current_user)],
-    user_service: Annotated[UserService, Depends(get_user_service)],
     transaction_query_service: Annotated[
         TransactionQueryService, Depends(get_transaction_query_service)
     ],
-    start_date: Optional[date] = None,
-    end_date: Optional[date] = None,
+    date_range: Annotated[DateRangeParameters, Depends()],
 ):
-    if start_date is not None and end_date is not None:
-        validate_date_range(start_date, end_date)
-
-    user = await user_service.get_by_id(current_user.id)
     return await transaction_query_service.get_user_transactions(
-        user, start_date, end_date
+        current_user.id, date_range.start_date, date_range.end_date
     )
 
 

@@ -3,10 +3,16 @@ from pydantic import BaseModel, Field, model_validator
 from backend.src.core.modules.user.exceptions import PasswordDoesNotMatch
 
 
-class UserCreateRequest(BaseModel):
+class UserBaseRequest(BaseModel):
     first_name: str = Field(min_length=3, max_length=50)
     last_name: str = Field(min_length=2, max_length=50)
     username: str = Field(min_length=3, max_length=20)
+
+    class ConfigDict:
+        frozen = True
+
+
+class UserCreateRequest(UserBaseRequest):
     email: str = Field(min_length=3, max_length=50)
     password: str = Field(min_length=8, max_length=50)
     password_confirmation: str = Field(min_length=8, max_length=50)
@@ -21,14 +27,6 @@ class UserCreateRequest(BaseModel):
 
         return self
 
-    class ConfigDict:
-        frozen = True
 
-
-class UserUpdateRequest(BaseModel):
-    first_name: str = Field(min_length=3, max_length=50)
-    last_name: str = Field(min_length=2, max_length=50)
-    username: str = Field(min_length=3, max_length=20)
-
-    class ConfigDict:
-        frozen = True
+class UserUpdateRequest(UserBaseRequest):
+    pass

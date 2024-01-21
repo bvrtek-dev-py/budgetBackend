@@ -21,7 +21,7 @@ class LoginService:
         self._token_service = token_service
         self._user_retrieval_use_case = user_retrieval_use_case
 
-    async def login(self, username: str, password: str):
+    async def login(self, username: str, password: str) -> SuccessAuthenticationDTO:
         user = await self._authenticate(username, password)
 
         return SuccessAuthenticationDTO(

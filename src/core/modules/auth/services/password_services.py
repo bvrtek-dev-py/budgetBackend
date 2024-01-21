@@ -4,6 +4,7 @@ from backend.src.core.modules.user.use_cases import UserRetrievalUseCase
 from backend.src.core.modules.auth.exceptions import InvalidCredentials
 from backend.src.core.modules.auth.schemas import ChangePasswordDTO
 from backend.src.core.modules.user.interfaces import UserRepositoryInterface
+from backend.src.core.modules.user.models import User
 
 
 class PasswordHashService:
@@ -35,7 +36,7 @@ class PasswordChangeService:
         self._hash_service = hash_service
         self._verify_service = verify_service
 
-    async def change_password(self, user_id: int, request: ChangePasswordDTO):
+    async def change_password(self, user_id: int, request: ChangePasswordDTO) -> User:
         user = await self._retrieval_use_case.get_by_id(user_id)
 
         if not self._verify_service.verify(request.current_password, user.password):

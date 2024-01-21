@@ -24,6 +24,9 @@ class ChangePasswordDTO(BaseModel):
     password: str
     password_confirmation: str
 
+    class ConfigDict:
+        frozen = True
+
 
 class SuccessAuthenticationDTO(BaseModel):
     token_type: str

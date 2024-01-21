@@ -5,7 +5,10 @@ from pydantic import BaseModel, Field, condecimal
 
 
 class TransactionTransferRequest(BaseModel):
-    name: str = Field(min_length=2)
+    name: str = Field(min_length=2, max_length=20)
     value: Decimal = condecimal(max_digits=10, decimal_places=2)  # type: ignore
     description: str = Field(min_length=2, max_length=2000)
     date: date
+
+    class ConfigDict:
+        frozen = True

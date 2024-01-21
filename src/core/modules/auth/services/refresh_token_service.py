@@ -9,7 +9,7 @@ class RefreshTokenService:
     def __init__(self, token_service: TokenService):
         self._token_service = token_service
 
-    def refresh(self, token: str):
+    def refresh(self, token: str) -> SuccessAuthenticationDTO:
         decoded_data = self._token_service.decode(token)
         token_data = AuthenticatedUserDTO(id=decoded_data.id, sub=decoded_data.email)
 

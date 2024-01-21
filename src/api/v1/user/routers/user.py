@@ -57,6 +57,7 @@ async def update_user(
     responses={
         200: {"model": UserBaseResponse},
         401: {"model": ErrorResponse},
+        403: {"model": ErrorResponse},
         404: {"model": ErrorResponse},
     },
     response_model=UserBaseResponse,

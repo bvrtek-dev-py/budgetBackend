@@ -18,12 +18,12 @@ class TransactionBaseQueryBuilder:
 
         return self
 
-    def apply_name(self, name: str) -> "TransactionBaseQueryBuilder":
+    def apply_name_filter(self, name: str) -> "TransactionBaseQueryBuilder":
         self._apply_filter(Transaction.name == name)
 
         return self
 
-    def apply_date(self, date_value: date) -> "TransactionBaseQueryBuilder":
+    def apply_date_filter(self, date_value: date) -> "TransactionBaseQueryBuilder":
         self._apply_filter(Transaction.date == date_value)
 
         return self

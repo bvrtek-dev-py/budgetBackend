@@ -7,30 +7,29 @@ from pydantic import BaseModel
 from backend.src.core.modules.transaction.enums import TransactionType
 
 
-class TransactionCreateDTO(BaseModel):
+class TransactionBaseDTO(BaseModel):
     name: str
     value: Decimal
+    description: str
+    date: date
+
+    class ConfigDict:
+        frozen = True
+
+
+class TransactionCreateDTO(TransactionBaseDTO):
     type: TransactionType
-    description: str
-    date: date
     subject_id: int
     category_id: int
 
 
-class TransactionUpdateDTO(BaseModel):
-    name: str
-    value: Decimal
-    description: str
-    date: date
+class TransactionUpdateDTO(TransactionBaseDTO):
     subject_id: int
     category_id: int
 
 
-class TransactionTransferDTO(BaseModel):
-    name: str
-    value: Decimal
-    description: str
-    date: date
+class TransactionTransferDTO(TransactionBaseDTO):
+    pass
 
 
 class TransactionValueSumDTO(BaseModel):
