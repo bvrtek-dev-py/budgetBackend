@@ -1,18 +1,18 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from backend.src.core.modules.transaction.enums import TransactionType
 
 
-class CategoryCreateRequest(BaseModel):
-    name: str
+class CategoryBaseRequest(BaseModel):
+    name: str = Field(min_length=2, max_length=20)
+
+    class ConfigDict:
+        frozen = True
+
+
+class CategoryCreateRequest(CategoryBaseRequest):
     transaction_type: TransactionType
 
-    class ConfigDict:
-        frozen = True
 
-
-class CategoryUpdateRequest(BaseModel):
-    name: str
-
-    class ConfigDict:
-        frozen = True
+class CategoryUpdateRequest(CategoryBaseRequest):
+    pass

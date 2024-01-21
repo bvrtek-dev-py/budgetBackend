@@ -13,19 +13,8 @@ class CategoryBaseResponse(BaseModel):
 
     class ConfigDict:
         frozen = True
-        orm_mode = True
-
-
-class CategoryCreateResponse(CategoryBaseResponse):
-    class ConfigDict:
-        frozen = True
-        orm_mode = True
 
 
 class CategoryGetResponse(CategoryBaseResponse):
     created_at: datetime
     updated_at: datetime
-
-    class ConfigDict:
-        frozen = True
-        orm_mode = True

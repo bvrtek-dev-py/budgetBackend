@@ -9,3 +9,6 @@ class TransactionTransferResponse(BaseModel):
     value: Decimal
     description: str
     date: date
+
+    class ConfigDict:
+        frozen = True

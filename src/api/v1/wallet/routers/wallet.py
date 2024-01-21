@@ -4,8 +4,8 @@ from fastapi import APIRouter, Depends, Path, status
 
 from backend.src.api.v1.common.responses import ErrorResponse
 from backend.src.api.v1.wallet.requests import (
-    WalletUpdateRequest,
-    WalletCreateRequest,
+    WalletBaseRequest,
+    WalletBaseRequest,
 )
 from backend.src.api.v1.wallet.responses import (
     WalletBaseResponse,
@@ -52,7 +52,7 @@ async def get_wallet(
     status_code=status.HTTP_201_CREATED,
 )
 async def create_wallet(
-    request: WalletCreateRequest,
+    request: WalletBaseRequest,
     current_user: Annotated[CurrentUserData, Depends(get_current_user)],
     wallet_service: Annotated[WalletService, Depends(get_wallet_service)],
 ):
@@ -76,7 +76,7 @@ async def create_wallet(
 )
 async def update_wallet(
     wallet_id: Annotated[int, Path(gt=0)],
-    request: WalletUpdateRequest,
+    request: WalletBaseRequest,
     wallet_service: Annotated[WalletService, Depends(get_wallet_service)],
 ):
     return await wallet_service.update(

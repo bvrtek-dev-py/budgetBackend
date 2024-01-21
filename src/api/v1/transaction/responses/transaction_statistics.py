@@ -24,7 +24,6 @@ class WalletTransactionStatisticsResponse(BaseModel):
 
     class ConfigDict:
         frozen = True
-        orm_mode = True
 
 
 class UserTransactionStatisticsResponse(BaseModel):
@@ -33,4 +32,3 @@ class UserTransactionStatisticsResponse(BaseModel):
 
     class ConfigDict:
         frozen = True
-        orm_mode = True

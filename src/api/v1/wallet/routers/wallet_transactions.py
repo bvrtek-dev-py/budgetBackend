@@ -1,31 +1,18 @@
-from datetime import date, datetime
-from typing import Annotated, List, Optional
+from datetime import datetime
+from typing import Annotated, List
 
 from dateutil.relativedelta import relativedelta
 from fastapi import APIRouter, Depends, Path
 from starlette import status
 
+from backend.src.api.v1.common.query_parameters import DateRangeParameters
 from backend.src.api.v1.common.responses import ErrorResponse
-from backend.src.api.v1.common.validators import validate_date_range
 from backend.src.api.v1.transaction.requests.transaction import TransactionCreateRequest
 from backend.src.api.v1.transaction.responses.transaction import TransactionBaseResponse
 from backend.src.api.v1.transaction.responses.transaction_statistics import (
     WalletTransactionStatisticsResponse,
     WalletTransactionStatisticResponse,
 )
-from backend.src.dependencies.auth.permissions import get_current_user
-from backend.src.dependencies.category.permissions import CategoryOwnerPermission
-from backend.src.dependencies.common.enums import IdentifierSource
-from backend.src.dependencies.subject.permissions import SubjectOwnerPermission
-from backend.src.dependencies.transaction.creators import (
-    get_transaction_service,
-    get_transaction_query_service,
-    get_transaction_statistics_service,
-)
-from backend.src.dependencies.wallet.creators import (
-    get_wallet_service,
-)
-from backend.src.dependencies.wallet.permissions import WalletOwnerPermission
 from backend.src.core.modules.auth.schemas import CurrentUserData
 from backend.src.core.modules.common.utils import get_first_day_of_month
 from backend.src.core.modules.transaction.schemas.transaction import (
@@ -40,7 +27,16 @@ from backend.src.core.modules.transaction.services.query_service import (
 from backend.src.core.modules.transaction.services.statistics_service import (
     TransactionStatisticsService,
 )
-from backend.src.core.modules.wallet.services import WalletService
+from backend.src.dependencies.auth.permissions import get_current_user
+from backend.src.dependencies.category.permissions import CategoryOwnerPermission
+from backend.src.dependencies.common.enums import IdentifierSource
+from backend.src.dependencies.subject.permissions import SubjectOwnerPermission
+from backend.src.dependencies.transaction.creators import (
+    get_transaction_service,
+    get_transaction_query_service,
+    get_transaction_statistics_service,
+)
+from backend.src.dependencies.wallet.permissions import WalletOwnerPermission
 
 router = APIRouter(
     prefix="/api/v1/wallets/{wallet_id}/transactions",
@@ -88,20 +84,13 @@ async def create_wallet_transaction(
 )
 async def get_wallet_transactions(
     wallet_id: Annotated[int, Path(gt=0)],
-    wallet_service: Annotated[WalletService, Depends(get_wallet_service)],
     transaction_query_service: Annotated[
         TransactionQueryService, Depends(get_transaction_query_service)
     ],
-    start_date: Optional[date] = None,
-    end_date: Optional[date] = None,
+    date_range: DateRangeParameters,
 ):
-    if start_date is not None and end_date is not None:
-        validate_date_range(start_date, end_date)
-
-    wallet = await wallet_service.get_by_id(wallet_id)
-
     return await transaction_query_service.get_wallet_transactions(
-        wallet, start_date, end_date
+        wallet_id, date_range.start_date, date_range.end_date
     )
 
 
@@ -141,10 +130,8 @@ async def get_wallet_statistics(
 )
 async def get_wallet_balance(
     wallet_id: Annotated[int, Path(gt=0)],
-    wallet_service: Annotated[WalletService, Depends(get_wallet_service)],
     transaction_statistics_service: Annotated[
         TransactionStatisticsService, Depends(get_transaction_statistics_service)
     ],
 ):
-    wallet = await wallet_service.get_by_id(wallet_id)
-    return await transaction_statistics_service.get_wallet_balance(wallet.id)
+    return await transaction_statistics_service.get_wallet_balance(wallet_id)

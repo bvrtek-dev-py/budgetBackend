@@ -2,6 +2,7 @@ from fastapi import status
 from fastapi.requests import Request
 from fastapi.responses import JSONResponse
 
+from api.v1.common.exceptions import DateRangeConflict
 from backend.src.core.modules.auth.exceptions import InvalidCredentials
 from backend.src.core.modules.common.exceptions import (
     BaseHttpException,
@@ -39,6 +40,11 @@ async def http_exception_handler(request: Request, exception: BaseHttpException)
     if isinstance(exception, PermissionDenied):
         return JSONResponse(
             status_code=status.HTTP_403_FORBIDDEN, content={"detail": exception.detail}
+        )
+
+    if isinstance(exception, DateRangeConflict):
+        return JSONResponse(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, content=exception.detail
         )
 
     return JSONResponse(

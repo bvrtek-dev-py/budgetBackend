@@ -1,20 +1,15 @@
-from datetime import date
-from typing import List, Annotated, Optional
+from typing import List, Annotated
 
 from fastapi import APIRouter, status, Depends, Path
 
+from api.v1.common.query_parameters import DateRangeParameters
 from backend.src.api.v1.common.responses import ErrorResponse
-from backend.src.api.v1.common.validators import validate_date_range
 from backend.src.api.v1.transaction.responses.transaction import TransactionBaseResponse
-from backend.src.dependencies.subject.dependencies import (
-    get_subject_service,
-)
-from backend.src.dependencies.subject.permissions import SubjectOwnerPermission
-from backend.src.dependencies.transaction.creators import get_transaction_query_service
-from backend.src.core.modules.subject.services import SubjectService
 from backend.src.core.modules.transaction.services.query_service import (
     TransactionQueryService,
 )
+from backend.src.dependencies.subject.permissions import SubjectOwnerPermission
+from backend.src.dependencies.transaction.creators import get_transaction_query_service
 
 router = APIRouter(
     prefix="/api/v1/subjects/{subject_id}/transactions",
@@ -34,18 +29,11 @@ router = APIRouter(
 )
 async def get_subject_transactions(
     subject_id: Annotated[int, Path(gt=0)],
-    subject_service: Annotated[SubjectService, Depends(get_subject_service)],
     transaction_query_service: Annotated[
         TransactionQueryService, Depends(get_transaction_query_service)
     ],
-    start_date: Optional[date] = None,
-    end_date: Optional[date] = None,
+    date_range: DateRangeParameters,
 ):
-    if start_date is not None and end_date is not None:
-        validate_date_range(start_date, end_date)
-
-    subject = await subject_service.get_by_id(subject_id)
-
     return await transaction_query_service.get_subject_transactions(
-        subject, start_date, end_date
+        subject_id, date_range.start_date, date_range.end_date
     )

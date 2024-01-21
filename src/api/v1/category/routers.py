@@ -12,17 +12,17 @@ from backend.src.api.v1.category.responses import (
     CategoryGetResponse,
 )
 from backend.src.api.v1.common.responses import ErrorResponse
-from backend.src.dependencies.auth.permissions import get_current_user
-from backend.src.dependencies.category.creators import (
-    get_category_service,
-)
-from backend.src.dependencies.category.permissions import CategoryOwnerPermission
 from backend.src.core.modules.auth.schemas import CurrentUserData
 from backend.src.core.modules.category.schemas import (
     CategoryCreateDTO,
     CategoryUpdateDTO,
 )
 from backend.src.core.modules.category.services import CategoryService
+from backend.src.dependencies.auth.permissions import get_current_user
+from backend.src.dependencies.category.creators import (
+    get_category_service,
+)
+from backend.src.dependencies.category.permissions import CategoryOwnerPermission
 
 router = APIRouter(prefix="/api/v1/categories", tags=["APIv1 Category"])
 
