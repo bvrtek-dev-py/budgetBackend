@@ -1,5 +1,5 @@
 from datetime import date
-from typing import Sequence, Optional
+from typing import Optional
 
 from backend.src.core.modules.common.exceptions import (
     ObjectDoesNotExist,
@@ -58,9 +58,6 @@ class TransactionService:
             raise ObjectDoesNotExist()
 
         return transaction
-
-    async def get_all(self) -> Sequence[Transaction]:
-        return await self._repository.get_all()
 
     async def _check_constraint_blockade(
         self,

@@ -1,6 +1,5 @@
 from datetime import datetime
 from decimal import Decimal
-from typing import Dict
 
 from dateutil.relativedelta import relativedelta
 
@@ -86,23 +85,6 @@ class TransactionStatisticsService:
             start_date += relativedelta(months=1)
 
         return statistics
-
-    def _update_monthly_statistics(
-        self,
-        monthly: Dict[str, TransactionStatisticDTO],
-        start_date: datetime,
-        update_data: TransactionValueSumDTO,
-        with_transfer: bool,
-    ) -> None:
-        month_stats_dto = TransactionStatisticDTO()
-
-        if with_transfer:
-            month_stats_dto.transfers = Decimal("0.0")
-
-        month_key = start_date.strftime("%Y-%m")
-        monthly[month_key] = self._update_transaction_statistic_dto(
-            month_stats_dto, update_data
-        )
 
     def _update_transaction_statistic_dto(
         self,
