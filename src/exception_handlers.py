@@ -2,7 +2,7 @@ from fastapi import status
 from fastapi.requests import Request
 from fastapi.responses import JSONResponse
 
-from api.v1.common.exceptions import DateRangeConflict
+from backend.src.api.v1.common.exceptions import DateRangeConflict
 from backend.src.core.modules.auth.exceptions import InvalidCredentials
 from backend.src.core.modules.common.exceptions import (
     BaseHttpException,
@@ -13,7 +13,7 @@ from backend.src.core.modules.common.exceptions import (
 from backend.src.core.modules.user.exceptions import PasswordDoesNotMatch
 
 
-# pylint: disable=W0613
+# pylint: disable=W0613, R0911
 async def http_exception_handler(request: Request, exception: BaseHttpException):
     if isinstance(exception, PasswordDoesNotMatch):
         return JSONResponse(

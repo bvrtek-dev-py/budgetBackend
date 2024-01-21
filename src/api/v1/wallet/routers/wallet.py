@@ -5,20 +5,19 @@ from fastapi import APIRouter, Depends, Path, status
 from backend.src.api.v1.common.responses import ErrorResponse
 from backend.src.api.v1.wallet.requests import (
     WalletBaseRequest,
-    WalletBaseRequest,
 )
 from backend.src.api.v1.wallet.responses import (
     WalletBaseResponse,
     WalletGetResponse,
 )
+from backend.src.core.modules.auth.schemas import CurrentUserData
+from backend.src.core.modules.wallet.schemas import WalletPayloadDTO
+from backend.src.core.modules.wallet.services import WalletService
 from backend.src.dependencies.auth.permissions import get_current_user
 from backend.src.dependencies.wallet.creators import (
     get_wallet_service,
 )
 from backend.src.dependencies.wallet.permissions import WalletOwnerPermission
-from backend.src.core.modules.auth.schemas import CurrentUserData
-from backend.src.core.modules.wallet.schemas import WalletPayloadDTO
-from backend.src.core.modules.wallet.services import WalletService
 
 router = APIRouter(prefix="/api/v1/wallets", tags=["APIv1 Wallet"])
 

@@ -87,7 +87,7 @@ async def get_wallet_transactions(
     transaction_query_service: Annotated[
         TransactionQueryService, Depends(get_transaction_query_service)
     ],
-    date_range: DateRangeParameters,
+    date_range: Annotated[DateRangeParameters, Depends()],
 ):
     return await transaction_query_service.get_wallet_transactions(
         wallet_id, date_range.start_date, date_range.end_date

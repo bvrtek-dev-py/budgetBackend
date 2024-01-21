@@ -2,7 +2,7 @@ from typing import List, Annotated
 
 from fastapi import APIRouter, status, Depends, Path
 
-from api.v1.common.query_parameters import DateRangeParameters
+from backend.src.api.v1.common.query_parameters import DateRangeParameters
 from backend.src.api.v1.common.responses import ErrorResponse
 from backend.src.api.v1.transaction.responses.transaction import TransactionBaseResponse
 from backend.src.core.modules.transaction.services.query_service import (
@@ -32,7 +32,7 @@ async def get_subject_transactions(
     transaction_query_service: Annotated[
         TransactionQueryService, Depends(get_transaction_query_service)
     ],
-    date_range: DateRangeParameters,
+    date_range: Annotated[DateRangeParameters, Depends()],
 ):
     return await transaction_query_service.get_subject_transactions(
         subject_id, date_range.start_date, date_range.end_date

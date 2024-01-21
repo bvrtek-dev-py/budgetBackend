@@ -1,20 +1,22 @@
 from datetime import date
+from typing import Optional
 
+from fastapi import Query
 from pydantic import BaseModel, model_validator
 
 from backend.src.api.v1.common.exceptions import DateRangeConflict
 
 
 class DateRangeParameters(BaseModel):
-    start_date: date
-    end_date: date
+    start_date: Optional[date] = Query(default=None)
+    end_date: Optional[date] = Query(default=None)
 
     @model_validator(mode="after")
     def check_passwords_match(self) -> "DateRangeParameters":
-        date1 = self.start_date
-        date2 = self.end_date
+        if self.start_date is None or self.end_date is None:
+            return self
 
-        if date1 is not None and date2 is not None and date1 >= date2:
+        if self.start_date > self.end_date:
             raise DateRangeConflict()
 
         return self
