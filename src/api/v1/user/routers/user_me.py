@@ -2,8 +2,8 @@ from typing import Annotated, List, Optional
 
 from fastapi import APIRouter, Depends, status
 
-from api.v1.user.requests import UserUpdateRequest
-from api.v1.user.responses import UserBaseResponse
+from backend.src.api.v1.user.requests import UserUpdateRequest
+from backend.src.api.v1.user.responses import UserBaseResponse
 from backend.src.api.v1.category.responses import CategoryGetResponse
 from backend.src.api.v1.common.responses import ErrorResponse
 from backend.src.api.v1.subject.responses import SubjectBaseResponse
