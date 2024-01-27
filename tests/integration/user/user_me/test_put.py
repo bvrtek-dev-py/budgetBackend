@@ -20,7 +20,7 @@ async def test_update_user(
 
     # When
     response = await async_client.put(
-        f"/api/v1/user/me",
+        "/api/v1/user/me",
         json=data,
         headers={"Authorization": f"Bearer {await access_token}"},
     )
@@ -41,7 +41,7 @@ async def test_update_user_not_authenticated(async_client: AsyncClient):
 
     # When
     response = await async_client.put(
-        f"/api/v1/user/me",
+        "/api/v1/user/me",
         json=data,
     )
 
@@ -62,7 +62,7 @@ async def test_update_user_duplicated_username(
 
     # When
     response = await async_client.put(
-        f"/api/v1/user/me",
+        "/api/v1/user/me",
         json=data,
         headers={"Authorization": f"Bearer {await access_token}"},
     )
@@ -84,7 +84,7 @@ async def test_update_user_owner_duplicated_username(
 
     # When
     response = await async_client.put(
-        f"/api/v1/user/me",
+        "/api/v1/user/me",
         json=data,
         headers={"Authorization": f"Bearer {await access_token}"},
     )
