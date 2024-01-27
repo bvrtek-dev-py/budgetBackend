@@ -26,7 +26,7 @@ from backend.src.dependencies.transaction.creators import (
 )
 
 router = APIRouter(
-    prefix="/api/v1/users/me/transactions", tags=["APIv1 User Me Transactions"]
+    prefix="/api/v1/user/me/transactions", tags=["APIv1 User Me Transactions"]
 )
 
 

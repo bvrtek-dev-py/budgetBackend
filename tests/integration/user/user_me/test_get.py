@@ -13,7 +13,7 @@ async def test_get_categories(
 ):
     # When
     response = await async_client.get(
-        "/api/v1/users/me/categories/",
+        "/api/v1/user/me/categories/",
         headers={"Authorization": f"Bearer {await access_token}"},
     )
 
@@ -31,7 +31,7 @@ async def test_get_categories_expense_type(
 
     # When
     response = await async_client.get(
-        f"/api/v1/users/me/categories/{query}",
+        f"/api/v1/user/me/categories/{query}",
         headers={"Authorization": f"Bearer {await access_token}"},
     )
 
@@ -49,7 +49,7 @@ async def test_get_categories_income_type(
 
     # When
     response = await async_client.get(
-        f"/api/v1/users/me/categories/{query}",
+        f"/api/v1/user/me/categories/{query}",
         headers={"Authorization": f"Bearer {await access_token}"},
     )
 
@@ -61,7 +61,7 @@ async def test_get_categories_income_type(
 @pytest.mark.asyncio
 async def test_get_categories_not_authenticated(async_client: AsyncClient):
     # When
-    response = await async_client.get("/api/v1/users/me/categories/")
+    response = await async_client.get("/api/v1/user/me/categories/")
 
     # Then
     assert response.status_code == 401
@@ -76,7 +76,7 @@ async def test_get_wallets(
 
     # When
     response = await async_client.get(
-        "/api/v1/users/me/wallets",
+        "/api/v1/user/me/wallets",
         headers={"Authorization": f"Bearer {await access_token}"},
     )
 
@@ -90,7 +90,7 @@ async def test_get_wallets(
 async def test_get_wallets_not_authenticated(async_client: AsyncClient):
     # When
     response = await async_client.get(
-        "/api/v1/users/me/wallets/",
+        "/api/v1/user/me/wallets/",
     )
 
     # Then
@@ -103,7 +103,7 @@ async def test_get_subjects(
 ):
     # When
     response = await async_client.get(
-        "/api/v1/users/me/subjects/",
+        "/api/v1/user/me/subjects/",
         headers={"Authorization": f"Bearer {await access_token}"},
     )
 
@@ -116,7 +116,7 @@ async def test_get_subjects(
 async def test_get_subjects_not_authenticated(async_client: AsyncClient):
     # When
     response = await async_client.get(
-        "/api/v1/users/me/subjects/",
+        "/api/v1/user/me/subjects/",
     )
 
     # Then
@@ -129,7 +129,7 @@ async def test_get_transactions(
 ):
     # When
     response = await async_client.get(
-        "/api/v1/users/me/transactions/",
+        "/api/v1/user/me/transactions/",
         headers={"Authorization": f"Bearer {await access_token}"},
     )
 
@@ -142,7 +142,7 @@ async def test_get_transactions(
 async def test_get_transactions_not_authenticated(async_client: AsyncClient):
     # When
     response = await async_client.get(
-        "/api/v1/users/me/transactions/",
+        "/api/v1/user/me/transactions/",
     )
 
     # Then
