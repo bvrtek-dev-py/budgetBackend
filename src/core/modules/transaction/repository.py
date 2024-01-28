@@ -1,4 +1,3 @@
-# pylint: disable=R0913
 import asyncio
 from datetime import date, datetime
 from decimal import Decimal
@@ -11,16 +10,16 @@ from sqlalchemy.orm import selectinload
 from backend.src.core.modules.transaction.builders.fetch_query import (
     TransactionFetchQueryBuilder,
 )
-from backend.src.core.modules.transaction.builders.sum_query import (
-    TransactionValueSumQueryBuilder,
-)
 from backend.src.core.modules.transaction.enum import TransactionType
+from backend.src.core.modules.transaction.model import Transaction
 from backend.src.core.modules.transaction.repository_interface import (
     TransactionRepositoryInterface,
 )
-from backend.src.core.modules.transaction.model import Transaction
 from backend.src.core.modules.transaction.schemas.transaction import (
     TransactionValueSumDTO,
+)
+from backend.src.core.modules.transaction.queries import (
+    build_sum_query_with_wallet_id, build_sum_query_with_user_id
 )
 
 
@@ -129,10 +128,10 @@ class TransactionRepository(TransactionRepositoryInterface):
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,
     ) -> TransactionValueSumDTO:
-        income_query = self._build_sum_query_with_user_id(
+        income_query = build_sum_query_with_user_id(
             user_id, TransactionType.INCOME, False, start_date, end_date
         )
-        expense_query = self._build_sum_query_with_user_id(
+        expense_query = build_sum_query_with_user_id(
             user_id, TransactionType.EXPENSE, False, start_date, end_date
         )
 
@@ -149,16 +148,16 @@ class TransactionRepository(TransactionRepositoryInterface):
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,
     ) -> TransactionValueSumDTO:
-        income_query = self._build_sum_query_with_wallet_id(
+        income_query = build_sum_query_with_wallet_id(
             wallet_id, TransactionType.INCOME, False, start_date, end_date
         )
-        expense_query = self._build_sum_query_with_wallet_id(
+        expense_query = build_sum_query_with_wallet_id(
             wallet_id, TransactionType.EXPENSE, False, start_date, end_date
         )
-        transfer_income_query = self._build_sum_query_with_wallet_id(
+        transfer_income_query = build_sum_query_with_wallet_id(
             wallet_id, TransactionType.INCOME, True, start_date, end_date
         )
-        transfer_expense_query = self._build_sum_query_with_wallet_id(
+        transfer_expense_query = build_sum_query_with_wallet_id(
             wallet_id, TransactionType.EXPENSE, True, start_date, end_date
         )
 
@@ -174,42 +173,6 @@ class TransactionRepository(TransactionRepositoryInterface):
             expenses=expenses,
             transfer_incomes=transfer_income,
             transfer_expenses=transfer_expense,
-        )
-
-    def _build_sum_query_with_wallet_id(
-        self,
-        wallet_id: int,
-        transaction_type: TransactionType,
-        is_transfer: bool,
-        start_date: Optional[datetime] = None,
-        end_date: Optional[datetime] = None,
-    ) -> Select:
-        return (
-            TransactionValueSumQueryBuilder()
-            .apply_transaction_type_filter(transaction_type)
-            .apply_is_transfer_filter(is_transfer)
-            .apply_wallet_id_filter(wallet_id)
-            .apply_start_date_filter(start_date)
-            .apply_end_date_filter(end_date)
-            .build()
-        )
-
-    def _build_sum_query_with_user_id(
-        self,
-        user_id: int,
-        transaction_type: TransactionType,
-        is_transfer: bool,
-        start_date: Optional[datetime] = None,
-        end_date: Optional[datetime] = None,
-    ) -> Select:
-        return (
-            TransactionValueSumQueryBuilder()
-            .apply_transaction_type_filter(transaction_type)
-            .apply_is_transfer_filter(is_transfer)
-            .apply_user_id_filter(user_id)
-            .apply_start_date_filter(start_date)
-            .apply_end_date_filter(end_date)
-            .build()
         )
 
     async def _execute_sum_query(self, query: Select) -> Decimal:
