@@ -10,6 +10,7 @@ from backend.src.core.modules.category.repository_interface import (
 from backend.src.core.modules.category.repository import CategoryRepository
 from backend.src.core.modules.category.service import CategoryService
 from backend.src.core.modules.category.validator import CategoryValidator
+from backend.src.core.modules.category.use_case import CategoryRetrievalUseCase
 
 
 def get_category_repository(
@@ -18,15 +19,30 @@ def get_category_repository(
     return CategoryRepository(session)
 
 
-def get_category_service(
+def get_category_retrieval_use_case(
     category_repository: Annotated[
         CategoryRepositoryInterface, Depends(get_category_repository)
     ]
+) -> CategoryRetrievalUseCase:
+    return CategoryRetrievalUseCase(category_repository)
+
+
+def get_category_service(
+    category_repository: Annotated[
+        CategoryRepositoryInterface, Depends(get_category_repository)
+    ],
+    category_retrieval_use_case: Annotated[
+        CategoryRetrievalUseCase, Depends(get_category_retrieval_use_case)
+    ],
 ) -> CategoryService:
-    return CategoryService(category_repository)
+    return CategoryService(
+        repository=category_repository, retrieval_use_case=category_retrieval_use_case
+    )
 
 
 def get_category_validator(
-    category_service: Annotated[CategoryService, Depends(get_category_service)]
+    retrieval_use_case: Annotated[
+        CategoryRetrievalUseCase, Depends(get_category_service)
+    ]
 ) -> CategoryValidator:
-    return CategoryValidator(category_service)
+    return CategoryValidator(retrieval_use_case)

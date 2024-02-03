@@ -1,19 +1,24 @@
 from typing import Sequence, Optional
 
 from backend.src.core.modules.common.exceptions import (
-    ObjectDoesNotExist,
     ObjectAlreadyExists,
 )
+from backend.src.core.modules.subject.model import Subject
 from backend.src.core.modules.subject.repository_interface import (
     SubjectRepositoryInterface,
 )
-from backend.src.core.modules.subject.model import Subject
 from backend.src.core.modules.subject.schemas import SubjectPayloadDTO
+from backend.src.core.modules.subject.use_case import SubjectRetrievalUseCase
 
 
 class SubjectService:
-    def __init__(self, repository: SubjectRepositoryInterface):
+    def __init__(
+        self,
+        repository: SubjectRepositoryInterface,
+        retrieval_use_case: SubjectRetrievalUseCase,
+    ):
         self._repository = repository
+        self._retrieval_use_case = retrieval_use_case
 
     async def create(self, request_dto: SubjectPayloadDTO, user_id: int) -> Subject:
         if await self._check_subject_with_name_and_user_id_exists(
@@ -43,12 +48,7 @@ class SubjectService:
         return await self._repository.delete(subject)
 
     async def get_by_id(self, subject_id: int) -> Subject:
-        subject = await self._repository.get_by_id(subject_id)
-
-        if subject is None:
-            raise ObjectDoesNotExist()
-
-        return subject
+        return await self._retrieval_use_case.get_by_id(subject_id)
 
     async def get_by_user_id(self, user_id: int) -> Sequence[Subject]:
         return await self._repository.get_by_user_id(user_id)
