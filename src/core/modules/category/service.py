@@ -1,23 +1,28 @@
 from typing import Sequence, Optional
 
+from backend.src.core.modules.category.model import Category
 from backend.src.core.modules.category.repository_interface import (
     CategoryRepositoryInterface,
 )
-from backend.src.core.modules.category.model import Category
 from backend.src.core.modules.category.schemas import (
     CategoryCreateDTO,
     CategoryUpdateDTO,
 )
+from backend.src.core.modules.category.use_case import CategoryRetrievalUseCase
 from backend.src.core.modules.common.exceptions import (
-    ObjectDoesNotExist,
     ObjectAlreadyExists,
 )
 from backend.src.core.modules.transaction.enum import TransactionType
 
 
 class CategoryService:
-    def __init__(self, repository: CategoryRepositoryInterface):
+    def __init__(
+        self,
+        repository: CategoryRepositoryInterface,
+        retrieval_use_case: CategoryRetrievalUseCase,
+    ):
         self._repository = repository
+        self._retrieval_use_case = retrieval_use_case
 
     async def create(self, user_id: int, request_dto: CategoryCreateDTO) -> Category:
         if await self._check_category_with_name_and_user_id_exists(
@@ -49,12 +54,7 @@ class CategoryService:
         return await self._repository.delete(category)
 
     async def get_by_id(self, category_id: int) -> Category:
-        category = await self._repository.get_by_id(category_id)
-
-        if category is None:
-            raise ObjectDoesNotExist()
-
-        return category
+        return await self._retrieval_use_case.get_by_id(category_id)
 
     async def get_by_user_id(
         self, user_id: int, transaction_type: Optional[TransactionType] = None

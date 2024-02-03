@@ -2,7 +2,6 @@ from datetime import date
 from typing import Optional
 
 from backend.src.core.modules.common.exceptions import (
-    ObjectDoesNotExist,
     ObjectAlreadyExists,
 )
 from backend.src.core.modules.transaction.model import Transaction
@@ -11,11 +10,17 @@ from backend.src.core.modules.transaction.schemas.transaction import (
     TransactionCreateDTO,
     TransactionUpdateDTO,
 )
+from backend.src.core.modules.transaction.use_case import TransactionRetrievalUseCase
 
 
 class TransactionService:
-    def __init__(self, repository: TransactionRepository):
+    def __init__(
+        self,
+        repository: TransactionRepository,
+        retrieval_use_case: TransactionRetrievalUseCase,
+    ):
         self._repository = repository
+        self._retrieval_use_case = retrieval_use_case
 
     async def create(
         self, wallet_id: int, user_id: int, request_dto: TransactionCreateDTO
@@ -52,12 +57,7 @@ class TransactionService:
         return await self._repository.delete(transaction)
 
     async def get_by_id(self, transaction_id: int) -> Transaction:
-        transaction = await self._repository.get_by_id(transaction_id)
-
-        if transaction is None:
-            raise ObjectDoesNotExist()
-
-        return transaction
+        return await self._retrieval_use_case.get_by_id(transaction_id)
 
     async def _check_constraint_blockade(
         self,

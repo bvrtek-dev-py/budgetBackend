@@ -21,6 +21,7 @@ from backend.src.core.modules.transaction.services.transfer_service import (
     TransactionTransferService,
 )
 from backend.src.core.modules.transaction.validator import TransactionValidator
+from backend.src.core.modules.transaction.use_case import TransactionRetrievalUseCase
 
 
 def get_transaction_repository(
@@ -29,39 +30,44 @@ def get_transaction_repository(
     return TransactionRepository(session)
 
 
+def get_transaction_retrieval_use_case(
+    repository: Annotated[TransactionRepository, Depends(get_transaction_repository)]
+) -> TransactionRetrievalUseCase:
+    return TransactionRetrievalUseCase(repository)
+
+
 def get_transaction_service(
-    transaction_repository: Annotated[
-        TransactionRepository, Depends(get_transaction_repository)
-    ]
+    repository: Annotated[TransactionRepository, Depends(get_transaction_repository)],
+    retrieval_use_case: Annotated[
+        TransactionRetrievalUseCase, Depends(get_transaction_retrieval_use_case)
+    ],
 ) -> TransactionService:
-    return TransactionService(transaction_repository)
+    return TransactionService(
+        repository=repository, retrieval_use_case=retrieval_use_case
+    )
 
 
 def get_transaction_query_service(
-    transaction_repository: Annotated[
-        TransactionRepository, Depends(get_transaction_repository)
-    ]
+    repository: Annotated[TransactionRepository, Depends(get_transaction_repository)]
 ) -> TransactionQueryService:
-    return TransactionQueryService(transaction_repository)
+    return TransactionQueryService(repository)
 
 
 def get_transaction_statistics_service(
-    transaction_repository: Annotated[
-        TransactionRepository, Depends(get_transaction_repository)
-    ]
+    repository: Annotated[TransactionRepository, Depends(get_transaction_repository)]
 ) -> TransactionStatisticsService:
-    return TransactionStatisticsService(transaction_repository)
+    return TransactionStatisticsService(repository)
 
 
 def get_transaction_transfer_service(
-    transaction_repository: Annotated[
-        TransactionRepository, Depends(get_transaction_repository)
-    ]
+    repository: Annotated[TransactionRepository, Depends(get_transaction_repository)]
 ) -> TransactionTransferService:
-    return TransactionTransferService(transaction_repository)
+    return TransactionTransferService(repository)
 
 
 def get_transaction_validator(
-    transaction_service: Annotated[TransactionService, Depends(get_transaction_service)]
+    retrieval_use_case: Annotated[
+        TransactionRetrievalUseCase, Depends(get_transaction_retrieval_use_case)
+    ]
 ) -> TransactionValidator:
-    return TransactionValidator(transaction_service)
+    return TransactionValidator(retrieval_use_case)
