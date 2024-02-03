@@ -1,5 +1,4 @@
 from backend.src.core.modules.common.exceptions import PermissionDenied
-from backend.src.core.modules.wallet.service import WalletService
 from backend.src.core.modules.wallet.use_case import WalletRetrievalUseCase
 
 
