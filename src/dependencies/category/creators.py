@@ -20,24 +20,20 @@ def get_category_repository(
 
 
 def get_category_retrieval_use_case(
-    category_repository: Annotated[
-        CategoryRepositoryInterface, Depends(get_category_repository)
-    ]
+    repository: Annotated[CategoryRepositoryInterface, Depends(get_category_repository)]
 ) -> CategoryRetrievalUseCase:
-    return CategoryRetrievalUseCase(category_repository)
+    return CategoryRetrievalUseCase(repository)
 
 
 def get_category_service(
-    category_repository: Annotated[
+    repository: Annotated[
         CategoryRepositoryInterface, Depends(get_category_repository)
     ],
-    category_retrieval_use_case: Annotated[
+    retrieval_use_case: Annotated[
         CategoryRetrievalUseCase, Depends(get_category_retrieval_use_case)
     ],
 ) -> CategoryService:
-    return CategoryService(
-        repository=category_repository, retrieval_use_case=category_retrieval_use_case
-    )
+    return CategoryService(repository=repository, retrieval_use_case=retrieval_use_case)
 
 
 def get_category_validator(
